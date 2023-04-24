@@ -1,0 +1,9 @@
+style = "blue"
+always_use_return = false
+whitespace_ops_in_indices = false
+pipe_to_function_call = false
+align_assignment = true
+align_struct_field = true
+align_conditional = true
+align_pair_arrow = true
+align_matrix = true

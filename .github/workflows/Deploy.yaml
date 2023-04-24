@@ -1,0 +1,110 @@
+# This workflow glues together two workflows:
+# - PlutoSliderServer.jl's ExportPluto.yaml
+# - Franklin.jl's FranklinDeploy.yml
+# 
+# This is done such that the `github-pages-deploy-action` doesn't overwrite
+# the deployment of the previous workflow.
+#
+# Paths are also modified: 
+# - PlutoSliderServer exports notebooks in /lectures to /website/__site/lectures
+# - Franklin builds to /website/__site
+# - github-pages-deploy-action deploys /website/__site
+
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+      - master
+
+# This action needs permission to write the exported HTML file to the gh-pages branch.
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # NOTE: Python is necessary for the pre-rendering (minification) step
+    - name: Install python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    # NOTE: Here you can install dependencies such as matplotlib if you use
+    # packages such as PyPlot.
+    # - run: pip install matplotlib
+    
+    - name: Install Julia
+      uses: julia-actions/setup-julia@v1
+      with:
+        version: "1" # This will automatically pick the latest Julia version
+
+    - name: Cache Julia artifacts & such
+      uses: julia-actions/cache@v1
+      with:
+        cache-registries: "true"
+
+    # We set up a folder that Pluto can use to cache exported notebooks. If the notebook file did not change, then Pluto can take the exported file from cache instead of running the notebook.
+    - name: Set up notebook state cache
+      uses: actions/cache@v3
+      with:
+          path: pluto_state_cache
+          key: ${{ runner.os }}-pluto_state_cache-v2-${{ hashFiles('**/Project.toml', '**/Manifest.toml', '.github/workflows/*' ) }}-${{ hashFiles('**/*jl') }}
+          restore-keys: |
+              ${{ runner.os }}-pluto_state_cache-v2-${{ hashFiles('**/Project.toml', '**/Manifest.toml', '.github/workflows/*' ) }}
+
+    - name: Run & export Pluto notebooks
+      run: |
+        julia --color=yes -e 'using Pkg
+          Pkg.activate(mktempdir())
+          Pkg.add([
+            Pkg.PackageSpec(name="PlutoSliderServer", version="0.3.2-0.3"),
+          ])
+
+          import PlutoSliderServer
+
+          PlutoSliderServer.github_action("lectures";
+            Export_output_dir="website/__site/lectures",
+            Export_cache_dir="pluto_state_cache",
+            Export_baked_notebookfile=false,
+            Export_baked_state=false,
+            # more parameters can go here
+          )
+          PlutoSliderServer.github_action("homework";
+            Export_output_dir="website/__site/homework",
+            Export_cache_dir="pluto_state_cache",
+            Export_baked_notebookfile=false,
+            Export_baked_state=false,
+            # more parameters can go here
+          )'
+
+    # NOTE
+    #   The steps below ensure that NodeJS and Franklin are loaded then it
+    #   installs highlight.js which is needed for the prerendering step
+    #   (code highlighting + katex prerendering).
+    #   Then the environment is activated and instantiated to install all
+    #   Julia packages which may be required to successfully build your site.
+    #   The last line should be `optimize()` though you may want to give it
+    #   specific arguments, see the documentation or ?optimize in the REPL.
+    - name: Build Franklin page
+      run: |
+        julia --color=yes -e '
+          using Pkg; Pkg.activate("website"); Pkg.instantiate();
+          cd("website");
+          include("generate_iframes.jl");
+          generate_iframes();
+          using NodeJS; run(`$(npm_cmd()) install highlight.js`);
+          using Franklin;
+          optimize()'
+
+    - name: Build and Deploy
+      uses: JamesIves/github-pages-deploy-action@releases/v4
+      with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: website/__site
+          single-commit: true

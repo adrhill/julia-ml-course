@@ -1,0 +1,9 @@
+__site/
+.DS_Store
+node_modules/
+package-lock.json
+
+# Markdown from generate_iframes.jl
+E*.md
+L*.md
+H*.md
