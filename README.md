@@ -1,4 +1,4 @@
-<h1 style="text-align:center">
+<h1 align="center">
     Julia programming for Machine Learning
 </h1>
 <p align="center">
