@@ -525,7 +525,7 @@ md"### Exercise 3.2 – Standard deviation"
 task(
     md"Write a function `my_std` that computes the ([corrected](https://en.wikipedia.org/wiki/Unbiased_estimation_of_standard_deviation)) sample standard deviation $\sigma$ of all elements in a vector:
 
-$\mathrm{Var}(x) = \frac{1}{n-1}\sum_{i=1}^{n} \left(x_i - \mu\right)^2$
+$\mathrm{Var}(x) = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n} \left(x_i - \mu\right)^2}$
 ",
     2,
 )
