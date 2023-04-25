@@ -103,6 +103,8 @@ Julia's package manager is called **Pkg**. In the Julia REPL, open the package m
  The REPL prompt should change from `julia>` to `(@1.8) pkg>`:
 
 ![Pkg](https://i.imgur.com/rzH4rbv.png)
+
+You can exit the package manager mode by pressing backspace.
 """
 
 # ╔═╡ 3e5ae3af-079d-46e1-be43-b4935278c965
