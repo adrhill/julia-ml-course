@@ -431,7 +431,7 @@ typeof(v1)
 typeof(v2)
 
 # ╔═╡ feadce71-ec02-4e70-a552-8f3f3245a750
-tip(md"Arrays are going to be covered in more detail in the next lecture.")
+tip(md"Vectors and arrays are going to be covered in more detail in the next lecture.")
 
 # ╔═╡ bc8f2317-3cb9-4a8c-85a9-16d2607d47f7
 md"""## Ranges
@@ -596,7 +596,7 @@ my_add_2(2, 3)
 
 # ╔═╡ 540c3e7f-63ea-4a55-a1ba-7b7a5d4e65a1
 md"""## Multiple return values
-Functions can have multiple values, separated by commas:
+Functions can return multiple values, separated by commas:
 """
 
 # ╔═╡ 92f705dd-989c-4ff7-beb1-f626a04d51cd
@@ -702,7 +702,7 @@ Let's implement a general $p$-norm function
 
 $\|x\|_p ~=~ \left(\sum_n|x_n|^p\right)^{\frac{1}{p}}$
 
-which im defaults to the $\ell^2$-norm using $p=2$:
+which defaults to the $\ell^2$-norm using $p=2$:
 """
 
 # ╔═╡ 89f79535-2681-4a93-a80f-28f74f22be0c

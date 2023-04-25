@@ -72,17 +72,15 @@ Julia Programming for Machine Learning (3 ECTS credits) is an optional course wi
 
 It's **not** possible to take the class as a standalone, seminar, or free-choice module.
 
-Participation in the exercise sessions is not mandatory but highly recommended. 
 Homework assignments must be submitted every week. 
 You must be enrolled on ISIS to submit homework. 
 If you do not register on time, you cannot pass the course.
 
 - **Course Period:**  April 26th - May 24th 2023
-  - **Lectures:** Wednesday 09:00 - 12:00 PM (online)
-  - **Office hours:** Monday 14:00 - 16:00 (online)
+  - **Lectures:** Wednesday 09:15 - 11:45 (online)
+  - **Office hours:** Monday 14:15 - 15:45 (online)
 
-More information will follow on [ISIS](https://isis.tu-berlin.de/course/view.php?id=34292) 
-as we approach the semester.
+More information and links to the Zoom meetings can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=34292).
 
 ## FAQ
 #### Why should I learn Julia?
@@ -98,12 +96,15 @@ Julia is:
 If these are features that sound appealing to you, you should learn Julia!
 
 #### How can I run the notebooks?
-Download or clone the [GitHub repository of this course](https://github.com/adrhill/julia-ml-course/). 
-The "lectures" folder contains the notebooks, which you can open in Pluto.
+Running notebooks is described in the *"Opening lectures & homework"* section of the *Installation* notebook.
 
 Alternatively, you can open the notebook on Binder by clicking *"Edit or run this notebook"*.
 However, Binder can take a prohibitively long time to load. 
-Pluto notebooks show an estimate of the loading times above the "Run in Binder" button.
+Pluto notebooks show an estimate of the loading times above the *"Run in Binder"* button.
+
+If you are familiar with Git, you can also clone the [GitHub repository of this course](https://github.com/adrhill/julia-ml-course/).
+You can then open your local copy of the lectures and homework in Pluto.
+Just make sure to regularly pull to keep your copy of the course up to date.
 
 #### I found an error or typo. What should I do?
 Please help make this course better! 
@@ -114,7 +115,7 @@ This will [create a pull request](https://docs.github.com/en/pull-requests/colla
 
 Alternatively, write me on [ISIS](https://isis.tu-berlin.de/) or open an issue on GitHub and tell me what needs to be fixed. Ideas and feedback are also more than welcome.
 
-#### What does the Symbol `⁽⁺⁾` in some slide titles mean?
+#### What does the symbol `⁽⁺⁾` in some slide titles mean?
 This symbol indicates optional–often more advanced–content that can be skipped.
 
 
