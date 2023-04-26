@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -24,12 +24,8 @@ end
 # ╔═╡ 755b8685-0711-48a2-a3eb-f80af39f10e1
 using PlutoTeachingTools
 
-# ╔═╡ 175b724b-add0-4484-a3a0-257f8e7494e0
-begin
-    using Plots
-    # using Plotly
-    # plotly() # activate Plotly backend
-end
+# ╔═╡ 327399fe-a38e-4410-b928-a7f9410aba90
+using Plots
 
 # ╔═╡ 7353d961-b03f-4be8-acf9-d87e2b27b307
 using PlutoUI
@@ -87,6 +83,9 @@ Plots.jl calls these packages [backends](https://docs.juliaplots.org/latest/back
 
 Because Pluto notebooks play well with JavaScript, we are going to load Plots.jl with the Plotly backend:
 "
+
+# ╔═╡ 175b724b-add0-4484-a3a0-257f8e7494e0
+plotly() # activate Plotly backend
 
 # ╔═╡ f9f1d2f0-9d3e-4b53-8938-b78bcfa7d8f2
 md"""## Line plots
@@ -302,7 +301,10 @@ plot(X, Y, Z1)
 Z2 = [sin(sqrt(x^2 + y^2)) / sqrt(x^2 + y^2) for x in X, y in Y]
 
 # ╔═╡ a6b6256e-5ec2-4f77-99ee-5c603726139b
-plot(X, Y, Z2; fill=true) # same as `contour`
+contour(X, Y, Z2; fill=true)
+
+# ╔═╡ 774e07af-bdcd-451a-bfc7-3255fc793053
+surface(X, Y, Z2)
 
 # ╔═╡ 156f1d7a-30fd-410a-b9a6-033d34b82ad6
 md"""# DataFrames.jl
@@ -560,7 +562,7 @@ StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 CSV = "~0.10.9"
 DataFrames = "~1.5.0"
 LaTeXStrings = "~1.3.0"
-Plots = "~1.38.8"
+Plots = "~1.38.10"
 PlutoTeachingTools = "~0.2.9"
 PlutoUI = "~0.7.50"
 StatsPlots = "~0.15.4"
@@ -572,7 +574,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "549697ea925373eb2f5b49e458a8423b42d1633c"
+project_hash = "2a6c9cc86d8fec65a3539bef3e6198241a7fb9a9"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -1325,9 +1327,9 @@ version = "1.3.4"
 
 [[deps.Plots]]
 deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "Preferences", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SnoopPrecompile", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "Unzip"]
-git-tree-sha1 = "f49a45a239e13333b8b936120fe6d793fe58a972"
+git-tree-sha1 = "5434b0ee344eaf2854de251f326df8720f6a7b55"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.38.8"
+version = "1.38.10"
 
 [[deps.PlutoHooks]]
 deps = ["InteractiveUtils", "Markdown", "UUIDs"]
@@ -1882,6 +1884,7 @@ version = "1.4.1+0"
 # ╟─96b32c06-6136-4d44-be87-f2f67b374bbd
 # ╟─f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 # ╟─c7db928d-bdd1-4561-82e0-6081ed6ff08c
+# ╠═327399fe-a38e-4410-b928-a7f9410aba90
 # ╠═175b724b-add0-4484-a3a0-257f8e7494e0
 # ╟─f9f1d2f0-9d3e-4b53-8938-b78bcfa7d8f2
 # ╠═206d0420-9669-4fc6-8f5d-7b4c22363a1f
@@ -1936,6 +1939,7 @@ version = "1.4.1+0"
 # ╠═5cdeae88-741a-4397-bcee-b3214a436d50
 # ╠═a6d1bd0a-43db-4d8d-aaa7-76849de96ef9
 # ╠═a6b6256e-5ec2-4f77-99ee-5c603726139b
+# ╠═774e07af-bdcd-451a-bfc7-3255fc793053
 # ╟─156f1d7a-30fd-410a-b9a6-033d34b82ad6
 # ╠═9b7b579e-7479-4d49-83fd-911bc66ded58
 # ╟─ab7b8a49-2e08-4f98-bc75-f6f32438f541
