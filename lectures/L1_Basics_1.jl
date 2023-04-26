@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -383,7 +383,7 @@ my_tuple = (1, 2.0, "Foo")
 typeof(my_tuple)
 
 # ╔═╡ b19f7ea2-db9d-4f3a-b9d6-6a6fd7ff5304
-tip(md"We will learn how to define our own types next week!")
+tip(md"We will learn how to define our own types in lecture 4!")
 
 # ╔═╡ 06e254b9-c460-46b1-94b5-f9a8d8079c83
 md""" ## Type hierarchy
@@ -431,7 +431,7 @@ typeof(v1)
 typeof(v2)
 
 # ╔═╡ feadce71-ec02-4e70-a552-8f3f3245a750
-tip(md"Vectors and arrays are going to be covered in more detail in the next lecture.")
+tip(md"Vectors and arrays are going to be covered in more detail in lecture 2.")
 
 # ╔═╡ bc8f2317-3cb9-4a8c-85a9-16d2607d47f7
 md"""## Ranges
@@ -850,13 +850,6 @@ md"""The methods of function `f` can be shown using `methods(f)`, e.g. for the s
 
 # ╔═╡ 62e799db-8058-4745-b9e3-cbb6761acebd
 methods(sin)
-
-# ╔═╡ beb978fb-0e3f-4a91-8779-f5c021165cf6
-tip(
-    md"""
-Object oriented programming can be viewed as a simple implementation of *dispatch* that only uses the type of the *first* argument (e.g. `self` in Python) to select the correct method.
-""",
-)
 
 # ╔═╡ 4b05bb8d-c6e8-4736-90e3-c79154aa36f3
 md"""## Comprehensions
@@ -1476,7 +1469,6 @@ version = "17.4.0+0"
 # ╠═d99f7bc2-dfae-4543-b38e-b4c7191d2e0e
 # ╟─ebc6a699-c2e1-4988-a992-c9bf329aefa4
 # ╠═62e799db-8058-4745-b9e3-cbb6761acebd
-# ╟─beb978fb-0e3f-4a91-8779-f5c021165cf6
 # ╟─4b05bb8d-c6e8-4736-90e3-c79154aa36f3
 # ╠═de2ae139-f928-4901-aab0-31162477aab6
 # ╟─35f9917d-bf2c-499a-a3ef-41e78f375033
