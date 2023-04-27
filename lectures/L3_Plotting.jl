@@ -51,6 +51,9 @@ ChooseDisplayMode()
 # ╔═╡ 96b32c06-6136-4d44-be87-f2f67b374bbd
 TableOfContents()
 
+# ╔═╡ 0074a75a-0a26-47cd-aeff-62c9cc7666ba
+PlutoTeachingTools.default_language[] = PlutoTeachingTools.PTTEnglish.EnglishUS();
+
 # ╔═╡ f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 html"""
 	<h1 style="text-align:center">
@@ -239,10 +242,13 @@ md"""These LaTeX strings start with `L"..."`, render nicely inside Pluto
 L"x = \frac{1}{\sqrt{2}}"
 
 # ╔═╡ 0e8d1bc9-de05-4163-8880-be9da1136852
-md"and can be used inside plots:"
+md"""Depending on the plotting backend, these can also be used inside plots:
+```julia
+plot(sqrt; label=L"\sqrt{x}", title=L"A random equation: $\frac{1}{\sqrt{2}}$")
+```
 
-# ╔═╡ dbbbfd18-82d8-4b18-891a-94c430380e49
-plot(sqrt; label=L"\sqrt{x}", title=L"An equation: $\frac{1}{\sqrt{2}}$")
+We aren't demonstrating this in here since Plotly isn't one of those backends. 
+"""
 
 # ╔═╡ ffff14d6-4eff-4f96-a535-9fceafc5e3e6
 md"## Subplots
@@ -1882,6 +1888,7 @@ version = "1.4.1+0"
 # ╠═755b8685-0711-48a2-a3eb-f80af39f10e1
 # ╟─83497498-2c14-49f4-bb5a-c252f655e006
 # ╟─96b32c06-6136-4d44-be87-f2f67b374bbd
+# ╟─0074a75a-0a26-47cd-aeff-62c9cc7666ba
 # ╟─f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 # ╟─c7db928d-bdd1-4561-82e0-6081ed6ff08c
 # ╠═327399fe-a38e-4410-b928-a7f9410aba90
@@ -1920,7 +1927,6 @@ version = "1.4.1+0"
 # ╟─53b3cf39-722f-4d58-8a44-1a0e98ce46e0
 # ╠═832e0845-b4a2-4c9f-8b59-27108cbb4ab1
 # ╟─0e8d1bc9-de05-4163-8880-be9da1136852
-# ╠═dbbbfd18-82d8-4b18-891a-94c430380e49
 # ╟─ffff14d6-4eff-4f96-a535-9fceafc5e3e6
 # ╠═73a7f358-484c-45b2-ab03-4dd14b5b4334
 # ╠═55b6f542-cfea-498d-89e4-0186ac85c939

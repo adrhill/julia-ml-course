@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -111,6 +111,9 @@ task(
 Inside the code cell, use `Shift+Enter` to run your edits, or press the `▶` button in the bottom right of the cell.",
     0,
 )
+
+# ╔═╡ 74e27f45-9897-4ddd-8516-59669b17b1ad
+PlutoTeachingTools.default_language[] = PlutoTeachingTools.PTTEnglish.EnglishUS();
 
 # ╔═╡ d358da52-ee09-4533-a2ef-c68b847e24d5
 md"## Exercise 1: Warm up
@@ -1080,6 +1083,7 @@ version = "17.4.0+0"
 # ╟─06c0ad65-22d4-4c8e-ae19-4f05ba125e79
 # ╠═755b8685-0711-48a2-a3eb-f80af39f10e1
 # ╟─5061a130-fc0a-4306-bdf5-6966e8de938a
+# ╟─74e27f45-9897-4ddd-8516-59669b17b1ad
 # ╟─d358da52-ee09-4533-a2ef-c68b847e24d5
 # ╟─e5670193-6221-49c6-a880-d287f717545e
 # ╠═b96fde59-1f2a-4d07-a5cc-6ec48e5079f1

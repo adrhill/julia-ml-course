@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -32,6 +32,9 @@ ChooseDisplayMode()
 
 # ╔═╡ c854cbe0-5e36-4569-9e1f-d17b2c3540d5
 TableOfContents()
+
+# ╔═╡ 676ec5af-e006-4870-b49c-08f180612113
+PlutoTeachingTools.default_language[] = PlutoTeachingTools.PTTEnglish.EnglishUS();
 
 # ╔═╡ 04376141-9c94-4197-804a-932c35a53777
 html"""
@@ -620,6 +623,7 @@ version = "17.4.0+0"
 # ╔═╡ Cell order:
 # ╟─c5e6183d-8fc9-47f4-aff4-6a0fa75b3e4b
 # ╟─c854cbe0-5e36-4569-9e1f-d17b2c3540d5
+# ╟─676ec5af-e006-4870-b49c-08f180612113
 # ╟─04376141-9c94-4197-804a-932c35a53777
 # ╟─7a078934-82c3-45a0-be32-77d6fe59485c
 # ╟─3133b51c-c1c0-43d3-8938-1179e9466e44

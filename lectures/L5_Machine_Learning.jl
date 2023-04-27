@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -24,6 +24,9 @@ ChooseDisplayMode()
 
 # ╔═╡ 96b32c06-6136-4d44-be87-f2f67b374bbd
 TableOfContents()
+
+# ╔═╡ 211d2b00-6b58-48eb-9aa2-c14820e6d976
+PlutoTeachingTools.default_language[] = PlutoTeachingTools.PTTEnglish.EnglishUS();
 
 # ╔═╡ f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 html"""
@@ -253,7 +256,7 @@ pca_params.projection
 md"# Further resources
 This lecture just scratched the surface of MLJ's features. For example, we didn't touch: 
 - [Performance estimation](https://alan-turing-institute.github.io/MLJ.jl/dev/evaluating_model_performance/) using the `evaluate` function 
-- [Transformers](https://alan-turing-institute.github.io/MLJ.jl/dev/transformers/)  (not the Deep Learning kind, but common data transformations such as standardization)
+- [Transformers](https://alan-turing-institute.github.io/MLJ.jl/dev/transformers/); not the Deep Learning kind, but common data transformations such as standardization
 - [Model tuning](https://alan-turing-institute.github.io/MLJ.jl/dev/tuning_models/)
 
 More information can be found in the [MLJ documentation](https://alan-turing-institute.github.io/MLJ.jl/dev/).
@@ -1193,6 +1196,7 @@ version = "17.4.0+0"
 # ╠═755b8685-0711-48a2-a3eb-f80af39f10e1
 # ╟─83497498-2c14-49f4-bb5a-c252f655e006
 # ╟─96b32c06-6136-4d44-be87-f2f67b374bbd
+# ╟─211d2b00-6b58-48eb-9aa2-c14820e6d976
 # ╟─f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 # ╟─2b26fb96-74b3-48fd-9d96-ea7c6e3b875b
 # ╠═92624962-0ef3-41be-b7a9-c14bd510311d

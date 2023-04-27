@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -15,6 +15,9 @@ ChooseDisplayMode()
 
 # ╔═╡ c854cbe0-5e36-4569-9e1f-d17b2c3540d5
 TableOfContents()
+
+# ╔═╡ 44ceefa1-61a1-4390-84f8-0940bb16237b
+PlutoTeachingTools.default_language[] = PlutoTeachingTools.PTTEnglish.EnglishUS();
 
 # ╔═╡ 04376141-9c94-4197-804a-932c35a53777
 html"""
@@ -179,7 +182,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "69f995e0dc6a1c35a46792be048dc8abd510ce38"
+project_hash = "fe1ea3a3075103bc4edb8f048cc2dcf2ba1b5d4e"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -513,6 +516,7 @@ version = "17.4.0+0"
 # ╠═1fcbc08a-a0b7-11ed-0477-13c86a949723
 # ╟─c5e6183d-8fc9-47f4-aff4-6a0fa75b3e4b
 # ╟─c854cbe0-5e36-4569-9e1f-d17b2c3540d5
+# ╟─44ceefa1-61a1-4390-84f8-0940bb16237b
 # ╟─04376141-9c94-4197-804a-932c35a53777
 # ╟─179a4ec9-5eec-4a53-8dfe-5f633db2d27a
 # ╟─9bb8258a-7e43-4f63-9c9d-c34394611a6a

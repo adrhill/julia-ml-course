@@ -20,6 +20,9 @@ end
 # ╔═╡ c5e6183d-8fc9-47f4-aff4-6a0fa75b3e4b
 ChooseDisplayMode()
 
+# ╔═╡ 98428309-2e55-4c8b-8c3a-3e98e677a1b2
+PlutoTeachingTools.default_language[] = PlutoTeachingTools.PTTEnglish.EnglishUS();
+
 # ╔═╡ c854cbe0-5e36-4569-9e1f-d17b2c3540d5
 TableOfContents()
 
@@ -1276,6 +1279,7 @@ version = "17.4.0+0"
 # ╔═╡ Cell order:
 # ╠═1fcbc08a-a0b7-11ed-0477-13c86a949723
 # ╟─c5e6183d-8fc9-47f4-aff4-6a0fa75b3e4b
+# ╟─98428309-2e55-4c8b-8c3a-3e98e677a1b2
 # ╟─c854cbe0-5e36-4569-9e1f-d17b2c3540d5
 # ╟─04376141-9c94-4197-804a-932c35a53777
 # ╟─6352d357-885e-463f-94e9-ae6fc4f79593
