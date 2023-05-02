@@ -714,14 +714,14 @@ feedback = """
 The homework took me around XX minutes.
 
 In the lecture / homework I would have liked more detailed explanations on:
-	- foo
-	- bar
+* foo
+* bar
 
 I liked:
-	- baz
+* baz
 
 I didn't like:
-	- qux
+* qux
 """;
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
