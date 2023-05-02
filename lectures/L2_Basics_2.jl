@@ -763,6 +763,21 @@ begin
     rand(distribution, 50000) |> histogram
 end
 
+# ╔═╡ b2cdd7d0-e009-4fca-a16b-ddd19cabc6a0
+md"""# Further resources
+In this lecture, we didn't get to cover Cartesian Indices, which are a great tool for implementing algorithms on high-dimensional arrays. 
+The following blogpost gives a great introduction:
+
+- [Multidimensional algorithms and iteration](https://julialang.org/blog/2016/02/iteration/)  by Tim Holy
+- [Julia documentation on Cartesian Indices](https://docs.julialang.org/en/v1/manual/arrays/#Cartesian-indices)
+
+Besides *SparseArrays.jl*, *OffsetArrays.jl* and *StaticArrays.jl*, the Julia ecosystem has many more packages to offer:
+
+- [JuliaArrays](https://github.com/JuliaArrays): organization on GitHub that maintains packages implementing custom array types
+- [JuliaLinearAlgebra](https://github.com/JuliaLinearAlgebra): organization on GitHub that maintains packages implementing linear algebra methods and matrix types
+- [Tullio.jl](https://github.com/mcabbott/Tullio.jl): einsum macro that also works on GPUs
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1568,5 +1583,6 @@ version = "17.4.0+0"
 # ╟─8ba035af-aed3-4b6c-a3bb-f73a46415d3b
 # ╠═cbfc8bdf-2b6c-4dae-89da-c27342ec6afe
 # ╠═5da0c56f-c6f4-4bff-9446-99180624b002
+# ╟─b2cdd7d0-e009-4fca-a16b-ddd19cabc6a0
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
