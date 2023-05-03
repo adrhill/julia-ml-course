@@ -191,7 +191,7 @@ plot(
     linestyle=:dash,
     linewidth=4,
     # Marker style
-    markershape=:star,
+    markershape=:diamond,
     markersize=8,
     # Axis settings
     yscale=:identity,
@@ -205,7 +205,7 @@ plot(
 )
 
 # ╔═╡ 7a0530d6-93f3-40b3-aa29-666cbb295cf3
-md"This plot used some common settings. Many more can be found in the [Plots.jl documentation](https://docs.juliaplots.org/stable/attributes/) or by querying `plotattr`:"
+md"This plot used some common settings. Many more can be found in the [Plots.jl documentation](https://docs.juliaplots.org/stable/generated/attributes_plot/) or by querying `plotattr`:"
 
 # ╔═╡ 7733958f-4464-4ca9-97af-a1c36bf8b21e
 plotattr("shape")
@@ -272,6 +272,30 @@ plot(my_plot, my_subplots; layout=(2, 1))
 
 # ╔═╡ 9ee70157-caab-4ab6-9ae7-80900a6c1734
 md"Information on more complex layouts can be found in the [Plots.jl documentation](https://docs.juliaplots.org/stable/layouts/)."
+
+# ╔═╡ c1ed139c-82ab-45e3-9b01-d2564d6e7497
+md"""## Saving plots
+Plots are saved using the `savefig` function:
+
+```julia
+savefig("figure.png")  		    # save most recent figure
+savefig(my_plot, "figure.png")  # save figure `my_plot` 
+```
+
+Note that [not all backends support all file formats](https://docs.juliaplots.org/latest/output/#Supported-output-file-formats):
+
+| Format | Supported by backends                                                |
+| :----- | :------------------------------------------------------------------- |
+| eps    | inspectdr, plotlyjs, pythonplot                                      |
+| html   | plotly,  plotlyjs                                                    |
+| json   | plotly, plotlyjs                                                     |
+| pdf    | gr, plotlyjs, pythonplot, pgfplotsx, inspectdr, gaston               |
+| png    | gr, plotlyjs, pythonplot, pgfplotsx, inspectdr, gaston, unicodeplots |
+| ps     | gr, pythonplot                                                       |
+| svg    | gr, inspectdr, pgfplotsx, plotlyjs, pythonplot, gaston               |
+| tex    | pgfplotsx                                                            |
+| text   | hdf5, unicodeplots                                                   |
+"""
 
 # ╔═╡ 994ffb7e-9cb8-4343-8cee-a066d6dd9348
 md"## Other Plot types
@@ -383,7 +407,7 @@ Instead of manually parsing the file, we use [CSV.jl](https://github.com/JuliaDa
 
 # ╔═╡ 0f73039c-a5c3-4fd2-8ce1-63972543ff99
 raw_weather_data = CSV.read(
-    csv_file, # path to our file 
+    csv_file,  # path to our file 
     DataFrame; # read to DataFrame
     delim=';', # values are separated by ";"
 )
@@ -1963,6 +1987,7 @@ version = "1.4.1+0"
 # ╠═56f98f37-fc33-4bfd-a59e-0feb22277124
 # ╠═0aac56e9-d82d-46b4-a3fd-37cc02d9ad38
 # ╟─9ee70157-caab-4ab6-9ae7-80900a6c1734
+# ╟─c1ed139c-82ab-45e3-9b01-d2564d6e7497
 # ╟─994ffb7e-9cb8-4343-8cee-a066d6dd9348
 # ╠═6229dce2-3b82-4fd8-8319-715258c23f26
 # ╠═8fb2297f-701e-439b-aaa8-421238e407b3

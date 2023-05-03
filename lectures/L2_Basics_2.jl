@@ -156,16 +156,16 @@ v7 = [sqrt(x) for x in 1:10 if x % 2 == 0]
 
 # ╔═╡ c66a192f-8bd7-462d-a062-cb670b07b723
 md"""## Indexing
-We can index into vectors using square bracket notation.
+We can index into vectors using square bracket notation. 
+
+Let's create a small test vector with values from 1 to 10 for this purpose:
 """
 
 # ╔═╡ 98ad601f-b944-4d79-a3c2-5c94bf17b50a
 one_to_ten = collect(1:10)
 
 # ╔═╡ 7eac40f2-4179-47d7-83e9-c4a5db964c7d
-warning_box(
-    md"Keep in mind that Julia's index is 1-based to match with mathematical notation!"
-)
+warning_box(md"Keep in mind that Julia's index is 1-based to match mathematical notation!")
 
 # ╔═╡ 7157d0ad-57a1-4feb-ba78-038ea61f2f1b
 one_to_ten[2] # second entry
@@ -177,10 +177,13 @@ one_to_ten[4] # fourth entry
 one_to_ten[2:4] # second until fourth entries
 
 # ╔═╡ d86c915a-be35-4a08-a0a9-c71043ce65cf
-one_to_ten[begin+1:end-6] # relative indexing
+one_to_ten[begin+2:end-6] # relative indexing
 
 # ╔═╡ 0a6d5f26-4bcc-4576-a71b-8a1376e2a921
 one_to_ten[4:-1:2] # iterate in reverse
+
+# ╔═╡ 12ac4c1b-1117-4f0f-8ebe-10967e34bd8d
+one_to_ten[[1, 3, 5]] # index values at specific positions 1, 3, 5
 
 # ╔═╡ eb58ff2a-f72c-4f06-948e-0400f79ca2d6
 md"Indexing will allocate a new vector in memory that is independent of the original (it makes a copy): "
@@ -215,6 +218,12 @@ md"With the `@view` macro, we can use the previously introduced index-notation:"
 
 # ╔═╡ 95e5e4f3-a989-4127-a61e-9fa9d3bea279
 @view one_to_ten[begin+1:end-6]
+
+# ╔═╡ 72485a86-5f90-4b8e-8827-ba3ca4af67c1
+md"Views are of type `SubArray`:"
+
+# ╔═╡ a7c24649-a826-44fd-bd4d-3bc00bcc2373
+typeof(@view one_to_ten[2:4])
 
 # ╔═╡ 9ef878c2-c444-49d3-bf6c-4fa7d5d44e5d
 md"Modifying a view will also modify the original array:"
@@ -251,8 +260,19 @@ v8 = [1, 2.3, 4//5]
 # ╔═╡ 89892503-524b-43c5-bd35-430be8febacf
 typeof(v8)
 
+# ╔═╡ d4a009e8-9bb3-40bb-a43c-113ea31beec7
+md"Some combinations of types don't have a common promotion type. This ends up creating a `Vector{Any}`:"
+
+# ╔═╡ 27d7f892-964d-4871-97df-dda3376b5c42
+does_not_promote = ["String", 1.4]
+
+# ╔═╡ 6381fd9c-84cd-41f0-a13f-669a16f270cf
+typeof(does_not_promote)
+
 # ╔═╡ 8a3ff2f1-0de7-4840-b431-ff44691e1ff3
-md"""If type promotion is not desired, explicitly create a `Vector{Any}`
+md"""### Avoiding type promotion
+
+If type promotion is not desired, explicitly create a `Vector{Any}`
 """
 
 # ╔═╡ 5c7d8961-ebb5-43fc-87e5-5f5bea48074b
@@ -276,7 +296,9 @@ typeof(t1)
 # ╔═╡ 79c55150-0457-49b7-90a5-2cad980b2cb9
 tip(
     md"""
-You can find out more in the [Julia documentation on Conversion and Promotion](https://docs.julialang.org/en/v1/manual/conversion-and-promotion/#conversion-and-promotion).
+For performance reasons, it is best to avoid Vectors of type `Vector{Any}`: Julia's compiler can't infer element types and therefore also can't specialize code, resulting in bad performance.  
+	
+You can find out more about type promotion in the [Julia documentation on Conversion and Promotion](https://docs.julialang.org/en/v1/manual/conversion-and-promotion/#conversion-and-promotion).
 """,
 )
 
@@ -390,13 +412,13 @@ Indexing and views work just like on vectors. Just like in mathematical notation
 A3 = reshape(1:20, 4, 5)
 
 # ╔═╡ 926c6289-e960-494b-a8e4-774fe1894f20
-A3[2, 3]
+A3[3, 2]
 
 # ╔═╡ 2ff4b81a-f5e7-4148-89df-471650c9a873
-A3[begin:3, 2:(end-1)] # begin and end also work
+A3[begin:3, 2:end-1] # begin and end also work
 
 # ╔═╡ 5b9b145b-aa4d-4a9d-ade7-fbc893c18191
-@view A3[begin:3, 2:(end-1)]
+@view A3[begin:3, 2:end-1]
 
 # ╔═╡ 1f25d491-1020-4258-b05d-e4110ee248a2
 md"The column `:` symbol can be used as a shorthand for `begin:end`"
@@ -477,7 +499,7 @@ SA = sparse([1, 2, 3], [2, 4, 8], [5, 6, 7]) # rows, columns, values
 md"""### OffsetArrays.jl
 You really love Julia, but want zero-based indexing? Why not use [OffsetArrays.jl](https://github.com/JuliaArrays/OffsetArrays.jl)!
 
-This package allows you to define arbitrary (positive, zero or negative) starting indices to each axis of an array. Let's define a zero-based matrix:"
+This package allows you to define arbitrary (positive, zero or negative) starting indices to each axis of an array. Let's define a zero-based matrix:
 """
 
 # ╔═╡ 2118b306-0a10-4aa9-9198-52c062f18cd2
@@ -486,11 +508,20 @@ A
 # ╔═╡ 635185b7-cffc-43ff-8245-b2db15bf7eda
 OA = OffsetArray(A, 0:1, 0:2) # row indices from 0 to 1, columns from 0 to 2
 
-# ╔═╡ 03c6a14f-e616-4007-9903-c1d53651d854
-md"everything we've learned about indexing and views also applies to OffsetArrays:"
-
 # ╔═╡ 75e1b1d6-1258-4294-920d-2937e28942b9
 OA[0, 0]
+
+# ╔═╡ a705cf00-e54e-4ce6-ba26-3fede17cfd97
+md"We don't have to stick to zero-based indexing – we can use any indices we want:"
+
+# ╔═╡ d93fba29-1254-44d3-b1f4-1a83b776a9d9
+OA2 = OffsetArray(A, -10:-9, 5:7) # row indices from -10 to -9, columns from 5 to 7
+
+# ╔═╡ a1651444-9c28-4e99-a782-c4d32305d176
+OA2[-9, 6]
+
+# ╔═╡ 03c6a14f-e616-4007-9903-c1d53651d854
+md"Everything we've learned about indexing and views also applies to OffsetArrays:"
 
 # ╔═╡ 1f0a67e3-cbfc-4ce9-8206-0ab08b8e236b
 @view OA[1, 1:end]
@@ -651,7 +682,7 @@ u'
 md"Now that the shapes match, we can multiply our arrays:"
 
 # ╔═╡ 1a0d6200-263b-4861-a588-928301f758d2
-u' * M
+u' * M  # (1, 3) × (3, 3) → (1, 3)
 
 # ╔═╡ 19b9fb94-3f35-4acb-9a4a-6e73cf4bc727
 u' * M * v
@@ -684,6 +715,29 @@ dot(u, v)
 
 # ╔═╡ 3387ba55-9cea-4cdc-bf62-106b2b432098
 u ⋅ v
+
+# ╔═╡ 6ab6588e-2c9d-43c8-aee2-b21ae851f53f
+md"## Identity matrix
+In Julia, we don't have to allocate identity matrices. LinearAlgebra's `I` represents identity matrices of any size:
+"
+
+# ╔═╡ 4bc40852-4d0d-4d89-aa04-c91b32e2fc04
+I # Indentity matrix is of type `UniformScaling`
+
+# ╔═╡ 8ef0fc0b-cb56-45f5-ab5f-ddc7fda987e6
+md"The identity matrix acts as the multiplicative identity of all matrices:
+
+$I_m A = A I_n = A \quad,\, \forall A \in \mathbb{R}^{m \times n}$
+"
+
+# ╔═╡ a299c289-7a51-43ef-94d6-8c8cd42f8439
+A
+
+# ╔═╡ 3b855422-9901-41a1-9d1f-10cb24fb23ba
+I * A
+
+# ╔═╡ bed771b5-67ea-4b20-a51c-5928beadcd9a
+A * I
 
 # ╔═╡ e52f9416-a362-4c2d-be06-4604a3efbc1c
 md"""# Random numbers
@@ -1433,6 +1487,7 @@ version = "17.4.0+0"
 # ╠═13f51add-f821-414e-9ef1-41f92fb83421
 # ╠═d86c915a-be35-4a08-a0a9-c71043ce65cf
 # ╠═0a6d5f26-4bcc-4576-a71b-8a1376e2a921
+# ╠═12ac4c1b-1117-4f0f-8ebe-10967e34bd8d
 # ╟─eb58ff2a-f72c-4f06-948e-0400f79ca2d6
 # ╠═73b4a85d-ab44-4445-973e-a309235605af
 # ╟─9511b49a-936c-4c43-b03b-eab3cb86ef8a
@@ -1440,12 +1495,17 @@ version = "17.4.0+0"
 # ╟─b0f71fe4-ee8e-47a8-a815-f1b082fb8763
 # ╠═5c546e19-cc3c-479a-84ca-b0615b0e4d88
 # ╠═95e5e4f3-a989-4127-a61e-9fa9d3bea279
+# ╟─72485a86-5f90-4b8e-8827-ba3ca4af67c1
+# ╠═a7c24649-a826-44fd-bd4d-3bc00bcc2373
 # ╟─9ef878c2-c444-49d3-bf6c-4fa7d5d44e5d
 # ╠═6079c3b6-ea6f-4128-bd2f-2aa6631dd2d3
 # ╟─43c078fb-7964-48e0-92fd-55d306f36b1d
 # ╟─b9a0dd69-02e5-4535-99f1-fa11cbe69b15
 # ╠═1862d034-ba74-4d58-a566-248e47a6c4d2
 # ╠═89892503-524b-43c5-bd35-430be8febacf
+# ╟─d4a009e8-9bb3-40bb-a43c-113ea31beec7
+# ╠═27d7f892-964d-4871-97df-dda3376b5c42
+# ╠═6381fd9c-84cd-41f0-a13f-669a16f270cf
 # ╟─8a3ff2f1-0de7-4840-b431-ff44691e1ff3
 # ╠═5c7d8961-ebb5-43fc-87e5-5f5bea48074b
 # ╠═fcbd3119-1a47-40c8-a7a5-652d9c293824
@@ -1509,8 +1569,11 @@ version = "17.4.0+0"
 # ╠═5d74be37-f1c2-4a14-afda-2501df203e4f
 # ╠═2118b306-0a10-4aa9-9198-52c062f18cd2
 # ╠═635185b7-cffc-43ff-8245-b2db15bf7eda
-# ╟─03c6a14f-e616-4007-9903-c1d53651d854
 # ╠═75e1b1d6-1258-4294-920d-2937e28942b9
+# ╟─a705cf00-e54e-4ce6-ba26-3fede17cfd97
+# ╠═d93fba29-1254-44d3-b1f4-1a83b776a9d9
+# ╠═a1651444-9c28-4e99-a782-c4d32305d176
+# ╟─03c6a14f-e616-4007-9903-c1d53651d854
 # ╠═1f0a67e3-cbfc-4ce9-8206-0ab08b8e236b
 # ╟─2328e00b-3ff7-4dee-a5a2-67457cc44172
 # ╠═36a8f7fa-fd1b-4d3a-bdac-ef24a52902bb
@@ -1563,6 +1626,12 @@ version = "17.4.0+0"
 # ╟─6f4e2428-bbe9-43c6-8e24-e7bf4bb1c828
 # ╠═6d474dbf-0036-4f68-aaa8-1478b37a5a4b
 # ╠═3387ba55-9cea-4cdc-bf62-106b2b432098
+# ╟─6ab6588e-2c9d-43c8-aee2-b21ae851f53f
+# ╠═4bc40852-4d0d-4d89-aa04-c91b32e2fc04
+# ╟─8ef0fc0b-cb56-45f5-ab5f-ddc7fda987e6
+# ╠═a299c289-7a51-43ef-94d6-8c8cd42f8439
+# ╠═3b855422-9901-41a1-9d1f-10cb24fb23ba
+# ╠═bed771b5-67ea-4b20-a51c-5928beadcd9a
 # ╟─e52f9416-a362-4c2d-be06-4604a3efbc1c
 # ╠═dc851849-e33d-4438-a958-8a100b91f54f
 # ╠═16c58360-558e-4879-a36c-66a877519a3e

@@ -145,7 +145,7 @@ map(x -> x^2, (1, 2, 3))  # returns Tuple{Int64, Int64, Int64}
 
 # ╔═╡ c19d69fc-168a-46dc-ad23-9a83622372cf
 md"""## Difference between `print` and `@info`
-* `print` writes to and output stream, defaulting to `stdout` (standard output, typically your active terminal)
+* `print` writes to an output stream, defaulting to `stdout` (standard output, typically your active terminal)
 * `@info` is a [logging function](https://docs.julialang.org/en/v1/stdlib/Logging/). There are several others: `@warn`, `@debug`, ...
 
 Logging can have a couple of advantages over printing:
@@ -188,7 +188,13 @@ function my_sum(xs)
 	end
     return missing
 end
-```"
+```
+
+`missing` represents missing values and is of type `Missing`:
+"
+
+# ╔═╡ 3777af6e-7dfd-42be-b605-905faef1c027
+typeof(missing)
 
 # ╔═╡ 85eeb7de-2aa5-4797-83de-8a2256faa1b8
 md"## Broadcasting isn't always necessary
@@ -199,6 +205,15 @@ For example, the multiplication of a vector by a scalar is mathematically well d
 
 # ╔═╡ b0f3c638-aa92-4abf-8c18-a6fd6816afd8
 [1, 2, 3] * 2
+
+# ╔═╡ 0de85d85-962e-4b4b-8569-b68bfb8c0e0d
+md"Addition and subtraction of two vectors of the same length is also well defined:"
+
+# ╔═╡ fd30652e-f50d-4801-8c37-7ef0d564bed6
+[1, 2, 3] + [2, 2, 3]
+
+# ╔═╡ 37dd57ac-b750-497b-b018-5dc8e4d489c9
+[1, 2, 3] - [2, 2, 3]
 
 # ╔═╡ a69cb5a7-5ac4-4de7-ba1b-f0a05b592b01
 md"""## Testing for edge cases
@@ -617,9 +632,13 @@ version = "17.4.0+0"
 # ╟─ff3340a7-03fa-48b6-8980-9eb4c9b74a30
 # ╠═1e9a2cee-b038-4bbb-9718-a22ef956e81a
 # ╟─f9b8b173-4f48-4605-8c6b-e522c63fef40
+# ╠═3777af6e-7dfd-42be-b605-905faef1c027
 # ╟─85eeb7de-2aa5-4797-83de-8a2256faa1b8
 # ╠═f7724f86-dcd3-4f41-b21c-d38c23e8c49d
 # ╠═b0f3c638-aa92-4abf-8c18-a6fd6816afd8
+# ╟─0de85d85-962e-4b4b-8569-b68bfb8c0e0d
+# ╠═fd30652e-f50d-4801-8c37-7ef0d564bed6
+# ╠═37dd57ac-b750-497b-b018-5dc8e4d489c9
 # ╟─a69cb5a7-5ac4-4de7-ba1b-f0a05b592b01
 # ╠═433c8a4c-c272-4952-8e54-8ac08c5abf2f
 # ╟─00000000-0000-0000-0000-000000000001
