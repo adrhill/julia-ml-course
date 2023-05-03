@@ -7,7 +7,14 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     quote
-        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local iv = try
+            Base.loaded_modules[Base.PkgId(
+                Base.UUID("6e696c72-6542-2067-7265-42206c756150"),
+                "AbstractPlutoDingetjes",
+            )].Bonds.initial_value
+        catch
+            b -> missing
+        end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
@@ -76,12 +83,37 @@ Since these models can get large and complicated, it would be nice to have machi
 Before we take a look at Julia AD packages, let's start with recapitulation of fundamental mathematical concepts.
 "
 
+# ╔═╡ 0ca06dac-6e62-4ba5-bbe6-89ec8f0e8a26
+md"# Mathematical foundations"
+
+# ╔═╡ 26727cec-1565-4a7d-b19d-1184a3749d4f
+md"## Linear maps
+Linear maps, also called linear transformations (*lineare Abbildungen* in German) are functions with the following properties:
+
+| Property    | Equation                       | property satisfied                                                                                                                                                                                  | property not satisfied                                                                                                                                                                              |
+|:------------|:-------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Additivity  | $f(v_1+v_2) = f(v_1) + f(v_2)$ | ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Compatibility_of_linear_map_with_addition_1.svg/1280px-Compatibility_of_linear_map_with_addition_1.svg.png)                           | ![](https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Compatibility_of_linear_map_with_addition_2.svg/1280px-Compatibility_of_linear_map_with_addition_2.svg.png)                           |
+| Homogeneity | $f(\lambda v) = \lambda f(v)$  | ![](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Compatibility_of_linear_map_with_scalar_multiplication_1.svg/1280px-Compatibility_of_linear_map_with_scalar_multiplication_1.svg.png) | ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Compatibility_of_linear_map_with_scalar_multiplication_2.svg/1280px-Compatibility_of_linear_map_with_scalar_multiplication_2.svg.png) |
+
+*Visualizations curtesy of [Stephan Kulla](https://commons.wikimedia.org/wiki/User:Stephan_Kulla) under CC0 license.*
+"
+
+# ╔═╡ 9673662f-2dc6-4fe8-88c9-9dfa88206152
+Foldable(
+    "Mathematically more rigorous definition",
+    md"> Assuming two arbitrary vector spaces $V, W$ over the field $K$, a function $f:V\rightarrow W$ is called a linear map if additivity and homogeneity are satisfied for any vectors $v_1, v_2 \in V$ and $\lambda \in K$.",
+)
+
+# ╔═╡ 78536125-8abc-4dfe-b84e-e22c4c6c19ed
+md"## Examples of linear maps
+
+"
+
 # ╔═╡ 68e1e6e9-5e39-4156-9f66-494e16fbe7ca
-md"# Mathematical foundations
-## What is a derivative?
+md"## What is a derivative?
 The ([total](https://en.wikipedia.org/wiki/Total_derivative)) derivative $\mathcal{D}f_\tilde{x}$ of a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ at a point $\tilde{x} \in \mathbb{R}^n$ is the **linear approximation** of $f$ near the point $\tilde{x}$.
 
-Note that the derivative is a linear function
+Note that the derivative is a linear map
 
 $\mathcal{D}f_\tilde{x}: \mathbb{R}^n \rightarrow \mathbb{R}^m \quad .$
 
@@ -99,7 +131,7 @@ md"You can play with this slider to select the point of linearization $\tilde{x}
 
 # ╔═╡ d4e8f116-62a7-42c8-9288-252e7326bcdd
 begin
-	# Plot function
+    # Plot function
     xs = range(-5, 5, 50)
     ymin, ymax = extrema(f.(xs))
     p = plot(
@@ -112,29 +144,23 @@ begin
         legendfontsize=9,
     )
 
-	# Obtain the function Dfx̃ 
-	y, Dfx̃ = Zygote.pullback(f, x̃)
+    # Obtain the function Dfx̃ 
+    y, Dfx̃ = Zygote.pullback(f, x̃)
 
     # Plot Dfx̃(x) 
     plot!(p, xs, x -> only(Dfx̃(x)); label=L"\mathcal{D}f_\tilde{x}(x)")
 
     # Plot 1st order Taylor series approximation
     lin_approx(x) = f(x̃) + only(Dfx̃(x - x̃)) # f(x) ≈ f(x̃) + Df(x̃)(x-x̃)
-    plot!(
-        p,
-        xs,
-        lin_approx;
-        label=L"1st order Taylor approx. around $\tilde{x}$",
-    )
+    plot!(p, xs, lin_approx; label=L"1st order Taylor approx. around $\tilde{x}$")
 
-	# Show point of linearization
+    # Show point of linearization
     vline!(p, [x̃]; style=:dash, c=:gray, label=L"\tilde{x}")
-
 end
 
 # ╔═╡ e966986c-d113-43cf-96f5-a89cd7427978
 md"The orange line $\mathcal{D}f_\tilde{x}$ is of biggest interest to us.
-Notice how the derivative is a *homogeneous* linear function: 
+Notice how the derivative is a *homogeneous* linear map: 
 it always goes through the origin $(x,y)=(0,0).$
 
 
@@ -160,10 +186,11 @@ $\lim_{h \rightarrow 0} \frac{|f(\tilde{x} + h) - f(\tilde{x}) - \mathcal{D}f_\t
 "
 
 # ╔═╡ 7aaa4294-97e7-4708-8047-f34c31bdd0d0
-md"## Jacobians
-Since $\mathcal{D}f$ is a linear map, for $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ it can be represented as a $m \times n$ matrix.
+md"## Jacobian
+Since $\mathcal{D}f_\tilde{x}$ is a linear map, for $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ it can be represented as a $m \times n$ matrix.
 
-In the [standard basis](https://en.wikipedia.org/wiki/Standard_basis), this matrix is called the Jacobian:
+
+In the [standard basis](https://en.wikipedia.org/wiki/Standard_basis), the matrix corresponding to $\mathcal{D}f$ is called the Jacobian:
 
 $J_f = \begin{bmatrix}
     \dfrac{\partial f_1}{\partial x_1} & \cdots & 
@@ -175,7 +202,7 @@ $J_f = \begin{bmatrix}
 
 Note that every entry $[J_f]_{ij}=\frac{\partial f_i}{\partial x_j}$ in this matrix is a function.
 
-If we evaluate the Jacobian at specific point $\tilde{x}$, we get the linear map corresponding to $\mathcal{D}f_\tilde{x}$:
+If we evaluate the Jacobian at a specific point $\tilde{x}$, we get the matrix corresponding to the linear map $\mathcal{D}f_\tilde{x}$:
 
 $J_f\big|_\tilde{x} = \begin{bmatrix}
     \dfrac{\partial f_1}{\partial x_1}\Bigg|_\tilde{x} & \cdots & 
@@ -183,11 +210,12 @@ $J_f\big|_\tilde{x} = \begin{bmatrix}
     \vdots                             & \ddots & \vdots\\
     \dfrac{\partial f_m}{\partial x_1}\Bigg|_\tilde{x} & \cdots & 
 	\dfrac{\partial f_m}{\partial x_n}\Bigg|_\tilde{x}
-\end{bmatrix}$
+\end{bmatrix} \in \mathbb{R}^{m \times n}$
 "
 
 # ╔═╡ 1ccfec42-64e7-46d6-abe7-f4dbf84a51ab
-example(md"Given the function $f: \mathbb{R}^2 \rightarrow \mathbb{R}^2$
+example(
+    md"Given the function $f: \mathbb{R}^2 \rightarrow \mathbb{R}^2$
 
 $f\left(\begin{bmatrix} x_1\\x_2\end{bmatrix}\right) 
 = \begin{bmatrix}  x_1^2 x_2 \\5 x_1 + \sin x_2 \end{bmatrix} \quad ,$
@@ -214,7 +242,8 @@ $\mathcal{D}f_\tilde{x}(h)
 \begin{bmatrix} h_1 \\ h_2 \end{bmatrix} \quad ,$
 
 for some input vector $h \in \mathbb{R}^2$. 
-")
+",
+)
 
 # ╔═╡ ff39d133-eff4-4abc-b04e-360832d4dd2a
 md"## Jacobian-Vector products
@@ -229,10 +258,12 @@ computes the **Jacobian-Vector product**. It is one of the two core objects behi
 "
 
 # ╔═╡ f324744a-aae8-4ee3-9498-9bdab9a942e8
-tip(md"Jacobians can get very large for functions with high input and/or output dimensions. 
+tip(
+    md"Jacobians can get very large for functions with high input and/or output dimensions. 
 When implementing AD, they therefore usually aren't allocated in memory. 
 Instead, linear functions $\mathcal{D}f$ are used.
-")
+"
+)
 
 # ╔═╡ 8ec1c1c3-5254-4678-8d63-2fa7487057d5
 md"## Chain rule
@@ -244,14 +275,15 @@ Since derivatives are linear maps, we can obtain the derivate of $h$ by composin
 
 $\mathcal{D}h_\tilde{x} 
 = \mathcal{D}(f \circ g)_\tilde{x} 
-= \mathcal{D}f_{g(\tilde{x})} \cdot \mathcal{D}g_\tilde{x}$
+= \mathcal{D}f_{g(\tilde{x})} \circ \mathcal{D}g_\tilde{x}$
 
 Note that this composition of linear transformations is also a linear transformation. 
 From the point of view of JVPs, this corresponds to simple matrix multiplication.
 "
 
 # ╔═╡ ec1bee51-c2b4-47b1-a78a-51d444943787
-example(md"""We just introduced a form of the **chain rule** that works on arbitrary input and output dimensions $n$, $m$ and $p$.
+example(
+    md"""We just introduced a form of the **chain rule** that works on arbitrary input and output dimensions $n$, $m$ and $p$.
 **Let's show that we can recover the product rule** 
 
 $(uv)'=u'v+uv'$ 
@@ -287,14 +319,15 @@ Using the chain rule, we can compose these derivatives to obtain the derivative 
 $\begin{align} (uv)' 
 	= \mathcal{D}h
 	&= \mathcal{D}(f \circ g) \\
-	&= \mathcal{D}f \cdot \mathcal{D}g \\
+	&= \mathcal{D}f \circ \mathcal{D}g \\
 	&= \begin{bmatrix} v & u \end{bmatrix} 
 		\cdot \begin{bmatrix} u' \\ v' \end{bmatrix} \\
 	&= vu' + uv'
 \end{align}$
 
 As you can see, the product rule follows from the chain rule. Instead of memorizing several different rules, the chain rule reduces everything to the composition of linear transformations, which corresponds to matrix multiplication.  
-""")
+""",
+)
 
 # ╔═╡ f9699004-6655-4e08-8596-d9067b773d89
 md"## Function composition
@@ -309,18 +342,21 @@ Applying the chain rule to compute the derivative of $f$ at $\tilde{x}$, we get
 
 $\begin{align}
 	\mathcal{D}f_\tilde{x} 
-	&= \mathcal{D}(f^N \circ f^{N-1} \circ \ldots \circ f^2 \circ f^1)_\tilde{x} \\
-	&= 	\mathcal{D}f^{N}_{f^{N-1}(\ldots f^2(f^1(x)))} \cdot 
-		\mathcal{D}f^{N-1}_{f^{N-2}(\ldots f^2(f^1(x)))} \cdot \ldots \cdot 
-		\mathcal{D}f^2_{f^1(\tilde{x})}  \cdot 
-		\mathcal{D}f^1_{\tilde{x}} \\
-	&= 	\mathcal{D}f^{N}_{h_{N-1}} \cdot 
-		\mathcal{D}f^{N-1}_{h_{N-2}} \cdot \ldots \cdot 
-		\mathcal{D}f^2_{h_1}  \cdot 
+	&= \mathcal{D}(f^N \circ f^{N-1} \circ \ldots \circ f^2 \circ f^1)_\tilde{x} \\[1em]
+	&= 	\mathcal{D}f^{N}_{h_{N-1}} \circ 
+		\mathcal{D}f^{N-1}_{h_{N-2}} \circ \ldots \circ 
+		\mathcal{D}f^2_{h_1}  \circ 
 		\mathcal{D}f^1_{\tilde{x}}
 \end{align}$
 
-where $h_i$ is the output of the $i$-th layer for the input $\tilde{x}$.
+where $h_i$ is the output of the $i$-th layer given the input $\tilde{x}$:
+
+$\begin{align}
+	h_1 &= f^1(\tilde{x}) \\
+	h_2 &= f^2(f^1(\tilde{x}))\\
+		&\,\,\,\vdots \\
+	h_{N-1} &= f^{N-1}(f^{N-2}(\ldots f^2(f^1(x))))
+\end{align}$
 
 Let's visualize this compositional structure as a computational graph: 
 "
@@ -1524,6 +1560,10 @@ version = "1.4.1+0"
 # ╟─f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 # ╟─9d97daa0-73e3-40c0-b697-1ecadf505243
 # ╟─3cffee7c-7394-445f-b00d-bb32e5e63783
+# ╟─0ca06dac-6e62-4ba5-bbe6-89ec8f0e8a26
+# ╟─26727cec-1565-4a7d-b19d-1184a3749d4f
+# ╟─9673662f-2dc6-4fe8-88c9-9dfa88206152
+# ╠═78536125-8abc-4dfe-b84e-e22c4c6c19ed
 # ╟─68e1e6e9-5e39-4156-9f66-494e16fbe7ca
 # ╠═29ab341a-6049-4b68-81f2-6e1562f72d49
 # ╟─b4f622c9-18bf-4eec-b5bc-66511c082808
