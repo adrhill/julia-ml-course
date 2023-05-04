@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.25
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -334,7 +334,7 @@ md"### Exercise 2.1: Low-rank approximation"
 
 # ╔═╡ 49c75eed-d1cc-47e0-884b-8c327f638250
 task(
-    md"Write a function `low_rank_approx` that uses SVD to compute a rank $n$ approximation $\tilde{A}$ of the input matrix $A$.
+    md"Write a function `rank_n_approx` that uses SVD to compute a rank $n$ approximation $\tilde{A}$ of the input matrix $A$.
 
 For this purpose:
 1. Compute $U$, $\Sigma$ and $V$ from $A$
@@ -381,7 +381,7 @@ else
             still_missing()
         elseif isnothing(result)
             keep_working(md"Did you forget to write `return`?")
-        elseif result != sol
+        elseif !(result ≈ sol)
             keep_working()
         else
             correct()
