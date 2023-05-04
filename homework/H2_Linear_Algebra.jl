@@ -341,6 +341,7 @@ For this purpose:
 2. In $\Sigma$, set all singular values after the $n$-th entry to zero. We will call this $\tilde{\Sigma}.$
 3. Return $\tilde{A} = U \tilde{\Sigma} V'$
 ",
+    2,
 )
 
 # ╔═╡ ec262620-a818-4f5c-b6b9-24a58b73a603
