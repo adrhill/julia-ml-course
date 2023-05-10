@@ -26,6 +26,7 @@ begin
     using PlutoUI
     using PlutoTeachingTools
     using LaTeXStrings
+    using Kroki
     using Plots
 
     using ForwardDiff
@@ -80,14 +81,14 @@ To apply gradient-based optimization methods such as [stochastic gradient descen
 
 Since these models can get large and complicated, it would be nice to have machinery that can take an arbitrary function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivatives. This is called automatic differentiation (AD).
 
-Before we take a look at Julia AD packages, let's start with recapitulation of fundamental mathematical concepts.
+Before we take a look at Julia AD packages, let's start with recapitulation of two fundamental mathematical concepts: linear maps and derivatives.
 "
 
 # ╔═╡ 0ca06dac-6e62-4ba5-bbe6-89ec8f0e8a26
-md"# Mathematical foundations"
+md"# Linear maps"
 
 # ╔═╡ 26727cec-1565-4a7d-b19d-1184a3749d4f
-md"## Linear maps
+md"## Properties
 Linear maps, also called linear transformations (*lineare Abbildungen* in German) are functions with the following properties:
 
 | Property    | Equation                       | property satisfied                                                                                                                                                                                  | property not satisfied                                                                                                                                                                              |
@@ -98,16 +99,87 @@ Linear maps, also called linear transformations (*lineare Abbildungen* in German
 *Visualizations curtesy of [Stephan Kulla](https://commons.wikimedia.org/wiki/User:Stephan_Kulla) under CC0 license.*
 "
 
-# ╔═╡ 9673662f-2dc6-4fe8-88c9-9dfa88206152
+# ╔═╡ f2dc6efc-c31d-4191-92a6-fa6cb3ea80f5
 Foldable(
     "Mathematically more rigorous definition",
-    md"> Assuming two arbitrary vector spaces $V, W$ over the field $K$, a function $f:V\rightarrow W$ is called a linear map if additivity and homogeneity are satisfied for any vectors $v_1, v_2 \in V$ and $\lambda \in K$.",
+    md"""
+    > Assuming two arbitrary vector spaces $V, W$ over the field $K$,
+    > a function $f:V\rightarrow W$ is called a linear map
+    > if additivity and homogeneity are satisfied for any vectors $v_1, v_2 \in V$ and $\lambda \in K$.
+    """,
 )
 
-# ╔═╡ 78536125-8abc-4dfe-b84e-e22c4c6c19ed
-md"## Examples of linear maps
+# ╔═╡ ae1c7dc7-6e0f-48c7-851b-dc6f0c0ad60e
+md"""## Connection to matrices
+> Every linear map $f$ between two finite-dimensional vector spaces $V, W$ **can be represented as a matrix** (if a basis is defined for each vector space, e.g. the [standard basis](https://en.wikipedia.org/wiki/Standard_basis)).
 
+A linear map $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ can be represented as
+
+$f(x) = Ax$
+
+where $A$ is a $m \times n$ matrix and $x \in \mathbb{R}^{n}$.
+"""
+
+# ╔═╡ 5106b16e-6cae-4b48-a0a7-5aca8eb81245
+example(
+    md"Linear maps $f: \mathbb{R}^2 \rightarrow \mathbb{R}^2$ can be represented as $2 \times 2$ matrices.
+
+Many common geometric transformations are linear maps, for example:
+
+| Transformation | Matrix representation |
+|:-------|:-------|
+| Rotations around $\theta$ | $\begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}$|
+| Projection on $y$-axis | $\begin{pmatrix} 0 & 0 \\ 0 & 1 \end{pmatrix}$
+| Reflection through $y$-axis | $\begin{pmatrix} -1 & 0 \\ 0 & 1 \end{pmatrix}$
+| Stretching along $y$-axis | $\begin{pmatrix} 1 & 0 \\ 0 & k \end{pmatrix}$ |
+| Shearing parallel to $y$-axis | $\begin{pmatrix} 1 & 0 \\ k & 1 \end{pmatrix}$ |
+| Squeezing | $\begin{pmatrix} k & 0 \\ 0 & \frac{1}{k} \end{pmatrix}$ |
+",
+)
+
+# ╔═╡ c1f8dc1e-52d4-4172-9e5b-c988d6cadcf7
+md"## Composition
+#### Connection to matrix multiplication
+> The composition $h = g \circ f$ of two linear maps $f: V \rightarrow W$, $g: W \rightarrow Z$ is also a linear map $h: V \rightarrow Z$.
+
+In finite-dimensional vector spaces, the composition of linear maps corresponds to matrix multiplication:
+
+$\begin{align}
+	f(x) &= Fx
+		&,\;
+		&f: \mathbb{R}^m \rightarrow \mathbb{R}^n
+		&,\;
+		&F \in \mathbb{R}^{n \times m} \\
+	g(x) &= Gx
+		&,\;
+		&g: \mathbb{R}^n \rightarrow \mathbb{R}^p
+		&,\;
+		&G \in \mathbb{R}^{p \times n} \\
+	h(x) &= (g \circ f)(x) = (G \cdot F) x = Hx
+		&,\;
+		&h: \mathbb{R}^m \rightarrow \mathbb{R}^p
+		&,\;
+		&H \in \mathbb{R}^{p \times m} \\
+\end{align}$
+
+#### Connection to matrix addition
+> The sum of two linear maps $f_1: V \rightarrow W$, $f_2: V \rightarrow W$ is also a linear map:
+>
+> $(f_1 + f_2)(x) = f_1(x) + f_2(x) \quad$
+
+In finite-dimensional vector spaces, the addition of linear maps corresponds to matrix addition.
+
+For $f_1$ and $f_2: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and $A, B \in \mathbb{R}^{m \times n}$
+
+$\begin{align}
+	f_1(x) &= Ax \\
+	f_2(x) &= Bx \\
+	(f_1 + f_2)(x) &= (A+B)x \quad .
+\end{align}$
 "
+
+# ╔═╡ 78536125-8abc-4dfe-b84e-e22c4c6c19ed
+md"# Derivatives"
 
 # ╔═╡ 68e1e6e9-5e39-4156-9f66-494e16fbe7ca
 md"## What is a derivative?
@@ -144,10 +216,10 @@ begin
         legendfontsize=9,
     )
 
-    # Obtain the function Dfx̃ 
+    # Obtain the function Dfx̃
     y, Dfx̃ = Zygote.pullback(f, x̃)
 
-    # Plot Dfx̃(x) 
+    # Plot Dfx̃(x)
     plot!(p, xs, x -> only(Dfx̃(x)); label=L"\mathcal{D}f_\tilde{x}(x)")
 
     # Plot 1st order Taylor series approximation
@@ -160,7 +232,7 @@ end
 
 # ╔═╡ e966986c-d113-43cf-96f5-a89cd7427978
 md"The orange line $\mathcal{D}f_\tilde{x}$ is of biggest interest to us.
-Notice how the derivative is a *homogeneous* linear map: 
+Notice how the derivative fulfills *homogeneity*:
 it always goes through the origin $(x,y)=(0,0).$
 
 
@@ -173,42 +245,42 @@ $f(x) \approx f(\tilde{x}) + \mathcal{D}f_\tilde{x}(x-\tilde{x}) \quad .$
 md"## Differentiability
 From your calculus classes, you might recall that a function $f: \mathbb{R} \rightarrow \mathbb{R}$ is differentiable at $\tilde{x}$ if there is a number $f'(\tilde{x})$ such that
 
-$\lim_{h \rightarrow 0} \frac{f(\tilde{x} + h) - f(\tilde{x})}{h} 
+$\lim_{h \rightarrow 0} \frac{f(\tilde{x} + h) - f(\tilde{x})}{h}
 = f'(\tilde{x}) \quad .$
 
 This number $f'(\tilde{x})$ is called the derivative.
 
-We can now extend this notion to multivariate functions: 
-A function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ is *totally* differentiable at a point at $\tilde{x}$ if there exists a linear map $\mathcal{D}f_\tilde{x}$ such that 
+We can now extend this notion to multivariate functions:
+A function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ is *totally* differentiable at a point at $\tilde{x}$ if there exists a linear map $\mathcal{D}f_\tilde{x}$ such that
 
-$\lim_{h \rightarrow 0} \frac{|f(\tilde{x} + h) - f(\tilde{x}) - \mathcal{D}f_\tilde{x}(h)|}{|h|} 
+$\lim_{h \rightarrow 0} \frac{|f(\tilde{x} + h) - f(\tilde{x}) - \mathcal{D}f_\tilde{x}(h)|}{|h|}
 = 0 \quad .$
 "
 
 # ╔═╡ 7aaa4294-97e7-4708-8047-f34c31bdd0d0
-md"## Jacobian
+md"## Jacobians
 Since $\mathcal{D}f_\tilde{x}$ is a linear map, for $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ it can be represented as a $m \times n$ matrix.
 
 
 In the [standard basis](https://en.wikipedia.org/wiki/Standard_basis), the matrix corresponding to $\mathcal{D}f$ is called the Jacobian:
 
 $J_f = \begin{bmatrix}
-    \dfrac{\partial f_1}{\partial x_1} & \cdots & 
+    \dfrac{\partial f_1}{\partial x_1} & \cdots &
 	\dfrac{\partial f_1}{\partial x_n}\\
     \vdots                             & \ddots & \vdots\\
-    \dfrac{\partial f_m}{\partial x_1} & \cdots & 
+    \dfrac{\partial f_m}{\partial x_1} & \cdots &
 	\dfrac{\partial f_m}{\partial x_n}
 \end{bmatrix}$
 
 Note that every entry $[J_f]_{ij}=\frac{\partial f_i}{\partial x_j}$ in this matrix is a function.
 
-If we evaluate the Jacobian at a specific point $\tilde{x}$, we get the matrix corresponding to the linear map $\mathcal{D}f_\tilde{x}$:
+If we evaluate the Jacobian at a specific point $\tilde{x}$, we get the matrix corresponding to the $\mathcal{D}f_\tilde{x}$:
 
 $J_f\big|_\tilde{x} = \begin{bmatrix}
-    \dfrac{\partial f_1}{\partial x_1}\Bigg|_\tilde{x} & \cdots & 
+    \dfrac{\partial f_1}{\partial x_1}\Bigg|_\tilde{x} & \cdots &
 	\dfrac{\partial f_1}{\partial x_n}\Bigg|_\tilde{x}\\
     \vdots                             & \ddots & \vdots\\
-    \dfrac{\partial f_m}{\partial x_1}\Bigg|_\tilde{x} & \cdots & 
+    \dfrac{\partial f_m}{\partial x_1}\Bigg|_\tilde{x} & \cdots &
 	\dfrac{\partial f_m}{\partial x_n}\Bigg|_\tilde{x}
 \end{bmatrix} \in \mathbb{R}^{m \times n}$
 "
@@ -217,17 +289,17 @@ $J_f\big|_\tilde{x} = \begin{bmatrix}
 example(
     md"Given the function $f: \mathbb{R}^2 \rightarrow \mathbb{R}^2$
 
-$f\left(\begin{bmatrix} x_1\\x_2\end{bmatrix}\right) 
+$f\left(\begin{bmatrix} x_1\\x_2\end{bmatrix}\right)
 = \begin{bmatrix}  x_1^2 x_2 \\5 x_1 + \sin x_2 \end{bmatrix} \quad ,$
 
-we obtain the $2 \times 2\,$ Jacobian 
+we obtain the $2 \times 2\,$ Jacobian
 
 $J_f = \begin{bmatrix}
   \dfrac{\partial f_1}{\partial x_1} & \dfrac{\partial f_1}{\partial x_2} \\
   \dfrac{\partial f_2}{\partial x_1} & \dfrac{\partial f_2}{\partial x_2} \end{bmatrix}
 = \begin{bmatrix}
   2 x_1 x_2 & x_1^2    \\
-  5     & \cos x_2 
+  5     & \cos x_2
 \end{bmatrix} \quad .$
 
 At the point $\tilde{x} = (2, 0)$, the Jacobian is
@@ -236,12 +308,12 @@ $J_f\big|_\tilde{x} = \begin{bmatrix} 0 & 4 \\ 5 & 1 \end{bmatrix} \quad .$
 
 In the standard basis, our linear map $\mathcal{D}f_\tilde{x}: \mathbb{R}^2 \rightarrow \mathbb{R}^2$ therefore corresponds to
 
-$\mathcal{D}f_\tilde{x}(h) 
-= J_f\big|_\tilde{x} \cdot h 
-= \begin{bmatrix} 0 & 4 \\ 5 & 1 \end{bmatrix} 
-\begin{bmatrix} h_1 \\ h_2 \end{bmatrix} \quad ,$
+$\mathcal{D}f_\tilde{x}(v)
+= J_f\big|_\tilde{x} \cdot v
+= \begin{bmatrix} 0 & 4 \\ 5 & 1 \end{bmatrix}
+\begin{bmatrix} v_1 \\ v_2 \end{bmatrix} \quad ,$
 
-for some input vector $h \in \mathbb{R}^2$. 
+for some input vector $v \in \mathbb{R}^2$.
 ",
 )
 
@@ -249,7 +321,7 @@ for some input vector $h \in \mathbb{R}^2$.
 md"## Jacobian-Vector products
 As we have seen in the previous example, the total derivative
 
-$\mathcal{D}f_\tilde{x}(h) = J_f\big|_\tilde{x} \cdot h$
+$\mathcal{D}f_\tilde{x}(v) = J_f\big|_\tilde{x} \cdot v$
 
 computes the **Jacobian-Vector product**. It is one of the two core objects behind AD systems:
 
@@ -258,81 +330,82 @@ computes the **Jacobian-Vector product**. It is one of the two core objects behi
 "
 
 # ╔═╡ f324744a-aae8-4ee3-9498-9bdab9a942e8
-tip(
-    md"Jacobians can get very large for functions with high input and/or output dimensions. 
-When implementing AD, they therefore usually aren't allocated in memory. 
-Instead, linear functions $\mathcal{D}f$ are used.
-"
-)
+tip(md"Jacobians can get very large for functions with high input and/or output dimensions.
+When implementing AD, they therefore usually aren't allocated in memory.
+Instead, linear maps $\mathcal{D}f$ are used.
+")
 
 # ╔═╡ 8ec1c1c3-5254-4678-8d63-2fa7487057d5
 md"## Chain rule
-Let's look at a function $h$ composed from two differentiable functions $f: \mathbb{R}^m \rightarrow \mathbb{R}^p$ and $g: \mathbb{R}^n \rightarrow \mathbb{R}^m$.
+Let's look at a function $h$ composed from two differentiable functions $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and $g: \mathbb{R}^m \rightarrow \mathbb{R}^p$.
 
-$h = f \circ g\,$ 
+$h = g \circ f\,$
 
-Since derivatives are linear maps, we can obtain the derivate of $h$ by composing the derivatives of $f$ and $g$ using the **chain rule**:
+Since derivatives are linear maps, we can obtain the derivate of $h$ by composing the derivatives of $g$ and $f$ using the **chain rule**:
 
-$\mathcal{D}h_\tilde{x} 
-= \mathcal{D}(f \circ g)_\tilde{x} 
-= \mathcal{D}f_{g(\tilde{x})} \circ \mathcal{D}g_\tilde{x}$
+$\mathcal{D}h_\tilde{x}
+= \mathcal{D}(g \circ f)_\tilde{x}
+= \mathcal{D}g_{f(\tilde{x})} \circ \mathcal{D}f_\tilde{x}$
 
-Note that this composition of linear transformations is also a linear transformation. 
-From the point of view of JVPs, this corresponds to simple matrix multiplication.
+As we have seen in the section on linear maps, this composition of linear maps is also a linear maps.
+It corresponds to simple matrix multiplication.
 "
 
 # ╔═╡ ec1bee51-c2b4-47b1-a78a-51d444943787
 example(
     md"""We just introduced a form of the **chain rule** that works on arbitrary input and output dimensions $n$, $m$ and $p$.
-**Let's show that we can recover the product rule** 
+**Let's show that we can recover the product rule**
 
-$(uv)'=u'v+uv'$ 
+$(uv)'=u'v+uv'$
 
-of two scalar functions $u(t)$, $v(t)$. 
-We start out by defining 
+of two scalar functions $u(t)$, $v(t)$.
+We start out by defining
 
-$f(u, v) = u \cdot v \qquad g(t) = \begin{pmatrix} u(t) \\ v(t) \end{pmatrix}$
+$g(u, v) = u \cdot v \qquad f(t) = \begin{pmatrix} u(t) \\ v(t) \end{pmatrix}$
 
-such that 
+such that
 
-$h(t) = (f \circ g)(t) = u(t) \cdot v(t) \quad .$
+$h(t) = (g \circ f)(t) = u(t) \cdot v(t) \quad .$
 
 The derivatives of $f$ and $g\,$ are
 
-$\mathcal{D}f 
-= \begin{bmatrix} 
-	\frac{\partial f}{\partial u} & 
-	\frac{\partial f}{\partial v} 
-  \end{bmatrix} 
-= \begin{bmatrix} v & u \end{bmatrix}$ 
-
 $\mathcal{D}g
-= \begin{bmatrix} 
-	\frac{\partial g_1}{\partial t} \\ 
-	\frac{\partial g_2}{\partial t}
+= \begin{bmatrix}
+	\frac{\partial g}{\partial u} &
+	\frac{\partial g}{\partial v}
+  \end{bmatrix}
+= \begin{bmatrix} v & u \end{bmatrix}$
+
+$\mathcal{D}f
+= \begin{bmatrix}
+	\frac{\partial f_1}{\partial t} \\
+	\frac{\partial f_2}{\partial t}
   \end{bmatrix}
 = \begin{bmatrix} u' \\ v' \end{bmatrix}$
 
 
 Using the chain rule, we can compose these derivatives to obtain the derivative of $h$:
 
-$\begin{align} (uv)' 
+$\begin{align} (uv)'
 	= \mathcal{D}h
-	&= \mathcal{D}(f \circ g) \\
-	&= \mathcal{D}f \circ \mathcal{D}g \\
-	&= \begin{bmatrix} v & u \end{bmatrix} 
+	&= \mathcal{D}(g \circ f) \\
+	&= \mathcal{D}g \circ \mathcal{D}f \\
+	&= \begin{bmatrix} v & u \end{bmatrix}
 		\cdot \begin{bmatrix} u' \\ v' \end{bmatrix} \\
 	&= vu' + uv'
 \end{align}$
 
-As you can see, the product rule follows from the chain rule. Instead of memorizing several different rules, the chain rule reduces everything to the composition of linear transformations, which corresponds to matrix multiplication.  
+As you can see, the product rule follows from the chain rule. Instead of memorizing several different rules, the chain rule reduces everything to the composition of linear maps, which corresponds to matrix multiplication.
 """,
 )
+
+# ╔═╡ 0fb53e78-06f9-4e5c-a782-ba8744a70c8d
+md"# Forward-mode AD"
 
 # ╔═╡ f9699004-6655-4e08-8596-d9067b773d89
 md"## Function composition
 In Deep Learning, we often need to compute derivatives over deeply nested functions.
-Assuming a neural network $f$ with $N$ layers,
+Assume we want to differentiate over a neural network $f$ with $N$ layers
 
 $f(x) = f^N(f^{N-1}(\ldots f^2(f^1(x)))) \quad ,$
 
@@ -341,11 +414,11 @@ where $f^i$ is the $i$-th layer of the neural network.
 Applying the chain rule to compute the derivative of $f$ at $\tilde{x}$, we get
 
 $\begin{align}
-	\mathcal{D}f_\tilde{x} 
+	\mathcal{D}f_\tilde{x}
 	&= \mathcal{D}(f^N \circ f^{N-1} \circ \ldots \circ f^2 \circ f^1)_\tilde{x} \\[1em]
-	&= 	\mathcal{D}f^{N}_{h_{N-1}} \circ 
-		\mathcal{D}f^{N-1}_{h_{N-2}} \circ \ldots \circ 
-		\mathcal{D}f^2_{h_1}  \circ 
+	&= 	\mathcal{D}f^{N}_{h_{N-1}} \circ
+		\mathcal{D}f^{N-1}_{h_{N-2}} \circ \ldots \circ
+		\mathcal{D}f^2_{h_1}  \circ
 		\mathcal{D}f^1_{\tilde{x}}
 \end{align}$
 
@@ -357,9 +430,69 @@ $\begin{align}
 		&\,\,\,\vdots \\
 	h_{N-1} &= f^{N-1}(f^{N-2}(\ldots f^2(f^1(x))))
 \end{align}$
-
-Let's visualize this compositional structure as a computational graph: 
 "
+
+# ╔═╡ 4afb6a1c-a0ff-4719-828e-4989bf472465
+md"""## Forward accumulation
+Let's visualize the compositional structure from the previous slide as a computational graph:
+```
+     x̃   ┌─────┐  h₁  ┌─────┐ h₂       hₙ₋₂ ┌───────┐  hₙ₋₁ ┌─────┐   y
+  ───┬──►│  f¹ ├──┬──►│  f² ├───► ... ──┬──►│  fⁿ⁻¹ ├───┬──►│  fⁿ ├────────►
+     │   └─────┘  │   └─────┘           │   └───────┘   │   └─────┘
+     │   ┌─────┐  │   ┌─────┐           │   ┌───────┐   │   ┌─────┐
+     └──►│ 𝒟f¹ │  └──►│ 𝒟f² │           └──►│ 𝒟fⁿ⁻¹ │   └──►│ 𝒟fⁿ │
+  ──────►│     ├─────►│     ├───► ... ─────►│       ├──────►│     ├────────►
+     v   └─────┘      └─────┘               └───────┘       └─────┘ 𝒟fₓ̃(v)
+```
+
+We can see that the computation of both $y=f(\tilde{x})$ and a Jacobian-Vector product $\mathcal{D}f_\tilde{x}(v)$ takes a single forward-pass through the compositional structure of $f$.
+
+This is called forward accumulation and is the basis for **forward-mode AD**.
+
+"""
+
+# ╔═╡ f3edfb70-7870-41b8-820b-40871bb1a30b
+md"""## Computing gradients
+For scalar-valued functions $f: \mathbb{R}^n \rightarrow \mathbb{R}$ (such as neural networks with scalar loss functions), the gradient $\nabla f_\tilde{x}$ is equivalent to the (transpose of the) Jacobian:
+
+$\nabla f_\tilde{x}
+= \begin{bmatrix}
+    \dfrac{\partial f}{\partial x_1}\Bigg|_\tilde{x} \\
+    \vdots \\
+    \dfrac{\partial f}{\partial x_n}\Bigg|_\tilde{x}
+\end{bmatrix}
+= \Big(J_f\big|_\tilde{x}\Big) ^ T$
+
+We've seen that Jacobian-vector products (JVPs) can be computed using the chain rule.
+It is important to emphasize that **this only computes JVPs, not full Jacobians**:
+
+$\mathcal{D}f_\tilde{x}(v)
+= 	\left(\mathcal{D}f^{N}_{h_{N-1}} \circ
+	\mathcal{D}f^{N-1}_{h_{N-2}} \circ \ldots \circ
+	\mathcal{D}f^2_{h_1}  \circ
+	\mathcal{D}f^1_{\tilde{x}}\right)(v)
+=J_f\big|_\tilde{x} \cdot v$
+
+However, by computing the JVP with the $i$-th standard basis vector $e_i$, where
+
+$\begin{align}
+	e_1 &= (1, 0, 0, \ldots, 0) \\
+	e_2 &= (0, 1, 0, \ldots, 0) \\
+		&\;\;\vdots \\
+	e_n &= (0, 0, 0, \ldots, 1) \quad ,
+\end{align}$
+we obtain the $i$-th entry in the Jacobian / Gradient
+
+$\mathcal{D}f_\tilde{x}(e_i) = \big[J_f\big|_\tilde{x}\big]_i = \big[\nabla f_\tilde{x}\big]_i \quad .$
+
+Computing $n$ JVPs with standard basis vectors $e_1$ to $e_n$ therefore constructs the full gradient.
+"""
+
+# ╔═╡ 1effbb3e-067b-4166-a39d-efa8e1d38f31
+md"""## Reverse-mode AD"""
+
+# ╔═╡ d690349c-b4a1-4310-a237-622e0614a24c
+md"# Automatic differentiation in Julia"
 
 # ╔═╡ 17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 md"# Acknowledgements
@@ -371,15 +504,18 @@ Further inspiration for this lecture came from
 
 ##### Further references
 - Books:
-  - Griewand & Walther, *Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation* 
+  - Griewand & Walther, *Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation*
   - Spivak, *Calculus on manifolds*
 - Overview of the Julia AD ecosystem: [juliadiff.org](https://juliadiff.org)
 "
+
+# ╔═╡ e7a32f52-e8ea-43cc-b723-05fc250add40
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+Kroki = "b3565e16-c1f2-4fe9-b4ab-221c88942068"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
@@ -388,6 +524,7 @@ Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [compat]
 ForwardDiff = "~0.10.35"
+Kroki = "~0.2.0"
 LaTeXStrings = "~1.3.0"
 Plots = "~1.38.10"
 PlutoTeachingTools = "~0.2.8"
@@ -401,7 +538,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "8535ef8969a4e6725a6e80f58724b2a72c7a833b"
+project_hash = "ba9df2654dc5233427e4cb0ee17ee14e3e62962e"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -786,6 +923,12 @@ deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
 git-tree-sha1 = "d9ae7a9081d9b1a3b2a5c1d3dac5e2fdaafbd538"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 version = "0.9.22"
+
+[[deps.Kroki]]
+deps = ["Base64", "CodecZlib", "DocStringExtensions", "HTTP", "JSON", "Markdown", "Reexport"]
+git-tree-sha1 = "a3235f9ff60923658084df500cdbc0442ced3274"
+uuid = "b3565e16-c1f2-4fe9-b4ab-221c88942068"
+version = "0.2.0"
 
 [[deps.LAME_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1562,8 +1705,11 @@ version = "1.4.1+0"
 # ╟─3cffee7c-7394-445f-b00d-bb32e5e63783
 # ╟─0ca06dac-6e62-4ba5-bbe6-89ec8f0e8a26
 # ╟─26727cec-1565-4a7d-b19d-1184a3749d4f
-# ╟─9673662f-2dc6-4fe8-88c9-9dfa88206152
-# ╠═78536125-8abc-4dfe-b84e-e22c4c6c19ed
+# ╟─f2dc6efc-c31d-4191-92a6-fa6cb3ea80f5
+# ╟─ae1c7dc7-6e0f-48c7-851b-dc6f0c0ad60e
+# ╟─5106b16e-6cae-4b48-a0a7-5aca8eb81245
+# ╟─c1f8dc1e-52d4-4172-9e5b-c988d6cadcf7
+# ╟─78536125-8abc-4dfe-b84e-e22c4c6c19ed
 # ╟─68e1e6e9-5e39-4156-9f66-494e16fbe7ca
 # ╠═29ab341a-6049-4b68-81f2-6e1562f72d49
 # ╟─b4f622c9-18bf-4eec-b5bc-66511c082808
@@ -1577,7 +1723,13 @@ version = "1.4.1+0"
 # ╟─f324744a-aae8-4ee3-9498-9bdab9a942e8
 # ╟─8ec1c1c3-5254-4678-8d63-2fa7487057d5
 # ╟─ec1bee51-c2b4-47b1-a78a-51d444943787
+# ╟─0fb53e78-06f9-4e5c-a782-ba8744a70c8d
 # ╟─f9699004-6655-4e08-8596-d9067b773d89
-# ╟─17a9dab3-46de-4c51-b16b-a0ce367bbcb3
+# ╟─4afb6a1c-a0ff-4719-828e-4989bf472465
+# ╟─f3edfb70-7870-41b8-820b-40871bb1a30b
+# ╟─1effbb3e-067b-4166-a39d-efa8e1d38f31
+# ╟─d690349c-b4a1-4310-a237-622e0614a24c
+# ╠═17a9dab3-46de-4c51-b16b-a0ce367bbcb3
+# ╠═e7a32f52-e8ea-43cc-b723-05fc250add40
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
