@@ -25,8 +25,8 @@ end
 begin
     using PlutoUI
     using PlutoTeachingTools
+    using HypertextLiteral
     using LaTeXStrings
-    using Kroki
     using Plots
 
     using ForwardDiff
@@ -44,6 +44,9 @@ PlutoTeachingTools.default_language[] = PlutoTeachingTools.PTTEnglish.EnglishUS(
 
 # ╔═╡ 24871322-7513-4b19-a337-90b1d00a1747
 example(md) = Markdown.MD(Markdown.Admonition("note", "Example", [md]));
+
+# ╔═╡ 116c6f7e-eb6c-4c16-a4af-69a22eabd6d0
+takeaways(md) = Markdown.MD(Markdown.Admonition("tip", "Takeaways", [md]));
 
 # ╔═╡ f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 html"""
@@ -76,12 +79,12 @@ Markdown.MD(
 )
 
 # ╔═╡ 3cffee7c-7394-445f-b00d-bb32e5e63783
-md"# Motivation
+md"## Motivation
 To apply gradient-based optimization methods such as [stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) to a neural network, we need to compute the gradient of its loss function with respect to its parameters.
 
-Since these models can get large and complicated, it would be nice to have machinery that can take an arbitrary function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivatives. This is called automatic differentiation (AD).
+Since Deep Learning models can get large and complicated, it would be nice to have machinery that can take an arbitrary function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivatives. This is called automatic differentiation (AD).
 
-Before we take a look at Julia AD packages, let's start with recapitulation of two fundamental mathematical concepts: linear maps and derivatives.
+Before we take a look at Julia AD packages, let's start with recapitulation of two fundamental mathematical concepts: linear maps and derivatives. This will help us understand the differences between different AD packages as well as pros and cons.
 "
 
 # ╔═╡ 0ca06dac-6e62-4ba5-bbe6-89ec8f0e8a26
@@ -155,7 +158,7 @@ $\begin{align}
 		&g: \mathbb{R}^n \rightarrow \mathbb{R}^p
 		&,\;
 		&G \in \mathbb{R}^{p \times n} \\
-	h(x) &= (g \circ f)(x) = (G \cdot F) x = Hx
+	h(x) = (g \circ f)(x) &= (G \cdot F) x = Hx
 		&,\;
 		&h: \mathbb{R}^m \rightarrow \mathbb{R}^p
 		&,\;
@@ -178,19 +181,28 @@ $\begin{align}
 \end{align}$
 "
 
+# ╔═╡ b3e9e95a-cd70-4dfb-b5a3-7d8cbdaabc75
+takeaways(md"
+- for our practical purposes, we look at linear maps as functions or matrices
+- linear maps are composable, corresponding to matrix multiplication and addition
+")
+
 # ╔═╡ 78536125-8abc-4dfe-b84e-e22c4c6c19ed
 md"# Derivatives"
 
 # ╔═╡ 68e1e6e9-5e39-4156-9f66-494e16fbe7ca
-md"## What is a derivative?
-The ([total](https://en.wikipedia.org/wiki/Total_derivative)) derivative $\mathcal{D}f_\tilde{x}$ of a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ at a point $\tilde{x} \in \mathbb{R}^n$ is the **linear approximation** of $f$ near the point $\tilde{x}$.
+md"""## What is a derivative?
+The ([total](https://en.wikipedia.org/wiki/Total_derivative)) derivative of a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ at a point $\tilde{x} \in \mathbb{R}^n$ is the **linear approximation of $f$ near the point $\tilde{x}$**.
 
-Note that the derivative is a linear map
+We give the derivative the symbol $\mathcal{D}f_\tilde{x}$. You can read this as "$\mathcal{D}$erivative of $f$ at $\tilde{x}$".
+
+
+Most importantly, **the derivative is a linear map**
 
 $\mathcal{D}f_\tilde{x}: \mathbb{R}^n \rightarrow \mathbb{R}^m \quad .$
 
 Let's visualize this on a simple scalar function:
-"
+"""
 
 # ╔═╡ 29ab341a-6049-4b68-81f2-6e1562f72d49
 f(x) = x^2 - 5 * sin(x) - 10 # you can change this function!
@@ -209,21 +221,21 @@ begin
     p = plot(
         xs,
         f;
-        label=L"f(x)",
+        label=L"Function $f(x)$",
         xlabel=L"x",
         legend=:top,
         ylims=(ymin - 5, ymax + 5),
         legendfontsize=9,
     )
 
-    # Obtain the function Dfx̃
-    y, Dfx̃ = Zygote.pullback(f, x̃)
+    # Obtain the function 𝒟fₓ̃
+    y, 𝒟fₓ̃ = Zygote.pullback(f, x̃)
 
-    # Plot Dfx̃(x)
-    plot!(p, xs, x -> only(Dfx̃(x)); label=L"\mathcal{D}f_\tilde{x}(x)")
+    # Plot Dfₓ̃(x)
+    plot!(p, xs, v -> 𝒟fₓ̃(v)[1]; label=L"Derivative $\mathcal{D}f_\tilde{x}(x)$")
 
     # Plot 1st order Taylor series approximation
-    lin_approx(x) = f(x̃) + only(Dfx̃(x - x̃)) # f(x) ≈ f(x̃) + Df(x̃)(x-x̃)
+    lin_approx(x) = f(x̃) + 𝒟fₓ̃(x - x̃)[1] # f(x) ≈ f(x̃) + 𝒟f(x̃)(x-x̃)
     plot!(p, xs, lin_approx; label=L"1st order Taylor approx. around $\tilde{x}$")
 
     # Show point of linearization
@@ -259,8 +271,7 @@ $\lim_{h \rightarrow 0} \frac{|f(\tilde{x} + h) - f(\tilde{x}) - \mathcal{D}f_\t
 
 # ╔═╡ 7aaa4294-97e7-4708-8047-f34c31bdd0d0
 md"## Jacobians
-Since $\mathcal{D}f_\tilde{x}$ is a linear map, for $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ it can be represented as a $m \times n$ matrix.
-
+Linear maps $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ can be represented as a $m \times n$ matrices.
 
 In the [standard basis](https://en.wikipedia.org/wiki/Standard_basis), the matrix corresponding to $\mathcal{D}f$ is called the Jacobian:
 
@@ -274,7 +285,9 @@ $J_f = \begin{bmatrix}
 
 Note that every entry $[J_f]_{ij}=\frac{\partial f_i}{\partial x_j}$ in this matrix is a function.
 
-If we evaluate the Jacobian at a specific point $\tilde{x}$, we get the matrix corresponding to the $\mathcal{D}f_\tilde{x}$:
+
+
+If we evaluate the Jacobian at a specific point $\tilde{x}$, we get the matrix corresponding to $\mathcal{D}f_\tilde{x}$:
 
 $J_f\big|_\tilde{x} = \begin{bmatrix}
     \dfrac{\partial f_1}{\partial x_1}\Bigg|_\tilde{x} & \cdots &
@@ -319,7 +332,7 @@ for some input vector $v \in \mathbb{R}^2$.
 
 # ╔═╡ ff39d133-eff4-4abc-b04e-360832d4dd2a
 md"## Jacobian-Vector products
-As we have seen in the previous example, the total derivative
+As we have seen in the example on the previous slide, the total derivative
 
 $\mathcal{D}f_\tilde{x}(v) = J_f\big|_\tilde{x} \cdot v$
 
@@ -347,7 +360,7 @@ $\mathcal{D}h_\tilde{x}
 = \mathcal{D}(g \circ f)_\tilde{x}
 = \mathcal{D}g_{f(\tilde{x})} \circ \mathcal{D}f_\tilde{x}$
 
-As we have seen in the section on linear maps, this composition of linear maps is also a linear maps.
+As we have seen in the section on linear maps, this composition of linear maps is also a linear map.
 It corresponds to simple matrix multiplication.
 "
 
@@ -399,6 +412,17 @@ As you can see, the product rule follows from the chain rule. Instead of memoriz
 """,
 )
 
+# ╔═╡ eeef4f94-570a-4b1d-8f23-01dee37124ce
+takeaways(
+    md"""
+* the derivative $\mathcal{D}f_\tilde{x}$ is a linear approximation of $f$ near the point $\tilde{x}$
+* derivatives are linear maps
+* since derivatives are linear maps, they are nicely composable
+* viewing linear maps as matrices, derivatives compute Jacobian-Vector products
+* The chain-rule allows us to obtain the derivative of a function by composing the derivatives of its parts. This corresponds to matrix multiplication.
+""",
+)
+
 # ╔═╡ 0fb53e78-06f9-4e5c-a782-ba8744a70c8d
 md"# Forward-mode AD"
 
@@ -435,25 +459,210 @@ $\begin{align}
 # ╔═╡ 4afb6a1c-a0ff-4719-828e-4989bf472465
 md"""## Forward accumulation
 Let's visualize the compositional structure from the previous slide as a computational graph:
-```
-     x̃   ┌─────┐  h₁  ┌─────┐ h₂       hₙ₋₂ ┌───────┐  hₙ₋₁ ┌─────┐   y
-  ───┬──►│  f¹ ├──┬──►│  f² ├───► ... ──┬──►│  fⁿ⁻¹ ├───┬──►│  fⁿ ├────────►
-     │   └─────┘  │   └─────┘           │   └───────┘   │   └─────┘
-     │   ┌─────┐  │   ┌─────┐           │   ┌───────┐   │   ┌─────┐
-     └──►│ 𝒟f¹ │  └──►│ 𝒟f² │           └──►│ 𝒟fⁿ⁻¹ │   └──►│ 𝒟fⁿ │
-  ──────►│     ├─────►│     ├───► ... ─────►│       ├──────►│     ├────────►
-     v   └─────┘      └─────┘               └───────┘       └─────┘ 𝒟fₓ̃(v)
-```
+"""
 
+# ╔═╡ 34c93a06-58e9-4c61-be87-9ec43a855e9a
+forward_accumulation = @htl("""
+<article class="diagram">
+<pre><code>
+     x̃    ┌─────┐  h₁  ┌─────┐ h₂      hₙ₋₂ ┌───────┐  hₙ₋₁ ┌─────┐   y
+──────┬──►│  f¹ ├──┬──►│  f² ├───► .. ──┬──►│  fⁿ⁻¹ ├───┬──►│  fⁿ ├───────►
+      │   └─────┘  │   └─────┘          │   └───────┘   │   └─────┘
+      │   ┌─────┐  │   ┌─────┐          │   ┌───────┐   │   ┌─────┐
+      └──►│ 𝒟f¹ │  └──►│ 𝒟f² │          └──►│ 𝒟fⁿ⁻¹ │   └──►│ 𝒟fⁿ │
+─────────►│     ├─────►│     ├───► .. ─────►│       ├──────►│     ├───────►
+     v    └─────┘      └─────┘              └───────┘       └─────┘ 𝒟fₓ̃(v)
+</code></pre>
+</article>
+
+<style>
+	article.diagram code {
+	  width: 600px;
+	  display: block;
+	}
+</style>
+""")
+
+# ╔═╡ 112a6344-070e-4d1b-b821-65c5723ebb99
+md"""
 We can see that the computation of both $y=f(\tilde{x})$ and a Jacobian-Vector product $\mathcal{D}f_\tilde{x}(v)$ takes a single forward-pass through the compositional structure of $f$.
 
 This is called forward accumulation and is the basis for **forward-mode AD**.
-
 """
 
-# ╔═╡ f3edfb70-7870-41b8-820b-40871bb1a30b
+# ╔═╡ 1b34590a-8754-439c-a5e7-eb96c097f6fd
+md"""## Computing Jacobians
+We've seen that Jacobian-vector products (JVPs) can be computed using the chain rule.
+It is important to emphasize that **this only computes JVPs, not full Jacobians**:
+
+$\mathcal{D}f_\tilde{x}(v) = J_f\big|_\tilde{x} \cdot v$
+
+However, by computing the JVP with the $i$-th standard basis column vector $e_i$, where
+
+$\begin{align}
+	e_1 &= (1, 0, 0, \ldots, 0) \\
+	e_2 &= (0, 1, 0, \ldots, 0) \\
+		&\;\;\vdots \\
+	e_n &= (0, 0, 0, \ldots, 1) \quad ,
+\end{align}$
+
+we obtain the $i$-th column in the Jacobian / Gradient
+
+$\begin{align}
+\mathcal{D}f_\tilde{x}(e_i)
+&= J_f\big|_\tilde{x} \cdot e_i \\[0.5em]
+&= \begin{bmatrix}
+    \dfrac{\partial f_1}{\partial x_1}\Bigg|_\tilde{x} & \cdots &
+	\dfrac{\partial f_1}{\partial x_n}\Bigg|_\tilde{x}\\
+    \vdots                             & \ddots & \vdots\\
+    \dfrac{\partial f_m}{\partial x_1}\Bigg|_\tilde{x} & \cdots &
+	\dfrac{\partial f_m}{\partial x_n}\Bigg|_\tilde{x}
+\end{bmatrix} \cdot e_i \\[0.5em]
+&= \begin{bmatrix}
+    \dfrac{\partial f_1}{\partial x_i}\Bigg|_\tilde{x} \\
+    \vdots \\
+    \dfrac{\partial f_m}{\partial x_i}\Bigg|_\tilde{x} \\
+\end{bmatrix} \quad .
+\end{align}$
+
+
+> For $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$, computing the full $m \times n$ Jacobian therefore requires computing $n\,$ JVPs: one for each column, as many as the input dimensionality of $f$.
+"""
+
+# ╔═╡ 1effbb3e-067b-4166-a39d-efa8e1d38f31
+md"""# Reverse-mode AD
+## Computing Jacobians
+In the previous slide, we've seen that for functions  $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$,
+we can construct a $m \times n$ Jacobian by computing $n$ JVPs, one for each column.
+
+There is an alternative way: instead of right-multiplying standard basis vectors,
+we could also obtain the Jacobian by left-multiplying row basis vectors $e_1^T$ to $e_m^T$.
+
+We obtain the $i$-th *row* of the Jacobian as
+
+$\begin{align}
+e_i^T \cdot J_f\big|_\tilde{x}
+&= e_i^T \cdot \begin{bmatrix}
+    \dfrac{\partial f_1}{\partial x_1}\Bigg|_\tilde{x} & \cdots &
+	\dfrac{\partial f_1}{\partial x_n}\Bigg|_\tilde{x}\\
+    \vdots                             & \ddots & \vdots\\
+    \dfrac{\partial f_m}{\partial x_1}\Bigg|_\tilde{x} & \cdots &
+	\dfrac{\partial f_m}{\partial x_n}\Bigg|_\tilde{x}
+\end{bmatrix} \\[0.5em]
+&= \hspace{1.8em}\begin{bmatrix}
+    \dfrac{\partial f_i}{\partial x_1}\Bigg|_\tilde{x} & \cdots &
+	\dfrac{\partial f_i}{\partial x_n}\Bigg|_\tilde{x}
+\end{bmatrix} \quad .
+\end{align}$
+
+> Computing the full $m \times n$ Jacobian requires computing $m\,$ JVPs: one for each row, as many as the output dimensionality of $f$.
+"""
+
+# ╔═╡ 9d035fb4-5ae2-4d8e-973c-c72d5cb77a44
+md"## Function composition
+For forward accumulation on a function $f(x) = f^N(f^{N-1}(\ldots f^2(f^1(x))))$, we saw that
+
+$\mathcal{D}f_\tilde{x}(v)
+= \big(
+	\mathcal{D}f^{N}_{h_{N-1}} \circ \ldots \circ
+	\mathcal{D}f^2_{h_1}  \circ
+	\mathcal{D}f^1_{\tilde{x}}\big)(v)$
+
+or in terms of Jacobians
+
+$\begin{align}
+\mathcal{D}f_\tilde{x}(v)
+&= J_f\big|_\tilde{x} \cdot v \\[0.5em]
+&= 	J_{f^{N  }}\big|_{h_{N-1}} \cdot \ldots \cdot
+	J_{f^{2  }}\big|_{h_{1  }} \cdot
+	J_{f^{1  }}\big|_{h_{\tilde{X}}} \cdot v \\[0.5em]
+&= 	J_{f^{N  }}\big|_{h_{N-1}} \cdot
+	\Big( \ldots \cdot
+	\Big( J_{f^{2  }}\big|_{h_{1  }} \cdot
+	\Big( J_{f^{1  }}\big|_{\tilde{x}} \cdot v \Big)\Big)\Big)
+\end{align}$
+
+where brackets are added to emphasize that the compositional structure can be seen as a series of nested JVPs.
+"
+
+# ╔═╡ ab09259f-51d9-47d9-93c8-34af8bbf71f9
+md"---
+Let's use the same notation to write down the Vector-Jacobian product:
+
+$\begin{align}
+w^T \cdot J_f\big|_\tilde{x}
+&= 	w^T \cdot
+	J_{f^{N  }}\big|_{h_{N-1}} \cdot
+	J_{f^{N-1}}\big|_{h_{N-2}} \cdot \ldots \cdot
+	J_{f^{1  }}\big|_{h_{\tilde{X}}} \\[0.5em]
+&= \Big(\Big(\Big( w^T \cdot
+	J_{f^{N  }}\big|_{h_{N-1}} \Big) \cdot
+	J_{f^{N-1}}\big|_{h_{N-2}} \Big) \cdot \ldots \Big)  \cdot
+	J_{f^{1  }}\big|_{h_{\tilde{X}}}
+\end{align}$
+
+once again, parentheses have been added to emphasize the compositional structure of a series of nested VJPs.
+
+Introducing the **transpose of the derivative**
+
+$\big(\mathcal{D}f_\tilde{x}\big)^T(w) = w^T \cdot J_f\big|_\tilde{x} \quad ,$
+
+which is also a linear map, we obtain the compositional structure
+
+$\begin{align}
+\big(\mathcal{D}f_\tilde{x}\big)^T(w)
+&= 	\Big(
+	\big(\mathcal{D}f^{1  }_\tilde{x}\big)^T  \circ \ldots \circ
+	\big(\mathcal{D}f^{N-1}_{h_{N-2}}\big)^T \circ
+	\big(\mathcal{D}f^{N  }_{h_{N-1}}\big)^T \Big) (w) \quad .
+\end{align}$
+
+"
+
+# ╔═╡ d89c4e9b-c804-4dec-9add-cab1ff44719b
+md"## Reverse accumulation
+Let's visualize the compositional structure from the previous slide as a computational graph
+"
+
+# ╔═╡ b8867e98-345b-4e6c-9f69-5c081d38aaf7
+reverse_accumulation = @htl("""
+<article class="diagram">
+<pre><code>
+      x̃    ┌──────┐  h₁  ┌──────┐ h₂      hₙ₋₂ ┌────────┐  hₙ₋₁ ┌──────┐ y
+───────┬──►│  f¹  ├──┬──►│  f²  ├───► .. ──┬──►│  fⁿ⁻¹  ├───┬──►│  fⁿ  ├───►
+       │   └──────┘  │   └──────┘          │   └────────┘   │   └──────┘
+       │   ┌──────┐  │   ┌──────┐          │   ┌────────┐   │   ┌──────┐
+       └──►│(𝒟f¹)ᵀ│  └──►│(𝒟f²)ᵀ│          └──►│(𝒟fⁿ⁻¹)ᵀ│   └──►│(𝒟fⁿ)ᵀ│
+◄──────────┤      │◄─────┤      │◄─── .. ──────┤        │◄──────┤      │◄───
+ (𝒟fₓ̃)ᵀ(w) └──────┘      └──────┘              └────────┘       └──────┘ w
+</code></pre>
+</article>
+
+<style>
+	article.diagram code {
+	  width: 800px;
+	  display: block;
+	}
+</style>
+""")
+
+# ╔═╡ b5dcbc38-d816-41b8-85d4-c0e5a9fefb39
+md"""
+We can see that the computation of both $y=f(\tilde{x})$ and the intermediate outputs $h_i$ first takes a forward-pass through $f$.
+Keeping track of all $h_i$, we can follow this forward-pass up by a reverse-pass, computing a VJP $(\mathcal{D}f_\tilde{x})^T(w)$.
+
+This is called reverse accumulation and is the basis for **reverse-mode AD**.
+Intermediate outputs $h_i$ are commonly saved in data structures known as *Tape* or *Wengert lists*.
+
+You might want to compare this to the graph of forward accumulation:
+"""
+
+# ╔═╡ 53705d41-36dd-4868-9193-8ee80aa94a07
+forward_accumulation
+
+# ╔═╡ cebd8f5c-a72c-436d-a870-a1a64fde16ab
 md"""## Computing gradients
-For scalar-valued functions $f: \mathbb{R}^n \rightarrow \mathbb{R}$ (such as neural networks with scalar loss functions), the gradient $\nabla f_\tilde{x}$ is equivalent to the (transpose of the) Jacobian:
+For scalar-valued functions $f: \mathbb{R}^n \rightarrow \mathbb{R}$ (such as neural networks with scalar loss functions), the gradient $\nabla f_\tilde{x}$ is equivalent to the transpose of the $1 \times n\,$ Jacobian:
 
 $\nabla f_\tilde{x}
 = \begin{bmatrix}
@@ -463,36 +672,31 @@ $\nabla f_\tilde{x}
 \end{bmatrix}
 = \Big(J_f\big|_\tilde{x}\Big) ^ T$
 
-We've seen that Jacobian-vector products (JVPs) can be computed using the chain rule.
-It is important to emphasize that **this only computes JVPs, not full Jacobians**:
+We've seen that we can compute this Jacobian / Gradient using either JVPs or VJPs:
 
-$\mathcal{D}f_\tilde{x}(v)
-= 	\left(\mathcal{D}f^{N}_{h_{N-1}} \circ
-	\mathcal{D}f^{N-1}_{h_{N-2}} \circ \ldots \circ
-	\mathcal{D}f^2_{h_1}  \circ
-	\mathcal{D}f^1_{\tilde{x}}\right)(v)
-=J_f\big|_\tilde{x} \cdot v$
+> * **Computing gradients with forward-mode AD is expensive**: we need to evaluate $n\,$ JVPs, where $n$ corresponds to the input dimension.
+> * **Computing gradients with reverse-mode AD is cheap**: we only need to evaluate a single JVP since the output dimension is $m=1$.
 
-However, by computing the JVP with the $i$-th standard basis vector $e_i$, where
-
-$\begin{align}
-	e_1 &= (1, 0, 0, \ldots, 0) \\
-	e_2 &= (0, 1, 0, \ldots, 0) \\
-		&\;\;\vdots \\
-	e_n &= (0, 0, 0, \ldots, 1) \quad ,
-\end{align}$
-we obtain the $i$-th entry in the Jacobian / Gradient
-
-$\mathcal{D}f_\tilde{x}(e_i) = \big[J_f\big|_\tilde{x}\big]_i = \big[\nabla f_\tilde{x}\big]_i \quad .$
-
-Computing $n$ JVPs with standard basis vectors $e_1$ to $e_n$ therefore constructs the full gradient.
+In Deep Learning, the input dimension $n$ is usually very large, making VJPs and reverse-mode AD more efficient than forward-mode AD.
 """
 
-# ╔═╡ 1effbb3e-067b-4166-a39d-efa8e1d38f31
-md"""## Reverse-mode AD"""
+# ╔═╡ c365c5a2-43b7-4ddc-82f1-3ca0670117ba
+takeaways(md"
+- JVPs and VJPs are the building blocks of automatic differentiation
+- Gradients are computed using JVPs and VJPs
+- Given a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$
+  - if $n \gg m$, reverse-mode AD is more efficient
+  - if $n \ll m$, forward-mode AD is more efficient
+")
 
 # ╔═╡ d690349c-b4a1-4310-a237-622e0614a24c
 md"# Automatic differentiation in Julia"
+
+# ╔═╡ 344a0531-60fa-436b-bdc5-0aaa98df0463
+md"""
+This also gives us an idea on how we could implement a *"rule-based"* reverse-mode AD system in Julia: For every function `f(x)`, we need to match a *"backward rule"* that implements `𝒟f(x, v)`.
+
+"""
 
 # ╔═╡ 17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 md"# Acknowledgements
@@ -509,13 +713,11 @@ Further inspiration for this lecture came from
 - Overview of the Julia AD ecosystem: [juliadiff.org](https://juliadiff.org)
 "
 
-# ╔═╡ e7a32f52-e8ea-43cc-b723-05fc250add40
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
-Kroki = "b3565e16-c1f2-4fe9-b4ab-221c88942068"
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
@@ -524,7 +726,7 @@ Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [compat]
 ForwardDiff = "~0.10.35"
-Kroki = "~0.2.0"
+HypertextLiteral = "~0.9.4"
 LaTeXStrings = "~1.3.0"
 Plots = "~1.38.10"
 PlutoTeachingTools = "~0.2.8"
@@ -538,7 +740,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "ba9df2654dc5233427e4cb0ee17ee14e3e62962e"
+project_hash = "517a9d08569854be75a642cca50b5e081c81b881"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -923,12 +1125,6 @@ deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
 git-tree-sha1 = "d9ae7a9081d9b1a3b2a5c1d3dac5e2fdaafbd538"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 version = "0.9.22"
-
-[[deps.Kroki]]
-deps = ["Base64", "CodecZlib", "DocStringExtensions", "HTTP", "JSON", "Markdown", "Reexport"]
-git-tree-sha1 = "a3235f9ff60923658084df500cdbc0442ced3274"
-uuid = "b3565e16-c1f2-4fe9-b4ab-221c88942068"
-version = "0.2.0"
 
 [[deps.LAME_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1700,6 +1896,7 @@ version = "1.4.1+0"
 # ╟─96b32c06-6136-4d44-be87-f2f67b374bbd
 # ╟─e56dbf8f-e0cb-4696-a8ed-e1e73d9e048b
 # ╟─24871322-7513-4b19-a337-90b1d00a1747
+# ╟─116c6f7e-eb6c-4c16-a4af-69a22eabd6d0
 # ╟─f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 # ╟─9d97daa0-73e3-40c0-b697-1ecadf505243
 # ╟─3cffee7c-7394-445f-b00d-bb32e5e63783
@@ -1709,6 +1906,7 @@ version = "1.4.1+0"
 # ╟─ae1c7dc7-6e0f-48c7-851b-dc6f0c0ad60e
 # ╟─5106b16e-6cae-4b48-a0a7-5aca8eb81245
 # ╟─c1f8dc1e-52d4-4172-9e5b-c988d6cadcf7
+# ╟─b3e9e95a-cd70-4dfb-b5a3-7d8cbdaabc75
 # ╟─78536125-8abc-4dfe-b84e-e22c4c6c19ed
 # ╟─68e1e6e9-5e39-4156-9f66-494e16fbe7ca
 # ╠═29ab341a-6049-4b68-81f2-6e1562f72d49
@@ -1723,13 +1921,24 @@ version = "1.4.1+0"
 # ╟─f324744a-aae8-4ee3-9498-9bdab9a942e8
 # ╟─8ec1c1c3-5254-4678-8d63-2fa7487057d5
 # ╟─ec1bee51-c2b4-47b1-a78a-51d444943787
+# ╟─eeef4f94-570a-4b1d-8f23-01dee37124ce
 # ╟─0fb53e78-06f9-4e5c-a782-ba8744a70c8d
 # ╟─f9699004-6655-4e08-8596-d9067b773d89
 # ╟─4afb6a1c-a0ff-4719-828e-4989bf472465
-# ╟─f3edfb70-7870-41b8-820b-40871bb1a30b
+# ╟─34c93a06-58e9-4c61-be87-9ec43a855e9a
+# ╟─112a6344-070e-4d1b-b821-65c5723ebb99
+# ╟─1b34590a-8754-439c-a5e7-eb96c097f6fd
 # ╟─1effbb3e-067b-4166-a39d-efa8e1d38f31
+# ╟─9d035fb4-5ae2-4d8e-973c-c72d5cb77a44
+# ╟─ab09259f-51d9-47d9-93c8-34af8bbf71f9
+# ╟─d89c4e9b-c804-4dec-9add-cab1ff44719b
+# ╟─b8867e98-345b-4e6c-9f69-5c081d38aaf7
+# ╟─b5dcbc38-d816-41b8-85d4-c0e5a9fefb39
+# ╟─53705d41-36dd-4868-9193-8ee80aa94a07
+# ╟─cebd8f5c-a72c-436d-a870-a1a64fde16ab
+# ╟─c365c5a2-43b7-4ddc-82f1-3ca0670117ba
 # ╟─d690349c-b4a1-4310-a237-622e0614a24c
-# ╠═17a9dab3-46de-4c51-b16b-a0ce367bbcb3
-# ╠═e7a32f52-e8ea-43cc-b723-05fc250add40
+# ╟─344a0531-60fa-436b-bdc5-0aaa98df0463
+# ╟─17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
