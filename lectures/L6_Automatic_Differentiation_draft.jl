@@ -652,7 +652,6 @@ We can see that the computation of both $y=f(\tilde{x})$ and the intermediate ou
 Keeping track of all $h_i$, we can follow this forward-pass up by a reverse-pass, computing a VJP $(\mathcal{D}f_\tilde{x})^T(w)$.
 
 This is called reverse accumulation and is the basis for **reverse-mode AD**.
-Intermediate outputs $h_i$ are commonly saved in data structures known as *Tape* or *Wengert lists*.
 
 You might want to compare this to the graph of forward accumulation:
 """
@@ -692,10 +691,98 @@ takeaways(md"
 # ╔═╡ d690349c-b4a1-4310-a237-622e0614a24c
 md"# Automatic differentiation in Julia"
 
+# ╔═╡ 98b0ac01-3a8c-4124-b470-7529bd136c0f
+md"""## Rule-based AD
+Looking at the computational graphs of forward- and reverse-mode AD gives us an idea on how to implement a *"rule-based"* AD system in Julia:
+"""
+
+# ╔═╡ fd5f0258-8d14-4200-9c49-d88656ec6c75
+forward_accumulation
+
+# ╔═╡ 52d897f3-c877-4b92-a482-dd748d404d97
+reverse_accumulation
+
 # ╔═╡ 344a0531-60fa-436b-bdc5-0aaa98df0463
 md"""
-This also gives us an idea on how we could implement a *"rule-based"* reverse-mode AD system in Julia: For every function `f(x)`, we need to match a *"backward rule"* that implements `𝒟f(x, v)`.
+For every function `f(x)`, we need to match either
+- a *"forward rule"* that implements `forward_rule(f, x̃, v) = 𝒟fₓ̃(v)`
+- a *"reverse rule"* that implements `reverse_rule(f, x̃, w) = (𝒟fₓ̃)ᵀ(w)`.
 
+Since in Julia, a function `f` is of type `typeof(f)`, we can use multiple dispatch to automatically match functions and their rules!
+"""
+
+# ╔═╡ 92def6ee-965c-42f9-acd3-176ac6e8c242
+md"""## ChainRules.jl
+[ChainRules.jl](https://github.com/JuliaDiff/ChainRules.jl) is a package that implements many of these forward- and reverse-mode AD rules, 
+allowing downstream Julia AD packages to use them. This avoids AD developers having to each reimplement all rules. 
+
+Package developers can make use of [ChainRulesCore.jl](https://github.com/JuliaDiff/ChainRulesCore.jl), a light-weight dependency that allows you to define rules for your package without having to depend on specific AD implementations.
+
+### Example: `sin(x)`
+Instead of explaining the API in detail, we are take a look at how forward and backward rules are implemented for the `sin` function. To avoid confusion, we are going to stick with our notation instead of the one used in the [ChainRules documentation](https://juliadiff.org/ChainRulesCore.jl/dev/).
+"""
+
+# ╔═╡ 8ed56f12-a076-4cff-bf7e-8e1e99674f34
+md"""### Forward-mode AD rule
+ChainRules.jl calls forward rules `frule`. 
+
+ $\mathcal{D}f_\tilde{x}(v)$, the derivative of $f(x) = \sin(x)$ at $\tilde{x}$, evaluated at $v$,  is implemented as: 
+
+```julia
+function frule((_, v), ::typeof(sin), x̃)
+    return sin(x̃), cos(x̃) * v
+end
+```
+
+We can observe that:
+- `frule` dispatches on the type of `sin`
+- `frule` returns $y = \sin(\tilde{x})$. This is often called the *primal output*
+- `frule` directly returns the result of the computation $\mathcal{D}f_\tilde{x}(v) = \cos(\tilde{x})\cdot v$
+
+### Reverse-mode AD rule
+ChainRules.jl calls reverse rules `rrule`. 
+
+ $(\mathcal{D}f_\tilde{x})^T(w)$ is implemented as
+
+```julia
+function rrule(::typeof(sin), x̃)
+    sin_pullback(w) = (NoTangent(), cos(x̃)' * w)
+    return sin(x̃), sin_pullback
+end
+```
+
+We can observe that:
+- `rrule` dispatches on the type of `sin`
+- `rrule` also returns the primal output $y = \sin(\tilde{x})$
+- instead of directly returning the result of the computation $(\mathcal{D}f_\tilde{x})^T(w)$, `rrule` returns a closure $(\mathcal{D}f_\tilde{x})^T$ that takes $w$ as an argument. This function is often called the *pullback*.  
+
+### Why pullbacks?
+Since reverse-mode AD has to complete a full forward-pass before being able to compute derivatives in the backward pass, 
+it is necessary for reverse-mode AD systems to **store all pullbacks and intermediate primal outputs**. 
+
+Data structures that save these are commonly called *Tape* or *Wengert lists*.
+"""
+
+# ╔═╡ 73d8aa52-b494-44dc-9594-c6e10d741981
+tip(
+    md"The [ChainRules.jl documentation](https://juliadiff.org/ChainRulesCore.jl/dev/) has a very nice [math primer](https://juliadiff.org/ChainRulesCore.jl/dev/maths/propagators.html) introducing their nomenclature and notation.",
+)
+
+# ╔═╡ a16c4a8b-50ab-4dd5-850a-8e97448603bf
+md"## Zygote.jl
+[Zygote.jl](https://github.com/FluxML/Zygote.jl)
+"
+
+# ╔═╡ a4e1e575-14d7-4b0b-9f58-1fb34b0e78fd
+md"## ForwardDiff.jl
+[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl)
+"
+
+# ╔═╡ a43bd454-4c09-4a75-9ec8-f426010fe7f9
+md"""## Other packages in the Julia AD ecosystem
+Julia has more than a dozen AD packages. 
+A "Big List" of available packages was compiled at [juliadiff.org](https://juliadiff.org/).
+Equipped with the mathematical fundamentals from this lecture, you should be able to understand the differences between packages that are summarized on the website.
 """
 
 # ╔═╡ 17a9dab3-46de-4c51-b16b-a0ce367bbcb3
@@ -1938,7 +2025,16 @@ version = "1.4.1+0"
 # ╟─cebd8f5c-a72c-436d-a870-a1a64fde16ab
 # ╟─c365c5a2-43b7-4ddc-82f1-3ca0670117ba
 # ╟─d690349c-b4a1-4310-a237-622e0614a24c
+# ╟─98b0ac01-3a8c-4124-b470-7529bd136c0f
+# ╠═fd5f0258-8d14-4200-9c49-d88656ec6c75
+# ╠═52d897f3-c877-4b92-a482-dd748d404d97
 # ╟─344a0531-60fa-436b-bdc5-0aaa98df0463
+# ╟─92def6ee-965c-42f9-acd3-176ac6e8c242
+# ╟─8ed56f12-a076-4cff-bf7e-8e1e99674f34
+# ╟─73d8aa52-b494-44dc-9594-c6e10d741981
+# ╟─a16c4a8b-50ab-4dd5-850a-8e97448603bf
+# ╟─a4e1e575-14d7-4b0b-9f58-1fb34b0e78fd
+# ╟─a43bd454-4c09-4a75-9ec8-f426010fe7f9
 # ╟─17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
