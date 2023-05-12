@@ -82,10 +82,30 @@ Markdown.MD(
 md"## Motivation
 To apply gradient-based optimization methods such as [stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) to a neural network, we need to compute the gradient of its loss function with respect to its parameters.
 
-Since Deep Learning models can get large and complicated, it would be nice to have machinery that can take an arbitrary function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivatives. This is called automatic differentiation (AD).
-
-Before we take a look at Julia AD packages, let's start with recapitulation of two fundamental mathematical concepts: linear maps and derivatives. This will help us understand the differences between different AD packages as well as pros and cons.
+Since Deep Learning models can get large and complicated, it would be nice to have **machinery that can take an arbitrary function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivatives**. This is called automatic differentiation (AD).
 "
+
+# ╔═╡ 748b0576-7e95-4199-918e-acd6a19adf84
+md"""## The Julia AD ecosystem
+Julia has more than a dozen AD systems. 
+A summary of available packages can be found at [juliadiff.org](https://juliadiff.org/). 
+The list is sorted by type:
+1. *Reverse-mode* 
+1. *Forward-mode*
+1. *Symbolic*
+1. *Finite differencing*
+
+and other more exotic approaches. Within these categories, there are further differences:
+* is the AD system *operator overloading* or *source-to-source*? 
+* does it operate on *IR*, *AST* or *LLVM* level?
+* does it only work on *scalar* functions?
+* does it allow *higher-order* AD?
+
+
+As you may not be familiar with these terms, **the goal of this lecture is to explain differences between various AD packages and outline their pros and cons.**
+
+For this purpose, we will take a step back and start with a recapitulation of two fundamental mathematical concepts: *linear maps* and *derivatives*.
+"""
 
 # ╔═╡ 0ca06dac-6e62-4ba5-bbe6-89ec8f0e8a26
 md"# Linear maps"
@@ -235,8 +255,8 @@ begin
     plot!(p, xs, v -> 𝒟fₓ̃(v)[1]; label=L"Derivative $\mathcal{D}f_\tilde{x}(x)$")
 
     # Plot 1st order Taylor series approximation
-    lin_approx(x) = f(x̃) + 𝒟fₓ̃(x - x̃)[1] # f(x) ≈ f(x̃) + 𝒟f(x̃)(x-x̃)
-    plot!(p, xs, lin_approx; label=L"1st order Taylor approx. around $\tilde{x}$")
+    taylor_approx(x) = f(x̃) + 𝒟fₓ̃(x - x̃)[1] # f(x) ≈ f(x̃) + 𝒟f(x̃)(x-x̃)
+    plot!(p, xs, taylor_approx; label=L"Taylor approx. around $\tilde{x}$")
 
     # Show point of linearization
     vline!(p, [x̃]; style=:dash, c=:gray, label=L"\tilde{x}")
@@ -704,23 +724,29 @@ reverse_accumulation
 
 # ╔═╡ 344a0531-60fa-436b-bdc5-0aaa98df0463
 md"""
-For every function `f(x)`, we need to match either
-- a *"forward rule"* that implements `forward_rule(f, x̃, v) = 𝒟fₓ̃(v)`
-- a *"reverse rule"* that implements `reverse_rule(f, x̃, w) = (𝒟fₓ̃)ᵀ(w)`.
+For every function `fⁱ(x)`, we need to match either
+- a *"forward rule"* that implements `forward_rule(fⁱ, x̃) = v -> 𝒟fⁱₓ̃(v)`
+- a *"reverse rule"* that implements `reverse_rule(fⁱ, x̃) = w -> (𝒟fⁱₓ̃)ᵀ(w)`.
 
 Since in Julia, a function `f` is of type `typeof(f)`, we can use multiple dispatch to automatically match functions and their rules!
+
+Then,
+- for forward-mode AD, we can then simply iterate through all `fⁱ` and `𝒟fⁱₓ̃`, simultaneously computing `y` and a JVP `𝒟fₓ̃(v)`.
+- for reverse-mode AD, we need to first iterate through all `fⁱ` and store all intermediate activations `hⁱ` and functions `(𝒟fⁱₓ̃)ᵀ`. Data structures that save these are commonly called *tape* or *Wengert lists*. We then have all the ingredients to compute a VJP `(𝒟fₓ̃)ᵀ(w)` in a second backward pass.
 """
 
 # ╔═╡ 92def6ee-965c-42f9-acd3-176ac6e8c242
 md"""## ChainRules.jl
-[ChainRules.jl](https://github.com/JuliaDiff/ChainRules.jl) is a package that implements many of these forward- and reverse-mode AD rules, 
-allowing downstream Julia AD packages to use them. This avoids AD developers having to each reimplement all rules. 
+[ChainRules.jl](https://github.com/JuliaDiff/ChainRules.jl) is a package that implements forward- and reverse-mode AD rules for many different functions, 
+allowing downstream Julia AD packages to re-use them instead of having to reimplement all rules. 
 
-Package developers can make use of [ChainRulesCore.jl](https://github.com/JuliaDiff/ChainRulesCore.jl), a light-weight dependency that allows you to define rules for your package without having to depend on specific AD implementations.
-
-### Example: `sin(x)`
 Instead of explaining the API in detail, we are take a look at how forward and backward rules are implemented for the `sin` function. To avoid confusion, we are going to stick with our notation instead of the one used in the [ChainRules documentation](https://juliadiff.org/ChainRulesCore.jl/dev/).
 """
+
+# ╔═╡ 73d8aa52-b494-44dc-9594-c6e10d741981
+tip(
+    md"The [ChainRules.jl documentation](https://juliadiff.org/ChainRulesCore.jl/dev/) has a well written [math primer](https://juliadiff.org/ChainRulesCore.jl/dev/maths/propagators.html) introducing their nomenclature and notation.",
+)
 
 # ╔═╡ 8ed56f12-a076-4cff-bf7e-8e1e99674f34
 md"""### Forward-mode AD rule
@@ -738,8 +764,10 @@ We can observe that:
 - `frule` dispatches on the type of `sin`
 - `frule` returns $y = \sin(\tilde{x})$. This is often called the *primal output*
 - `frule` directly returns the result of the computation $\mathcal{D}f_\tilde{x}(v) = \cos(\tilde{x})\cdot v$
+"""
 
-### Reverse-mode AD rule
+# ╔═╡ 69b448a1-99a2-4336-bb95-1adb0863943b
+md"""### Reverse-mode AD rule
 ChainRules.jl calls reverse rules `rrule`. 
 
  $(\mathcal{D}f_\tilde{x})^T(w)$ is implemented as
@@ -754,51 +782,40 @@ end
 We can observe that:
 - `rrule` dispatches on the type of `sin`
 - `rrule` also returns the primal output $y = \sin(\tilde{x})$
-- instead of directly returning the result of the computation $(\mathcal{D}f_\tilde{x})^T(w)$, `rrule` returns a closure $(\mathcal{D}f_\tilde{x})^T$ that takes $w$ as an argument. This function is often called the *pullback*.  
-
-### Why pullbacks?
-Since reverse-mode AD has to complete a full forward-pass before being able to compute derivatives in the backward pass, 
-it is necessary for reverse-mode AD systems to **store all pullbacks and intermediate primal outputs**. 
-
-Data structures that save these are commonly called *Tape* or *Wengert lists*.
+- instead of directly returning the result of the computation $(\mathcal{D}f_\tilde{x})^T(w)$, `rrule` returns a closure $(\mathcal{D}f_\tilde{x})^T$ that takes $w$ as an argument. This function is often called the *pullback*.
 """
 
-# ╔═╡ 73d8aa52-b494-44dc-9594-c6e10d741981
-tip(
-    md"The [ChainRules.jl documentation](https://juliadiff.org/ChainRulesCore.jl/dev/) has a very nice [math primer](https://juliadiff.org/ChainRulesCore.jl/dev/maths/propagators.html) introducing their nomenclature and notation.",
-)
+# ╔═╡ c9e073b7-038e-4357-b3f0-669c63413387
+md"### ChainRulesCore.jl
+If you develop your own package, you can make use of [ChainRulesCore.jl](https://github.com/JuliaDiff/ChainRulesCore.jl), 
+a light-weight dependency that allows you to define forward- and/or reverse-rules for your package without having to depend on specific AD implementations.
+"
 
 # ╔═╡ a16c4a8b-50ab-4dd5-850a-8e97448603bf
-md"## Zygote.jl
-[Zygote.jl](https://github.com/FluxML/Zygote.jl)
-"
+md"""## Zygote.jl
+[Zygote.jl](https://github.com/FluxML/Zygote.jl) is a widely used reverse-mode AD system. It uses ChainRules.jl and performs *"IR-level source to source"* transformation.
+"""
 
 # ╔═╡ a4e1e575-14d7-4b0b-9f58-1fb34b0e78fd
 md"## ForwardDiff.jl
 [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl)
 "
 
-# ╔═╡ a43bd454-4c09-4a75-9ec8-f426010fe7f9
-md"""## Other packages in the Julia AD ecosystem
-Julia has more than a dozen AD packages. 
-A "Big List" of available packages was compiled at [juliadiff.org](https://juliadiff.org/).
-Equipped with the mathematical fundamentals from this lecture, you should be able to understand the differences between packages that are summarized on the website.
-"""
-
 # ╔═╡ 17a9dab3-46de-4c51-b16b-a0ce367bbcb3
-md"# Acknowledgements
+md"""# Acknowledgements
 Many thanks to Niklas Schmitz for many insightful conversations about AD systems and feedback on this lecture!
 
 Further inspiration for this lecture came from
 - Prof. Robert Ghrist's [lecture on the chain rule](https://twitter.com/robertghrist/status/1627627577652269056)
 - SciML book chapters on [forward-mode](https://book.sciml.ai/notes/08-Forward-Mode_Automatic_Differentiation_(AD)_via_High_Dimensional_Algebras/) and [reverse-mode AD](https://book.sciml.ai/notes/10-Basic_Parameter_Estimation-Reverse-Mode_AD-and_Inverse_Problems/)
+- Mike Innes' [Differentiation for Hackers](https://github.com/MikeInnes/diff-zoo), also [rendered here](https://aviatesk.github.io/diff-zoo/dev/)
 
 ##### Further references
 - Books:
   - Griewand & Walther, *Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation*
   - Spivak, *Calculus on manifolds*
 - Overview of the Julia AD ecosystem: [juliadiff.org](https://juliadiff.org)
-"
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1987,6 +2004,7 @@ version = "1.4.1+0"
 # ╟─f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 # ╟─9d97daa0-73e3-40c0-b697-1ecadf505243
 # ╟─3cffee7c-7394-445f-b00d-bb32e5e63783
+# ╟─748b0576-7e95-4199-918e-acd6a19adf84
 # ╟─0ca06dac-6e62-4ba5-bbe6-89ec8f0e8a26
 # ╟─26727cec-1565-4a7d-b19d-1184a3749d4f
 # ╟─f2dc6efc-c31d-4191-92a6-fa6cb3ea80f5
@@ -2030,11 +2048,12 @@ version = "1.4.1+0"
 # ╠═52d897f3-c877-4b92-a482-dd748d404d97
 # ╟─344a0531-60fa-436b-bdc5-0aaa98df0463
 # ╟─92def6ee-965c-42f9-acd3-176ac6e8c242
-# ╟─8ed56f12-a076-4cff-bf7e-8e1e99674f34
 # ╟─73d8aa52-b494-44dc-9594-c6e10d741981
+# ╟─8ed56f12-a076-4cff-bf7e-8e1e99674f34
+# ╟─69b448a1-99a2-4336-bb95-1adb0863943b
+# ╟─c9e073b7-038e-4357-b3f0-669c63413387
 # ╟─a16c4a8b-50ab-4dd5-850a-8e97448603bf
 # ╟─a4e1e575-14d7-4b0b-9f58-1fb34b0e78fd
-# ╟─a43bd454-4c09-4a75-9ec8-f426010fe7f9
 # ╟─17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
