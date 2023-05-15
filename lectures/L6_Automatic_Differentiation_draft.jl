@@ -95,11 +95,12 @@ The list is sorted by type:
 1. *Symbolic*
 1. *Finite differencing*
 
-and other more exotic approaches. Within these categories, there are further differences:
-* is the AD system *operator overloading* or *source-to-source*? 
-* does it operate on *IR*, *AST* or *LLVM* level?
-* does it only work on *scalar* functions?
-* does it allow *higher-order* AD?
+and other more exotic approaches. These are already complicated sounding terms, but within these categories, there are further differences:
+
+> Is the AD system *operator overloading* or *source-to-source*?
+> Which *representation* level does it operate on?
+> Does it only work on *scalar* functions?
+> Does it allow *higher-order* AD?
 
 
 As you may not be familiar with these terms, **the goal of this lecture is to explain differences between various AD packages and outline their pros and cons.**
@@ -134,7 +135,7 @@ Foldable(
 
 # ╔═╡ ae1c7dc7-6e0f-48c7-851b-dc6f0c0ad60e
 md"""## Connection to matrices
-> Every linear map $f$ between two finite-dimensional vector spaces $V, W$ **can be represented as a matrix** (if a basis is defined for each vector space, e.g. the [standard basis](https://en.wikipedia.org/wiki/Standard_basis)).
+> Every linear map $f$ between two finite-dimensional vector spaces $V, W$ **can be represented as a matrix**, given a basis for each vector space (e.g. the [standard basis](https://en.wikipedia.org/wiki/Standard_basis)).
 
 A linear map $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ can be represented as
 
@@ -147,16 +148,18 @@ where $A$ is a $m \times n$ matrix and $x \in \mathbb{R}^{n}$.
 example(
     md"Linear maps $f: \mathbb{R}^2 \rightarrow \mathbb{R}^2$ can be represented as $2 \times 2$ matrices.
 
-Many common geometric transformations are linear maps, for example:
+Many common geometric transformations are linear maps, for example
 
 | Transformation | Matrix representation |
 |:-------|:-------|
-| Rotations around $\theta$ | $\begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}$|
+| Rotations by angle $\theta$ | $\begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}$|
 | Projection on $y$-axis | $\begin{pmatrix} 0 & 0 \\ 0 & 1 \end{pmatrix}$
 | Reflection through $y$-axis | $\begin{pmatrix} -1 & 0 \\ 0 & 1 \end{pmatrix}$
 | Stretching along $y$-axis | $\begin{pmatrix} 1 & 0 \\ 0 & k \end{pmatrix}$ |
 | Shearing parallel to $y$-axis | $\begin{pmatrix} 1 & 0 \\ k & 1 \end{pmatrix}$ |
 | Squeezing | $\begin{pmatrix} k & 0 \\ 0 & \frac{1}{k} \end{pmatrix}$ |
+
+for the basis $e_x = (1, 0)$, $e_y = (0, 1)$.
 ",
 )
 
@@ -248,14 +251,14 @@ begin
         legendfontsize=9,
     )
 
-    # Obtain the function 𝒟fₓ̃
-    y, 𝒟fₓ̃ = Zygote.pullback(f, x̃)
+    # Obtain the function 𝒟fₓ̃ᵀ
+    ŷ, 𝒟fₓ̃ᵀ = Zygote.pullback(f, x̃)
 
     # Plot Dfₓ̃(x)
-    plot!(p, xs, v -> 𝒟fₓ̃(v)[1]; label=L"Derivative $\mathcal{D}f_\tilde{x}(x)$")
+    plot!(p, xs, w -> 𝒟fₓ̃ᵀ(w)[1]; label=L"Derivative $\mathcal{D}f_\tilde{x}(x)$")
 
     # Plot 1st order Taylor series approximation
-    taylor_approx(x) = f(x̃) + 𝒟fₓ̃(x - x̃)[1] # f(x) ≈ f(x̃) + 𝒟f(x̃)(x-x̃)
+    taylor_approx(x) = f(x̃) + 𝒟fₓ̃ᵀ(x - x̃)[1] # f(x) ≈ f(x̃) + 𝒟f(x̃)(x-x̃)
     plot!(p, xs, taylor_approx; label=L"Taylor approx. around $\tilde{x}$")
 
     # Show point of linearization
@@ -303,7 +306,7 @@ $J_f = \begin{bmatrix}
 	\dfrac{\partial f_m}{\partial x_n}
 \end{bmatrix}$
 
-Note that every entry $[J_f]_{ij}=\frac{\partial f_i}{\partial x_j}$ in this matrix is a function.
+Note that every entry $[J_f]_{ij}=\frac{\partial f_i}{\partial x_j}$ in this matrix is a scalar function $\mathbb{R} \rightarrow \mathbb{R}$.
 
 
 
@@ -356,10 +359,12 @@ As we have seen in the example on the previous slide, the total derivative
 
 $\mathcal{D}f_\tilde{x}(v) = J_f\big|_\tilde{x} \cdot v$
 
-computes the **Jacobian-Vector product**. It is one of the two core objects behind AD systems:
+computes a **Jacobian-Vector product**. It is one of the two core objects behind AD systems:
 
 1. *Jacobian-Vector products* (JVPs), used in forward-mode AD
 2. *Vector-Jacobian products* (VJPs), used in reverse-mode AD
+
+**Note:** In our notation, all vectors $v$ are column vectors and row vectors are written as transposed $v^T$.
 "
 
 # ╔═╡ f324744a-aae8-4ee3-9498-9bdab9a942e8
@@ -370,7 +375,7 @@ Instead, linear maps $\mathcal{D}f$ are used.
 
 # ╔═╡ 8ec1c1c3-5254-4678-8d63-2fa7487057d5
 md"## Chain rule
-Let's look at a function $h$ composed from two differentiable functions $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and $g: \mathbb{R}^m \rightarrow \mathbb{R}^p$.
+Let's look at a function $h(x)=g(f(x))$ composed from two differentiable functions $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and $g: \mathbb{R}^m \rightarrow \mathbb{R}^p$.
 
 $h = g \circ f\,$
 
@@ -436,10 +441,9 @@ As you can see, the product rule follows from the chain rule. Instead of memoriz
 takeaways(
     md"""
 * the derivative $\mathcal{D}f_\tilde{x}$ is a linear approximation of $f$ near the point $\tilde{x}$
-* derivatives are linear maps
-* since derivatives are linear maps, they are nicely composable
+* derivatives are linear maps, therefore nicely composable
 * viewing linear maps as matrices, derivatives compute Jacobian-Vector products
-* The chain-rule allows us to obtain the derivative of a function by composing the derivatives of its parts. This corresponds to matrix multiplication.
+* The chain-rule allows us to obtain the derivative of a function by composing  derivatives of its parts. This corresponds to matrix multiplication.
 """,
 )
 
@@ -453,7 +457,7 @@ Assume we want to differentiate over a neural network $f$ with $N$ layers
 
 $f(x) = f^N(f^{N-1}(\ldots f^2(f^1(x)))) \quad ,$
 
-where $f^i$ is the $i$-th layer of the neural network.
+where $f^i$ is the $i$-th layer of the neural network. 
 
 Applying the chain rule to compute the derivative of $f$ at $\tilde{x}$, we get
 
@@ -546,7 +550,7 @@ $\begin{align}
 \end{align}$
 
 
-> For $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$, computing the full $m \times n$ Jacobian therefore requires computing $n\,$ JVPs: one for each column, as many as the input dimensionality of $f$.
+> For $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$, computing the full $m \times n$ Jacobian therefore requires computing $n\,$ JVPs: one for each column, as many as the **input dimensionality** of $f$.
 """
 
 # ╔═╡ 1effbb3e-067b-4166-a39d-efa8e1d38f31
@@ -575,7 +579,7 @@ e_i^T \cdot J_f\big|_\tilde{x}
 \end{bmatrix} \quad .
 \end{align}$
 
-> Computing the full $m \times n$ Jacobian requires computing $m\,$ JVPs: one for each row, as many as the output dimensionality of $f$.
+> Computing the full $m \times n$ Jacobian requires computing $m\,$ JVPs: one for each row, as many as the **output dimensionality** of $f$.
 """
 
 # ╔═╡ 9d035fb4-5ae2-4d8e-973c-c72d5cb77a44
@@ -625,7 +629,9 @@ once again, parentheses have been added to emphasize the compositional structure
 
 Introducing the **transpose of the derivative**
 
-$\big(\mathcal{D}f_\tilde{x}\big)^T(w) = w^T \cdot J_f\big|_\tilde{x} \quad ,$
+$\big(\mathcal{D}f_\tilde{x}\big)^T(w) 
+= \Big(w^T \cdot J_f\big|_\tilde{x}\Big) ^ T
+= J_f\big|_\tilde{x}^T \cdot w  \quad ,$
 
 which is also a linear map, we obtain the compositional structure
 
@@ -681,32 +687,57 @@ forward_accumulation
 
 # ╔═╡ cebd8f5c-a72c-436d-a870-a1a64fde16ab
 md"""## Computing gradients
-For scalar-valued functions $f: \mathbb{R}^n \rightarrow \mathbb{R}$ (such as neural networks with scalar loss functions), the gradient $\nabla f_\tilde{x}$ is equivalent to the transpose of the $1 \times n\,$ Jacobian:
+For scalar-valued functions $f: \mathbb{R}^n \rightarrow \mathbb{R}$ (such as neural networks with scalar loss functions), the gradient $\nabla f\big|_\tilde{x}$ is equivalent to the transpose of the $1 \times n\,$ Jacobian:
 
-$\nabla f_\tilde{x}
+$\Big(\nabla f\big|_\tilde{x}\Big)^T 
 = \begin{bmatrix}
-    \dfrac{\partial f}{\partial x_1}\Bigg|_\tilde{x} \\
-    \vdots \\
+    \dfrac{\partial f}{\partial x_1}\Bigg|_\tilde{x} &
+    \dots &
     \dfrac{\partial f}{\partial x_n}\Bigg|_\tilde{x}
 \end{bmatrix}
-= \Big(J_f\big|_\tilde{x}\Big) ^ T$
+= J_f\big|_\tilde{x}$
 
-We've seen that we can compute this Jacobian / Gradient using either JVPs or VJPs:
+### Computing gradients using JVPs
+Compute the $i$-th entry of the Jacobian using the standard basis vector $e_i$:
 
-> * **Computing gradients with forward-mode AD is expensive**: we need to evaluate $n\,$ JVPs, where $n$ corresponds to the input dimension.
-> * **Computing gradients with reverse-mode AD is cheap**: we only need to evaluate a single JVP since the output dimension is $m=1$.
+$\begin{align}
+\mathcal{D}f_\tilde{x}(e_i)
+&= J_f\big|_\tilde{x} \cdot e_i \\[0.5em]
+&= \begin{bmatrix}
+    \dfrac{\partial f}{\partial x_1}\Bigg|_\tilde{x} &
+    \dots &
+    \dfrac{\partial f}{\partial x_n}\Bigg|_\tilde{x}
+\end{bmatrix} \cdot e_i \\[0.5em]
+&= \dfrac{\partial f}{\partial x_i}\Bigg|_\tilde{x}
+\end{align}$
 
-In Deep Learning, the input dimension $n$ is usually very large, making VJPs and reverse-mode AD more efficient than forward-mode AD.
+Obtaining the full gradient / Jacobian requires computing $n$ JVPs with $e_1$ to $e_n$.
+
+> **Computing gradients with forward-mode AD is expensive**: we need to evaluate $n\,$ JVPs, where $n$ corresponds to the input dimensionality.
+
+### Computing gradients using VJPs
+Since our function is scalar-valued, we only need to compute a single VJP with $e_1=1$:
+
+$\begin{align}\big(\mathcal{D}f_\tilde{x}\big)^T(e_1) 
+= \Big(1 \cdot J_f\big|_\tilde{x}\Big) ^ T
+= J_f\big|_\tilde{x}^T \cdot 1 
+= \nabla f\big|_\tilde{x}
+\end{align}$
+
+> **Computing gradients with reverse-mode AD is cheap**: we only need to evaluate a single JVP since the output dimension is $m=1$.
 """
 
 # ╔═╡ c365c5a2-43b7-4ddc-82f1-3ca0670117ba
-takeaways(md"
+takeaways(
+    md"
 - JVPs and VJPs are the building blocks of automatic differentiation
 - Gradients are computed using JVPs and VJPs
 - Given a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$
   - if $n \gg m$, reverse-mode AD is more efficient
   - if $n \ll m$, forward-mode AD is more efficient
-")
+- In Deep Learning, $n$ is usually very large and $m=1$, making reverse-mode AD more efficient than forward-mode AD.
+",
+)
 
 # ╔═╡ d690349c-b4a1-4310-a237-622e0614a24c
 md"# Automatic differentiation in Julia"
@@ -725,14 +756,14 @@ reverse_accumulation
 # ╔═╡ 344a0531-60fa-436b-bdc5-0aaa98df0463
 md"""
 For every function `fⁱ(x)`, we need to match either
-- a *"forward rule"* that implements `forward_rule(fⁱ, x̃) = v -> 𝒟fⁱₓ̃(v)`
-- a *"reverse rule"* that implements `reverse_rule(fⁱ, x̃) = w -> (𝒟fⁱₓ̃)ᵀ(w)`.
+- a *"forward rule"* that implements `forward_rule(f, x̃) = v -> 𝒟fₓ̃(v)`
+- a *"reverse rule"* $\,$ that implements `reverse_rule(f, x̃) = w -> (𝒟fₓ̃)ᵀ(w)`.
 
 Since in Julia, a function `f` is of type `typeof(f)`, we can use multiple dispatch to automatically match functions and their rules!
 
 Then,
 - for forward-mode AD, we can then simply iterate through all `fⁱ` and `𝒟fⁱₓ̃`, simultaneously computing `y` and a JVP `𝒟fₓ̃(v)`.
-- for reverse-mode AD, we need to first iterate through all `fⁱ` and store all intermediate activations `hⁱ` and functions `(𝒟fⁱₓ̃)ᵀ`. Data structures that save these are commonly called *tape* or *Wengert lists*. We then have all the ingredients to compute a VJP `(𝒟fₓ̃)ᵀ(w)` in a second backward pass.
+- for reverse-mode AD, we first need to iterate through all `fⁱ` and store all intermediate activations `hⁱ` and functions `(𝒟fⁱₓ̃)ᵀ`. Data structures that save these are commonly called *tape* or *Wengert lists*. We then have all the ingredients needed to compute a VJP `(𝒟fₓ̃)ᵀ(w)` in a second backward pass.
 """
 
 # ╔═╡ 92def6ee-965c-42f9-acd3-176ac6e8c242
