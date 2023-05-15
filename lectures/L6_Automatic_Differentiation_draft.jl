@@ -28,8 +28,6 @@ begin
     using HypertextLiteral
     using LaTeXStrings
     using Plots
-
-    using ForwardDiff
 end
 
 # ╔═╡ 5754ef41-3835-40e3-a879-b071b4e12d5c
@@ -37,6 +35,15 @@ using Zygote
 
 # ╔═╡ 031bc83b-8754-4586-83c8-08fbcbe80bda
 using Enzyme
+
+# ╔═╡ 44e0dc91-9f2a-4b1b-8ec2-dd6f8209558c
+using FiniteDiff
+
+# ╔═╡ efad4e11-75be-4081-8b32-7ddf600fb82a
+using FiniteDifferences
+
+# ╔═╡ ff9aa2fe-6984-4896-9437-f32ec2f385f7
+using ForwardDiff
 
 # ╔═╡ 83497498-2c14-49f4-bb5a-c252f655e006
 ChooseDisplayMode()
@@ -75,27 +82,26 @@ html"""
 """
 
 # ╔═╡ 9d97daa0-73e3-40c0-b697-1ecadf505243
-Markdown.MD(
-    Markdown.Admonition(
-        "warning",
-        "Under construction",
-        [md"The contents of this lecture will be uploaded soon."],
-    ),
-)
+md"---
+**Note:** This lecture demonstrates multiple automatic differentiation packages.
+Loading it for the first time can take several minutes."
 
 # ╔═╡ 3cffee7c-7394-445f-b00d-bb32e5e63783
 md"## Motivation
-To apply gradient-based optimization methods such as [stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) to a neural network, we need to compute the gradient of its loss function with respect to its parameters.
+To apply gradient-based optimization methods such as [stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) to a neural network,
+we need to compute the gradient of its loss function with respect to its parameters.
 
-Since Deep Learning models can get large and complicated, it would be nice to have **machinery that can take an arbitrary function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivatives**. This is called automatic differentiation (AD).
+Since Deep Learning models can get large and complicated, it would be nice to have **machinery that can take an arbitrary function
+$f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivatives**.
+This is called automatic differentiation (AD).
 "
 
 # ╔═╡ 748b0576-7e95-4199-918e-acd6a19adf84
 md"""## The Julia AD ecosystem
-Julia has more than a dozen AD systems. 
-A summary of available packages can be found at [juliadiff.org](https://juliadiff.org/). 
+Julia has more than a dozen AD systems.
+A summary of available packages can be found at [juliadiff.org](https://juliadiff.org/).
 The list is sorted by type:
-1. *Reverse-mode* 
+1. *Reverse-mode*
 1. *Forward-mode*
 1. *Symbolic*
 1. *Finite differencing*
@@ -140,7 +146,8 @@ Foldable(
 
 # ╔═╡ ae1c7dc7-6e0f-48c7-851b-dc6f0c0ad60e
 md"""## Connection to matrices
-> Every linear map $f$ between two finite-dimensional vector spaces $V, W$ **can be represented as a matrix**, given a basis for each vector space (e.g. the [standard basis](https://en.wikipedia.org/wiki/Standard_basis)).
+> Every linear map $f$ between two finite-dimensional vector spaces $V, W$ **can be represented as a matrix**,
+> given a basis for each vector space (e.g. the [standard basis](https://en.wikipedia.org/wiki/Standard_basis)).
 
 A linear map $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ can be represented as
 
@@ -220,7 +227,8 @@ md"# Derivatives"
 
 # ╔═╡ 68e1e6e9-5e39-4156-9f66-494e16fbe7ca
 md"""## What is a derivative?
-The ([total](https://en.wikipedia.org/wiki/Total_derivative)) derivative of a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ at a point $\tilde{x} \in \mathbb{R}^n$ is the **linear approximation of $f$ near the point $\tilde{x}$**.
+The ([total](https://en.wikipedia.org/wiki/Total_derivative)) derivative of a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$
+at a point $\tilde{x} \in \mathbb{R}^n$ is the **linear approximation of $f$ near the point $\tilde{x}$**.
 
 We give the derivative the symbol $\mathcal{D}f_\tilde{x}$. You can read this as "$\mathcal{D}$erivative of $f$ at $\tilde{x}$".
 
@@ -283,7 +291,8 @@ $f(x) \approx f(\tilde{x}) + \mathcal{D}f_\tilde{x}(x-\tilde{x}) \quad .$
 
 # ╔═╡ 430941d0-2f83-4af0-ab48-25d67da3e675
 md"## Differentiability
-From your calculus classes, you might recall that a function $f: \mathbb{R} \rightarrow \mathbb{R}$ is differentiable at $\tilde{x}$ if there is a number $f'(\tilde{x})$ such that
+From your calculus classes, you might recall that a function $f: \mathbb{R} \rightarrow \mathbb{R}$
+is differentiable at $\tilde{x}$ if there is a number $f'(\tilde{x})$ such that
 
 $\lim_{h \rightarrow 0} \frac{f(\tilde{x} + h) - f(\tilde{x})}{h}
 = f'(\tilde{x}) \quad .$
@@ -291,7 +300,8 @@ $\lim_{h \rightarrow 0} \frac{f(\tilde{x} + h) - f(\tilde{x})}{h}
 This number $f'(\tilde{x})$ is called the derivative.
 
 We can now extend this notion to multivariate functions:
-A function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ is *totally* differentiable at a point at $\tilde{x}$ if there exists a linear map $\mathcal{D}f_\tilde{x}$ such that
+A function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ is *totally* differentiable at a point $\tilde{x}$
+if there exists a linear map $\mathcal{D}f_\tilde{x}$ such that
 
 $\lim_{h \rightarrow 0} \frac{|f(\tilde{x} + h) - f(\tilde{x}) - \mathcal{D}f_\tilde{x}(h)|}{|h|}
 = 0 \quad .$
@@ -380,7 +390,8 @@ Instead, linear maps $\mathcal{D}f$ are used.
 
 # ╔═╡ 8ec1c1c3-5254-4678-8d63-2fa7487057d5
 md"## Chain rule
-Let's look at a function $h(x)=g(f(x))$ composed from two differentiable functions $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and $g: \mathbb{R}^m \rightarrow \mathbb{R}^p$.
+Let's look at a function $h(x)=g(f(x))$ composed from two differentiable functions
+$f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and $g: \mathbb{R}^m \rightarrow \mathbb{R}^p$.
 
 $h = g \circ f\,$
 
@@ -438,7 +449,8 @@ $\begin{align} (uv)'
 	&= vu' + uv'
 \end{align}$
 
-As you can see, the product rule follows from the chain rule. Instead of memorizing several different rules, the chain rule reduces everything to the composition of linear maps, which corresponds to matrix multiplication.
+As you can see, the product rule follows from the chain rule. Instead of memorizing several different rules,
+the chain rule reduces everything to the composition of linear maps, which corresponds to matrix multiplication.
 """,
 )
 
@@ -462,7 +474,7 @@ Assume we want to differentiate over a neural network $f$ with $N$ layers
 
 $f(x) = f^N(f^{N-1}(\ldots f^2(f^1(x)))) \quad ,$
 
-where $f^i$ is the $i$-th layer of the neural network. 
+where $f^i$ is the $i$-th layer of the neural network.
 
 Applying the chain rule to compute the derivative of $f$ at $\tilde{x}$, we get
 
@@ -514,7 +526,8 @@ forward_accumulation = @htl("""
 
 # ╔═╡ 112a6344-070e-4d1b-b821-65c5723ebb99
 md"""
-We can see that the computation of both $y=f(\tilde{x})$ and a Jacobian-Vector product $\mathcal{D}f_\tilde{x}(v)$ takes a single forward-pass through the compositional structure of $f$.
+We can see that the computation of both $y=f(\tilde{x})$ and a Jacobian-Vector product $\mathcal{D}f_\tilde{x}(v)$
+takes a single forward-pass through the compositional structure of $f$.
 
 This is called forward accumulation and is the basis for **forward-mode AD**.
 """
@@ -555,7 +568,8 @@ $\begin{align}
 \end{align}$
 
 
-> For $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$, computing the full $m \times n$ Jacobian therefore requires computing $n\,$ JVPs: one for each column, as many as the **input dimensionality** of $f$.
+> For $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$, computing the full $m \times n$ Jacobian therefore requires computing $n\,$ JVPs:
+> one for each column, as many as the **input dimensionality** of $f$.
 """
 
 # ╔═╡ 1effbb3e-067b-4166-a39d-efa8e1d38f31
@@ -634,7 +648,7 @@ once again, parentheses have been added to emphasize the compositional structure
 
 Introducing the **transpose of the derivative**
 
-$\big(\mathcal{D}f_\tilde{x}\big)^T(w) 
+$\big(\mathcal{D}f_\tilde{x}\big)^T(w)
 = \Big(w^T \cdot J_f\big|_\tilde{x}\Big) ^ T
 = J_f\big|_\tilde{x}^T \cdot w  \quad ,$
 
@@ -692,9 +706,10 @@ forward_accumulation
 
 # ╔═╡ cebd8f5c-a72c-436d-a870-a1a64fde16ab
 md"""## Computing gradients
-For scalar-valued functions $f: \mathbb{R}^n \rightarrow \mathbb{R}$ (such as neural networks with scalar loss functions), the gradient $\nabla f\big|_\tilde{x}$ is equivalent to the transpose of the $1 \times n\,$ Jacobian:
+For scalar-valued functions $f: \mathbb{R}^n \rightarrow \mathbb{R}$ (such as neural networks with scalar loss functions),
+the gradient $\nabla f\big|_\tilde{x}$ is equivalent to the transpose of the $1 \times n\,$ Jacobian:
 
-$\Big(\nabla f\big|_\tilde{x}\Big)^T 
+$\Big(\nabla f\big|_\tilde{x}\Big)^T
 = \begin{bmatrix}
     \dfrac{\partial f}{\partial x_1}\Bigg|_\tilde{x} &
     \dots &
@@ -723,9 +738,9 @@ Obtaining the full gradient / Jacobian requires computing $n$ JVPs with $e_1$ to
 ### Computing gradients using VJPs
 Since our function is scalar-valued, we only need to compute a single VJP with $e_1=1$:
 
-$\begin{align}\big(\mathcal{D}f_\tilde{x}\big)^T(e_1) 
+$\begin{align}\big(\mathcal{D}f_\tilde{x}\big)^T(e_1)
 = \Big(1 \cdot J_f\big|_\tilde{x}\Big) ^ T
-= J_f\big|_\tilde{x}^T \cdot 1 
+= J_f\big|_\tilde{x}^T \cdot 1
 = \nabla f\big|_\tilde{x}
 \end{align}$
 
@@ -768,27 +783,31 @@ Since in Julia, a function `f` is of type `typeof(f)`, we can use multiple dispa
 
 Then,
 - for forward-mode AD, we can then simply iterate through all `fⁱ` and `𝒟fⁱₓ̃`, simultaneously computing `y` and a JVP `𝒟fₓ̃(v)`.
-- for reverse-mode AD, we first need to iterate through all `fⁱ` and store all intermediate activations `hⁱ` and functions `(𝒟fⁱₓ̃)ᵀ`. Data structures that save these are commonly called *tape* or *Wengert lists*. We then have all the ingredients needed to compute a VJP `(𝒟fₓ̃)ᵀ(w)` in a second backward pass.
+- for reverse-mode AD, we first need to iterate through all `fⁱ` and store all intermediate activations `hⁱ` and functions `(𝒟fⁱₓ̃)ᵀ`.
+  Data structures that save these are commonly called *tape* or *Wengert lists*.
+  We then have all the ingredients needed to compute a VJP `(𝒟fₓ̃)ᵀ(w)` in a second backward pass.
 """
 
 # ╔═╡ 92def6ee-965c-42f9-acd3-176ac6e8c242
 md"""## ChainRules.jl
-[ChainRules.jl](https://github.com/JuliaDiff/ChainRules.jl) is a package that implements forward- and reverse-mode AD rules for many different functions, 
-allowing downstream Julia AD packages to re-use them instead of having to reimplement all rules. 
+[ChainRules.jl](https://github.com/JuliaDiff/ChainRules.jl) is a package that implements forward- and reverse-mode AD rules for many different functions,
+allowing downstream Julia AD packages to re-use them instead of having to reimplement all rules.
 
-Instead of explaining the API in detail, we are take a look at how forward and backward rules are implemented for the `sin` function. To avoid confusion, we are going to stick with our notation instead of the one used in the [ChainRules documentation](https://juliadiff.org/ChainRulesCore.jl/dev/).
+Instead of explaining the API in detail, we are take a look at how forward and backward rules are implemented for the `sin` function.
+To avoid confusion, we are going to stick with our notation instead of the one used in the [ChainRules documentation](https://juliadiff.org/ChainRulesCore.jl/dev/).
 """
 
 # ╔═╡ 73d8aa52-b494-44dc-9594-c6e10d741981
 tip(
-    md"The [ChainRules.jl documentation](https://juliadiff.org/ChainRulesCore.jl/dev/) has a well written [math primer](https://juliadiff.org/ChainRulesCore.jl/dev/maths/propagators.html) introducing their nomenclature and notation.",
+    md"The [ChainRules.jl documentation](https://juliadiff.org/ChainRulesCore.jl/dev/) has a well written
+    [math primer](https://juliadiff.org/ChainRulesCore.jl/dev/maths/propagators.html) introducing their nomenclature and notation.",
 )
 
 # ╔═╡ 8ed56f12-a076-4cff-bf7e-8e1e99674f34
 md"""### Forward-mode AD rule
-ChainRules.jl calls forward rules `frule`. 
+ChainRules.jl calls forward rules `frule`.
 
- $\mathcal{D}f_\tilde{x}(v)$, the derivative of $f(x) = \sin(x)$ at $\tilde{x}$, evaluated at $v$,  is implemented as: 
+ $\mathcal{D}f_\tilde{x}(v)$, the derivative of $f(x) = \sin(x)$ at $\tilde{x}$, evaluated at $v$,  is implemented as:
 
 ```julia
 function frule((_, v), ::typeof(sin), x̃)
@@ -804,7 +823,7 @@ We can observe that:
 
 # ╔═╡ 69b448a1-99a2-4336-bb95-1adb0863943b
 md"""### Reverse-mode AD rule
-ChainRules.jl calls reverse rules `rrule`. 
+ChainRules.jl calls reverse rules `rrule`.
 
  $(\mathcal{D}f_\tilde{x})^T(w)$ is implemented as
 
@@ -818,12 +837,13 @@ end
 We can observe that:
 - `rrule` dispatches on the type of `sin`
 - `rrule` also returns the primal output $y = \sin(\tilde{x})$
-- instead of directly returning the result of the computation $(\mathcal{D}f_\tilde{x})^T(w)$, `rrule` returns a closure $(\mathcal{D}f_\tilde{x})^T$ that takes $w$ as an argument. This function is often called the *pullback*.
+- instead of directly returning the result of the computation $(\mathcal{D}f_\tilde{x})^T(w)$,
+  `rrule` returns a closure $(\mathcal{D}f_\tilde{x})^T$ that takes $w$ as an argument. This function is often called the *pullback*.
 """
 
 # ╔═╡ c9e073b7-038e-4357-b3f0-669c63413387
 md"### ChainRulesCore.jl
-If you develop your own package, you can make use of [ChainRulesCore.jl](https://github.com/JuliaDiff/ChainRulesCore.jl), 
+If you develop your own package, you can make use of [ChainRulesCore.jl](https://github.com/JuliaDiff/ChainRulesCore.jl),
 a light-weight dependency that allows you to define forward- and/or reverse-rules for your package without having to depend on specific AD implementations.
 "
 
@@ -865,7 +885,7 @@ Using the `@code_llvm` macro, we can view the LLVM IR that is compiled from our 
 
 # ╔═╡ 7a168cc7-0615-4f1c-8c2d-6d3ad831c2b9
 md"""### Depth 4: Native code
-Using the `@code_native` macro, we can view specific assembly instructions that are compiled from our code. 
+Using the `@code_native` macro, we can view specific assembly instructions that are compiled from our code.
 
 This is specific to each CPU architecture and therefore **"too deep" of a representation to implement AD systems in**.
 """
@@ -875,7 +895,10 @@ This is specific to each CPU architecture and therefore **"too deep" of a repres
 
 # ╔═╡ 7fa49c99-fad0-4cbc-9207-940570676906
 md"""## Zygote.jl
-[Zygote.jl](https://github.com/FluxML/Zygote.jl) is a widely used reverse-mode AD system. It uses ChainRules.jl and performs *"IR-level source to source"* transformation, meaning that is looks at the Julia IR to analyze the structure of the function it differentiates. It then constructs a function that computes the VJP.
+[Zygote.jl](https://github.com/FluxML/Zygote.jl) is a widely used reverse-mode AD system.
+It uses ChainRules.jl and performs *"IR-level source to source"* transformation,
+meaning that is looks at the Julia IR to analyze the structure of the function it differentiates.
+It then constructs a function that computes the VJP.
 """
 
 # ╔═╡ 40bc8112-371b-4401-b393-d4fe0578089e
@@ -896,14 +919,14 @@ As we have learned in the slide *"Reverse-mode AD: Computing gradients"*,
 we can compute the gradient by computing a VJP with $e_1=1$:
 
 $\begin{align}
-\big(\nabla g\big|_\tilde{x}\big)^T 
+\big(\nabla g\big|_\tilde{x}\big)^T
 &= 1 \cdot J_g\big|_\tilde{x} \\
-&= 1 \cdot \begin{bmatrix} 
-		\frac{\partial g}{\partial x_1}\Big|_\tilde{x} & 
+&= 1 \cdot \begin{bmatrix}
+		\frac{\partial g}{\partial x_1}\Big|_\tilde{x} &
 		\frac{\partial g}{\partial x_2}\Big|_\tilde{x}
 	\end{bmatrix} \\
-&= 1 \cdot \begin{bmatrix} 
-		2\tilde{x}_1 + 2\tilde{x}_2 & 
+&= 1 \cdot \begin{bmatrix}
+		2\tilde{x}_1 + 2\tilde{x}_2 &
 		2\tilde{x}_1
 	\end{bmatrix}
 \end{align}$
@@ -915,7 +938,9 @@ Therefore, for $\tilde{x}=(1 , 2)$, the gradient is $\nabla g\big|_\tilde{x} = (
 ∇gₓ̃ = 𝒟gₓ̃ᵀ(1)
 
 # ╔═╡ 520d017e-a94d-4d81-b99c-90714578bd8f
-md"If we are only interested in the gradient, Zygote also offers the convenience function `gradient`, which does exactly what we did: compute the *pullback* $\big(\mathcal{D}g_\tilde{x}\big)^T$ and evaluate $\big(\mathcal{D}g_\tilde{x}\big)^T(1)$:"
+md"If we are only interested in the gradient, Zygote also offers the convenience function `gradient`,
+which does exactly what we did: compute the *pullback* $\big(\mathcal{D}g_\tilde{x}\big)^T$
+and evaluate $\big(\mathcal{D}g_\tilde{x}\big)^T(1)$:"
 
 # ╔═╡ 86f443be-7a41-49c6-9792-86e6908028a3
 Zygote.gradient(g, [1, 2])
@@ -929,16 +954,17 @@ As we have learned, Zygote's reverse-mode AD applies the chain rule to a functio
 reverse_accumulation
 
 # ╔═╡ 67215844-1c32-49eb-8d01-cc8c81f5e37d
-md"""The computational graph assumes that all functions $f$ are *"pure"* and have *no side effects*, 
-which allows us to store intermediate activations $h$ for a later backward-pass.
+md"""The computational graph assumes that all functions `fⁱ` are *"pure"* and have *no side effects*,
+which allows us to store intermediate activations `hⁱ` for a later backward-pass.
 
-This motivates a problem: **If a function $f$ in-place modifies the activation $h$ from the previous layer to $\hat{h}$, 
-Zygote will compute $\big(\mathcal{D}f_\hat{h}\big)^T$ 
+This motivates a problem: **If a function $f$ in-place modifies the activation $h$ from the previous layer to $\hat{h}$,
+Zygote will compute $\big(\mathcal{D}f_\hat{h}\big)^T$
 instead of $\big(\mathcal{D}f_h\big)^T$** and return the wrong VJP / gradient.
 
 In the best case, an error will be thrown when Zygote catches a mutating function:
 
-> Mutating arrays is not supported -- called `copyto!(Vector{Int64}, ...)`
+> Mutating arrays is not supported -- called `copyto!(Vector{Int64}, ...)`.
+>
 > This error occurs when you ask Zygote to differentiate operations that change
 > the elements of arrays in place (e.g. setting values with `x .= ...`)
 > Possible fixes:
@@ -948,30 +974,31 @@ In the best case, an error will be thrown when Zygote catches a mutating functio
 
 In the worst case scenario, an incorrect gradient will be silently returned.
 
-This can be dangerous when trying to differentiate through a function `foo` from an external package:
-even non-mutating functions `foo` might call a mutating function `bar!` under the hood.
-Make sure the package developer advertises compatibility with Zygote 
+This can be dangerous when trying to differentiate through a function `foo` from an external package.
+Even non-mutating functions `foo` might call a mutating function `bar!` under the hood.
+Make sure the package developer advertises compatibility with Zygote
 or check the source code and run some sanity tests.
 """
 
 # ╔═╡ 513990ce-d7e5-4ca6-a079-e0b3197571ee
 tip(
-    md"Always read the sections on limitations / gotchas / sharp bits in AD package documentation.",
+    md"Always read the section on limitations / gotchas / sharp bits in AD package documentation.",
 )
 
 # ╔═╡ a2c9b337-7381-4d46-9981-5fad6043f76f
 md"""## Enzyme.jl
-[Enzyme.jl](https://github.com/EnzymeAD/Enzyme.jl) is a new, experimental AD system that does *LLVM source to source* transformations. It supports both forward- and reverse-mode AD, but can only be applied to functions with scalar outputs. It currently doens't support ChainRules.jl, instead using its own [EnzymeRules](https://enzyme.mit.edu/index.fcgi/julia/stable/generated/custom_rule/).
+[Enzyme.jl](https://github.com/EnzymeAD/Enzyme.jl) is a new, experimental AD system that does *LLVM source to source* transformations, supporting both forward- and reverse-mode AD.
+It currently doesn't support ChainRules.jl, instead using its own [EnzymeRules](https://enzyme.mit.edu/index.fcgi/julia/stable/generated/custom_rule/).
 
 Since the package is under rapid development and the API hasn't fully stabilized, note that this example uses Enzyme `v0.11.1`.
 """
 
 # ╔═╡ 4ea887d9-956a-4ca4-96be-be8c4b1ba330
-md"Using reverse-mode AD for $\tilde{x}=(1,2)$ and 
+md"For $\tilde{x}=(1,2)$ and
 
-$g(x) = x_1^2 + 2 x_1 x_2 \quad ,$ 
+$g(x) = x_1^2 + 2 x_1 x_2 \quad ,$
 
-we correctly obtain the primal output $y=5$ and the gradient $\nabla g\big|_\tilde{x} = (6, 2)$:"
+we can use reverse-mode AD to correctly obtain the primal output $y=5$ and the gradient $\nabla g\big|_\tilde{x} = (6, 2)$:"
 
 # ╔═╡ 14e464f7-d262-4d80-abd3-41d138895673
 begin
@@ -986,7 +1013,7 @@ begin
 end
 
 # ╔═╡ 3e2bdfbf-dc0a-40d6-b67c-d97dae8a67f3
-md"Using forward-mode AD:"
+md"We can also use forward-mode AD:"
 
 # ╔═╡ 46646317-7160-4a83-9468-009c12cd6691
 begin
@@ -999,33 +1026,136 @@ begin
 end
 
 # ╔═╡ 06f2a81a-97bd-4e03-a470-5c3be869d61c
-md"**Personal opinion:** Enzyme is in early development and the API needs some polish. Wrapper types like `Active`, `Duplicated`, `BatchDuplicated` are unintuitive and return values are inconsistent for different AD modes."
+md"**Personal opinion:**
+Enzyme is in early development and the API still needs some polish.
+Wrapper types like `Active`, `Duplicated`, `BatchDuplicated` are not very intuitive and return values are inconsistent for different AD modes."
+
+# ╔═╡ 1ec36193-87cc-40a6-8dbf-69ad88c5f034
+md"""## Finite differences
+In this lecture, we jumped directly into linear maps and total derivatives to motivate forward- and reverse-mode AD.
+By doing so, we skipped the simplest method of all: *finite differences*.
+
+Going back to the definition of a derivative we introduced in the slide on *Differentiability*,
+for $f: \mathbb{R} \rightarrow \mathbb{R}$, we can compute the derivative as
+
+$f'(\tilde{x}) = \lim_{h \rightarrow 0} \frac{f(\tilde{x} + h) - f(\tilde{x})}{h} \quad .$
+
+Using a very small number $\varepsilon$, we can **approximate** the derivative as
+
+$f'(\tilde{x}) \approx \frac{f(\tilde{x} + \varepsilon) - f(\tilde{x})}{\varepsilon} \quad .$
+
+Without going into too much detail, this idea generalizes to functions
+$f: \mathbb{R}^n \rightarrow \mathbb{R}^m$.
+Similar to forward-mode AD, we can use finite differences to recover one column of the Jacobian of $J_f\big|_\tilde{x}$ at a time.
+Using a perturbation "in direction" $e_i$, we **approximate** the $i$-th column ot the Jacobian as
+
+$J_f\big|_\tilde{x} \cdot e_i
+\approx \frac{f(\tilde{x} + \varepsilon e_i) - f(\tilde{x})}{\varepsilon} \quad .$
+
+
+### Pros & Cons
+Computing a Jacobian or Gradient using finite differences requires $n+1$ evaluations of $f$
+and therefore gets expensive for functions with large input dimensionality $n$.
+
+Additionally, selecting $\varepsilon$ can be tricky: If it is too large, our approximation of the derivative is inaccurate.
+If it is too small, we run into numerical problems due to rounding errors in floating point arithmetic.
+
+However, finite differences are easy to implement and can be applied to almost any function.
+"""
+
+# ╔═╡ 2a166f56-e179-4986-857a-dcd6d577fb6b
+md"### FiniteDiff.jl and FiniteDifferences.jl
+[FiniteDiff.jl](https://github.com/JuliaDiff/FiniteDiff.jl) and [FiniteDifferences.jl](https://github.com/JuliaDiff/FiniteDifferences.jl)
+are two similar packages that implement finite differences.
+The [documentation](https://docs.sciml.ai/FiniteDiff/stable/#FiniteDiff.jl-vs-FiniteDifferences.jl) lists differences between the two packages:
+> - FiniteDifferences.jl supports basically any type, where as FiniteDiff.jl supports only array-ish types
+> - FiniteDifferences.jl supports higher order approximation
+> - FiniteDiff.jl is carefully optimized to minimize allocations
+> - FiniteDiff.jl supports coloring vectors for efficient calculation of sparse Jacobians
+"
+
+# ╔═╡ f5253b44-981e-4fd2-bac8-094238c29ef1
+md"#### FiniteDiff.jl"
+
+# ╔═╡ 7a9c76e8-31a6-48cf-a7bc-5e6384d278e6
+md"Using FiniteDiff.jl to approximate the Jacobian of $g(x) = x_1^2 + 2 x_1 x_2\,$
+at $\tilde{x}=(1,2)$, we obtain the correct Jacobian $J_g\big|_\tilde{x} = (6, 2)$:"
+
+# ╔═╡ 39434efc-4638-4660-b871-b27ca8a85474
+FiniteDiff.finite_difference_jacobian(g, [1.0, 2.0])
+
+# ╔═╡ 80a19e18-3721-42de-82ea-9e394375d0cb
+FiniteDiff.finite_difference_gradient(g, [1.0, 2.0])
+
+# ╔═╡ 1c953bd3-7d70-45ba-aae6-df7a98625093
+md"#### FiniteDifferences.jl"
+
+# ╔═╡ e30c170d-fd6d-439f-bb30-b702b0f29502
+md"FiniteDifferences.jl requires the definition of a finite difference method (FDM), e.g. the *5th order central method*.
+Applying this method to $g$, we also obtain the correct Jacobian:"
+
+# ╔═╡ 33d3d6e5-473c-4599-8335-34b45bc64167
+fdm_method = central_fdm(5, 1)
+
+# ╔═╡ 31913258-b867-437c-bc7b-fcdcbf9c1e86
+FiniteDifferences.jacobian(fdm_method, g, [1.0, 2.0])
+
+# ╔═╡ 53c3cf1e-61bc-46cb-99b7-3dd8e52a7903
+FiniteDifferences.grad(fdm_method, g, [1.0, 2.0])
 
 # ╔═╡ a4e1e575-14d7-4b0b-9f58-1fb34b0e78fd
 md"## ForwardDiff.jl
-[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl)
+Finally, we will take a look at
+[ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl), which implements forward-mode AD using *operator overloading*.
+ForwardDiff introduces a *Dual number* type
+
+```julia
+struct Dual{T}
+    val::T  # value
+    der::T  # derivative
+end
+```
+and overloads Julia Base functions such as addition and multiplication on this type to implement the product and quotient rules.
+
+Since you are going to learn more about dual numbers in the **homework, where you will implement your own version of ForwardDiff**,
+we will skip details and take a look at the API:
+"
+
+# ╔═╡ 15a3167e-f9c2-4516-a6fb-e737958fbdfe
+md"As expected, for $g(x) = x_1^2 + 2 x_1 x_2\,$ and $\tilde{x}=(1,2)$, we obtain $\nabla g\big|_\tilde{x} = (6, 2)$"
+
+# ╔═╡ bafd8dc3-7666-4d5e-a07f-d4e35b26a777
+ForwardDiff.gradient(g, [1.0, 2.0])
+
+# ╔═╡ 8aa5cd8a-ae0d-4c5c-a52b-6c00930b63cc
+tip(md"ForwardDiff.jl is considered one of the most stable and reliable Julia AD packages.")
+
+# ╔═╡ ce2d9ef5-3835-4871-8744-18293c772133
+md"## Other AD packages
+Now that you are equipped with the knowledge to understand its information, take a look at the list of AD packages [juliadiff.org](https://juliadiff.org)!
 "
 
 # ╔═╡ 17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 md"""# Acknowledgements
-Many thanks to [Niklas Schmitz](https://twitter.com/niklasschmitz_) for many insightful conversations about AD systems and feedback on this lecture. This lecture wouldn't exist in this form without him.
+Many thanks to [Niklas Schmitz](https://twitter.com/niklasschmitz_) for many insightful conversations about AD systems and feedback on this lecture.
+This lecture wouldn't exist in this form without him.
 
 Further inspiration for this lecture came from
 - Prof. Robert Ghrist's [lecture on the chain rule](https://twitter.com/robertghrist/status/1627627577652269056)
-- SciML book chapters on [forward-mode](https://book.sciml.ai/notes/08-Forward-Mode_Automatic_Differentiation_(AD)_via_High_Dimensional_Algebras/) and [reverse-mode AD](https://book.sciml.ai/notes/10-Basic_Parameter_Estimation-Reverse-Mode_AD-and_Inverse_Problems/)
+- SciML book chapter on [forward-mode AD](https://book.sciml.ai/notes/08-Forward-Mode_Automatic_Differentiation_(AD)_via_High_Dimensional_Algebras/)
 - Mike Innes' [Differentiation for Hackers](https://github.com/MikeInnes/diff-zoo),  [rendered here](https://aviatesk.github.io/diff-zoo/dev/)
 
 ##### Further references
-- Books:
-  - Griewand & Walther, *Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation*
-  - Spivak, *Calculus on manifolds*
-- Overview of the Julia AD ecosystem: [juliadiff.org](https://juliadiff.org)
+- Griewand & Walther, *Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation*
+- Spivak, *Calculus on manifolds*
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
+FiniteDiff = "6a86dc24-6348-571c-b903-95158fe2bd41"
+FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
@@ -1036,6 +1166,8 @@ Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [compat]
 Enzyme = "~0.11.1"
+FiniteDiff = "~2.20.0"
+FiniteDifferences = "~0.12.26"
 ForwardDiff = "~0.10.35"
 HypertextLiteral = "~0.9.4"
 LaTeXStrings = "~1.3.0"
@@ -1051,7 +1183,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "6d8bd6efa1c40c8a28410ac91d967d63a552c41a"
+project_hash = "b73829ebf3108cf9b4fe384a1b87131476af59c5"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -1074,6 +1206,12 @@ version = "3.6.2"
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 version = "1.1.1"
+
+[[deps.ArrayInterface]]
+deps = ["Adapt", "LinearAlgebra", "Requires", "SparseArrays", "SuiteSparse"]
+git-tree-sha1 = "c4d9efe93662757bca4cc24df50df5f75e659a2d"
+uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
+version = "7.4.4"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -1173,6 +1311,12 @@ version = "4.6.1"
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 version = "1.0.1+0"
+
+[[deps.ConstructionBase]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "738fec4d684a9a6ee9598a8bfee305b26831f28c"
+uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
+version = "1.5.2"
 
 [[deps.Contour]]
 git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
@@ -1280,6 +1424,18 @@ git-tree-sha1 = "fc86b4fd3eff76c3ce4f5e96e2fdfa6282722885"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
 version = "1.0.0"
 
+[[deps.FiniteDiff]]
+deps = ["ArrayInterface", "LinearAlgebra", "Requires", "Setfield", "SparseArrays", "StaticArrays"]
+git-tree-sha1 = "6604e18a0220650dbbea7854938768f15955dd8e"
+uuid = "6a86dc24-6348-571c-b903-95158fe2bd41"
+version = "2.20.0"
+
+[[deps.FiniteDifferences]]
+deps = ["ChainRulesCore", "LinearAlgebra", "Printf", "Random", "Richardson", "SparseArrays", "StaticArrays"]
+git-tree-sha1 = "3f605dd6db5640c5278f2551afc9427656439f42"
+uuid = "26cc04aa-876d-5657-8c51-4c34ba976000"
+version = "0.12.26"
+
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
 git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
@@ -1315,6 +1471,10 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "aa31987c2ba8704e23c6c8ba8a4f769d5d7e4f91"
 uuid = "559328eb-81f9-559d-9380-de523a88c83c"
 version = "1.0.10+0"
+
+[[deps.Future]]
+deps = ["Random"]
+uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
 [[deps.GLFW_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Pkg", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll"]
@@ -1851,6 +2011,12 @@ git-tree-sha1 = "90cb983381a9dc7d3dff5fb2d1ee52cd59877412"
 uuid = "295af30f-e4ad-537b-8983-00126c2a3abe"
 version = "3.5.1"
 
+[[deps.Richardson]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "e03ca566bec93f8a3aeb059c8ef102f268a38949"
+uuid = "708f8203-808e-40c0-ba2d-98a6953ed40d"
+version = "1.4.0"
+
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
@@ -1863,6 +2029,12 @@ version = "1.2.0"
 
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+
+[[deps.Setfield]]
+deps = ["ConstructionBase", "Future", "MacroTools", "StaticArraysCore"]
+git-tree-sha1 = "e2cc6d8c88613c05e1defb55170bf5ff211fbeac"
+uuid = "efcf1570-3423-57d1-acb7-fd33fddbac46"
+version = "1.1.1"
 
 [[deps.Showoff]]
 deps = ["Dates", "Grisu"]
@@ -1938,6 +2110,10 @@ deps = ["Test"]
 git-tree-sha1 = "010dc73c7146869c042b49adcdb6bf528c12e859"
 uuid = "53d494c1-5632-5724-8f4c-31dff12d585f"
 version = "0.3.0"
+
+[[deps.SuiteSparse]]
+deps = ["Libdl", "LinearAlgebra", "Serialization", "SparseArrays"]
+uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
 
 [[deps.TOML]]
 deps = ["Dates"]
@@ -2345,7 +2521,25 @@ version = "1.4.1+0"
 # ╟─3e2bdfbf-dc0a-40d6-b67c-d97dae8a67f3
 # ╠═46646317-7160-4a83-9468-009c12cd6691
 # ╟─06f2a81a-97bd-4e03-a470-5c3be869d61c
+# ╟─1ec36193-87cc-40a6-8dbf-69ad88c5f034
+# ╟─2a166f56-e179-4986-857a-dcd6d577fb6b
+# ╟─f5253b44-981e-4fd2-bac8-094238c29ef1
+# ╠═44e0dc91-9f2a-4b1b-8ec2-dd6f8209558c
+# ╟─7a9c76e8-31a6-48cf-a7bc-5e6384d278e6
+# ╠═39434efc-4638-4660-b871-b27ca8a85474
+# ╠═80a19e18-3721-42de-82ea-9e394375d0cb
+# ╟─1c953bd3-7d70-45ba-aae6-df7a98625093
+# ╠═efad4e11-75be-4081-8b32-7ddf600fb82a
+# ╟─e30c170d-fd6d-439f-bb30-b702b0f29502
+# ╠═33d3d6e5-473c-4599-8335-34b45bc64167
+# ╠═31913258-b867-437c-bc7b-fcdcbf9c1e86
+# ╠═53c3cf1e-61bc-46cb-99b7-3dd8e52a7903
 # ╟─a4e1e575-14d7-4b0b-9f58-1fb34b0e78fd
+# ╠═ff9aa2fe-6984-4896-9437-f32ec2f385f7
+# ╟─15a3167e-f9c2-4516-a6fb-e737958fbdfe
+# ╠═bafd8dc3-7666-4d5e-a07f-d4e35b26a777
+# ╟─8aa5cd8a-ae0d-4c5c-a52b-6c00930b63cc
+# ╟─ce2d9ef5-3835-4871-8744-18293c772133
 # ╟─17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
