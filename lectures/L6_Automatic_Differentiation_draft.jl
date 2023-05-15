@@ -30,8 +30,13 @@ begin
     using Plots
 
     using ForwardDiff
-    using Zygote
 end
+
+# ╔═╡ 5754ef41-3835-40e3-a879-b071b4e12d5c
+using Zygote
+
+# ╔═╡ 031bc83b-8754-4586-83c8-08fbcbe80bda
+using Enzyme
 
 # ╔═╡ 83497498-2c14-49f4-bb5a-c252f655e006
 ChooseDisplayMode()
@@ -501,8 +506,8 @@ forward_accumulation = @htl("""
 
 <style>
 	article.diagram code {
-	  width: 600px;
-	  display: block;
+		width: 800px;
+		display: block;
 	}
 </style>
 """)
@@ -666,8 +671,8 @@ reverse_accumulation = @htl("""
 
 <style>
 	article.diagram code {
-	  width: 800px;
-	  display: block;
+		width: 800px;
+		display: block;
 	}
 </style>
 """)
@@ -822,10 +827,179 @@ If you develop your own package, you can make use of [ChainRulesCore.jl](https:/
 a light-weight dependency that allows you to define forward- and/or reverse-rules for your package without having to depend on specific AD implementations.
 "
 
-# ╔═╡ a16c4a8b-50ab-4dd5-850a-8e97448603bf
-md"""## Zygote.jl
-[Zygote.jl](https://github.com/FluxML/Zygote.jl) is a widely used reverse-mode AD system. It uses ChainRules.jl and performs *"IR-level source to source"* transformation.
+# ╔═╡ 2abcf211-5ffd-464e-8948-83860fe186db
+md"""## Code introspection ⁽⁺⁾
+Julia code can look at its own structure. This is called *reflection* or *introspection* and gives Julia its metaprogramming powers.
+Introspection can be applied at several levels: AST, IR or LLVM. Let's demonstrate this on a simple test function:
 """
+
+# ╔═╡ 32f6945a-d918-4cdc-8c4d-8d3cd898392d
+foo(x) = sqrt(x + 2)
+
+# ╔═╡ 3c02c7dc-064e-4b11-8750-e01ac0c090c7
+md"### Depth 1: AST representation
+Using Julia's metaprogramming capabilities, the structure of source code can be represented as an *abstract syntax tree* (AST)."
+
+# ╔═╡ effe7e5e-a5e9-472d-ad4a-7ec7a9022b03
+ast = Meta.parse("foo(x) = sqrt(x + 2)")
+
+# ╔═╡ 2037447c-d916-4c13-b620-5d27bf5debe6
+ast.head
+
+# ╔═╡ 9218e2f5-722e-4559-b4e6-bb3fcee6e0ea
+ast.args
+
+# ╔═╡ 25634d4c-1346-4678-a4c5-84e18a95f8d6
+md"### Depth 2: Julia IR
+Using the `@code_lowered` macro, we can view the *intermediate representation* (IR) of our code."
+
+# ╔═╡ b953c179-3802-4ac9-a831-ffeac8e6746a
+@code_lowered foo(1)
+
+# ╔═╡ 9a71568d-2ebf-4f0f-86f7-71d0d51c0bef
+md"### Depth 3: LLVM representation
+Using the `@code_llvm` macro, we can view the LLVM IR that is compiled from our code."
+
+# ╔═╡ 9eaa6fd1-d2a6-4603-a7a1-e128e38eeb73
+@code_llvm foo(1)
+
+# ╔═╡ 7a168cc7-0615-4f1c-8c2d-6d3ad831c2b9
+md"""### Depth 4: Native code
+Using the `@code_native` macro, we can view specific assembly instructions that are compiled from our code. 
+
+This is specific to each CPU architecture and therefore **"too deep" of a representation to implement AD systems in**.
+"""
+
+# ╔═╡ 665fc505-3ccc-4b1a-b4d5-5124ff08bbe9
+@code_native foo(1)
+
+# ╔═╡ 7fa49c99-fad0-4cbc-9207-940570676906
+md"""## Zygote.jl
+[Zygote.jl](https://github.com/FluxML/Zygote.jl) is a widely used reverse-mode AD system. It uses ChainRules.jl and performs *"IR-level source to source"* transformation, meaning that is looks at the Julia IR to analyze the structure of the function it differentiates. It then constructs a function that computes the VJP.
+"""
+
+# ╔═╡ 40bc8112-371b-4401-b393-d4fe0578089e
+md"Given a function $g(x) = x_1^2 + 2 x_1 x_2$"
+
+# ╔═╡ 65d5b76b-cfda-4aac-ba54-733f578c6622
+g(x) = x[1]^2 + 2 * x[1] * x[2]
+
+# ╔═╡ 8bfa9912-71f2-4eff-a8c5-b6df81b3bf7e
+md"we can compute the primal $y=g(\tilde{x})$ and the pullback $\big(\mathcal{D}g_\tilde{x}\big)^T$ for $\tilde{x}=(1, 2)$ using the function `pullback`:"
+
+# ╔═╡ 5b59b307-c864-4775-95ca-30ea12feb16d
+y, 𝒟gₓ̃ᵀ = Zygote.pullback(g, [1, 2])
+
+# ╔═╡ b24d757b-cbbb-4ff4-a11d-5bc55320be64
+md"""
+As we have learned in the slide *"Reverse-mode AD: Computing gradients"*,
+we can compute the gradient by computing a VJP with $e_1=1$:
+
+$\begin{align}
+\big(\nabla g\big|_\tilde{x}\big)^T 
+&= 1 \cdot J_g\big|_\tilde{x} \\
+&= 1 \cdot \begin{bmatrix} 
+		\frac{\partial g}{\partial x_1}\Big|_\tilde{x} & 
+		\frac{\partial g}{\partial x_2}\Big|_\tilde{x}
+	\end{bmatrix} \\
+&= 1 \cdot \begin{bmatrix} 
+		2\tilde{x}_1 + 2\tilde{x}_2 & 
+		2\tilde{x}_1
+	\end{bmatrix}
+\end{align}$
+
+Therefore, for $\tilde{x}=(1 , 2)$, the gradient is $\nabla g\big|_\tilde{x} = (6, 2)$:
+"""
+
+# ╔═╡ 6211048c-71a6-488e-a549-b50934823c36
+∇gₓ̃ = 𝒟gₓ̃ᵀ(1)
+
+# ╔═╡ 520d017e-a94d-4d81-b99c-90714578bd8f
+md"If we are only interested in the gradient, Zygote also offers the convenience function `gradient`, which does exactly what we did: compute the *pullback* $\big(\mathcal{D}g_\tilde{x}\big)^T$ and evaluate $\big(\mathcal{D}g_\tilde{x}\big)^T(1)$:"
+
+# ╔═╡ 86f443be-7a41-49c6-9792-86e6908028a3
+Zygote.gradient(g, [1, 2])
+
+# ╔═╡ a7396ce9-62bc-4be7-8db3-3801b23f028b
+md"""### Caveats
+As we have learned, Zygote's reverse-mode AD applies the chain rule to a function that is composed of several other functions:
+"""
+
+# ╔═╡ faf4aef3-133b-44ef-b4fe-8223de4ca86b
+reverse_accumulation
+
+# ╔═╡ 67215844-1c32-49eb-8d01-cc8c81f5e37d
+md"""The computational graph assumes that all functions $f$ are *"pure"* and have *no side effects*, 
+which allows us to store intermediate activations $h$ for a later backward-pass.
+
+This motivates a problem: **If a function $f$ in-place modifies the activation $h$ from the previous layer to $\hat{h}$, 
+Zygote will compute $\big(\mathcal{D}f_\hat{h}\big)^T$ 
+instead of $\big(\mathcal{D}f_h\big)^T$** and return the wrong VJP / gradient.
+
+In the best case, an error will be thrown when Zygote catches a mutating function:
+
+> Mutating arrays is not supported -- called `copyto!(Vector{Int64}, ...)`
+> This error occurs when you ask Zygote to differentiate operations that change
+> the elements of arrays in place (e.g. setting values with `x .= ...`)
+> Possible fixes:
+> - avoid mutating operations (preferred)
+> - or read the documentation and solutions for this error
+> [https://fluxml.ai/Zygote.jl/latest/limitations](https://fluxml.ai/Zygote.jl/latest/limitations)
+
+In the worst case scenario, an incorrect gradient will be silently returned.
+
+This can be dangerous when trying to differentiate through a function `foo` from an external package:
+even non-mutating functions `foo` might call a mutating function `bar!` under the hood.
+Make sure the package developer advertises compatibility with Zygote 
+or check the source code and run some sanity tests.
+"""
+
+# ╔═╡ 513990ce-d7e5-4ca6-a079-e0b3197571ee
+tip(
+    md"Always read the sections on limitations / gotchas / sharp bits in AD package documentation.",
+)
+
+# ╔═╡ a2c9b337-7381-4d46-9981-5fad6043f76f
+md"""## Enzyme.jl
+[Enzyme.jl](https://github.com/EnzymeAD/Enzyme.jl) is a new, experimental AD system that does *LLVM source to source* transformations. It supports both forward- and reverse-mode AD, but can only be applied to functions with scalar outputs. It currently doens't support ChainRules.jl, instead using its own [EnzymeRules](https://enzyme.mit.edu/index.fcgi/julia/stable/generated/custom_rule/).
+
+Since the package is under rapid development and the API hasn't fully stabilized, note that this example uses Enzyme `v0.11.1`.
+"""
+
+# ╔═╡ 4ea887d9-956a-4ca4-96be-be8c4b1ba330
+md"Using reverse-mode AD for $\tilde{x}=(1,2)$ and 
+
+$g(x) = x_1^2 + 2 x_1 x_2 \quad ,$ 
+
+we correctly obtain the primal output $y=5$ and the gradient $\nabla g\big|_\tilde{x} = (6, 2)$:"
+
+# ╔═╡ 14e464f7-d262-4d80-abd3-41d138895673
+begin
+    x̃2 = [1.0, 2.0]
+
+    # Mutate ∇gₓ̃2 in place
+    ∇gₓ̃2 = similar(x̃2)
+    out2 = Enzyme.autodiff(ReverseWithPrimal, g, Active, Duplicated(x̃2, ∇gₓ̃2))
+
+    @info out2
+    @info ∇gₓ̃2
+end
+
+# ╔═╡ 3e2bdfbf-dc0a-40d6-b67c-d97dae8a67f3
+md"Using forward-mode AD:"
+
+# ╔═╡ 46646317-7160-4a83-9468-009c12cd6691
+begin
+    x̃3 = [1.0, 2.0]
+    v3 = ([1.0, 0.0], [0.0, 1.0]) # standard basis vectors e₁, e₂
+
+    out3 = Enzyme.autodiff(Forward, g, BatchDuplicated, BatchDuplicated(x̃3, v3))
+
+    @info out3
+end
+
+# ╔═╡ 06f2a81a-97bd-4e03-a470-5c3be869d61c
+md"**Personal opinion:** Enzyme is in early development and the API needs some polish. Wrapper types like `Active`, `Duplicated`, `BatchDuplicated` are unintuitive and return values are inconsistent for different AD modes."
 
 # ╔═╡ a4e1e575-14d7-4b0b-9f58-1fb34b0e78fd
 md"## ForwardDiff.jl
@@ -834,12 +1008,12 @@ md"## ForwardDiff.jl
 
 # ╔═╡ 17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 md"""# Acknowledgements
-Many thanks to Niklas Schmitz for many insightful conversations about AD systems and feedback on this lecture!
+Many thanks to [Niklas Schmitz](https://twitter.com/niklasschmitz_) for many insightful conversations about AD systems and feedback on this lecture. This lecture wouldn't exist in this form without him.
 
 Further inspiration for this lecture came from
 - Prof. Robert Ghrist's [lecture on the chain rule](https://twitter.com/robertghrist/status/1627627577652269056)
 - SciML book chapters on [forward-mode](https://book.sciml.ai/notes/08-Forward-Mode_Automatic_Differentiation_(AD)_via_High_Dimensional_Algebras/) and [reverse-mode AD](https://book.sciml.ai/notes/10-Basic_Parameter_Estimation-Reverse-Mode_AD-and_Inverse_Problems/)
-- Mike Innes' [Differentiation for Hackers](https://github.com/MikeInnes/diff-zoo), also [rendered here](https://aviatesk.github.io/diff-zoo/dev/)
+- Mike Innes' [Differentiation for Hackers](https://github.com/MikeInnes/diff-zoo),  [rendered here](https://aviatesk.github.io/diff-zoo/dev/)
 
 ##### Further references
 - Books:
@@ -851,6 +1025,7 @@ Further inspiration for this lecture came from
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
@@ -860,13 +1035,14 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [compat]
+Enzyme = "~0.11.1"
 ForwardDiff = "~0.10.35"
 HypertextLiteral = "~0.9.4"
 LaTeXStrings = "~1.3.0"
 Plots = "~1.38.10"
 PlutoTeachingTools = "~0.2.8"
 PlutoUI = "~0.7.50"
-Zygote = "~0.6.60"
+Zygote = "~0.6.61"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -875,7 +1051,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "517a9d08569854be75a642cca50b5e081c81b881"
+project_hash = "6d8bd6efa1c40c8a28410ac91d967d63a552c41a"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -891,9 +1067,9 @@ version = "1.1.4"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra", "Requires"]
-git-tree-sha1 = "cc37d689f599e8df4f464b2fa3870ff7db7492ef"
+git-tree-sha1 = "76289dc51920fdc6e0013c872ba9551d54961c24"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "3.6.1"
+version = "3.6.2"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -929,9 +1105,9 @@ version = "1.16.1+1"
 
 [[deps.ChainRules]]
 deps = ["Adapt", "ChainRulesCore", "Compat", "Distributed", "GPUArraysCore", "IrrationalConstants", "LinearAlgebra", "Random", "RealDot", "SparseArrays", "Statistics", "StructArrays"]
-git-tree-sha1 = "7d20c2fb8ab838e41069398685e7b6b5f89ed85b"
+git-tree-sha1 = "8bae903893aeeb429cf732cf1888490b93ecf265"
 uuid = "082447d4-558c-5d27-93f4-14fc19e9eca2"
-version = "1.48.0"
+version = "1.49.0"
 
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
@@ -1054,11 +1230,34 @@ deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
 
+[[deps.Enzyme]]
+deps = ["CEnum", "EnzymeCore", "Enzyme_jll", "GPUCompiler", "LLVM", "Libdl", "LinearAlgebra", "ObjectFile", "Printf", "Random"]
+git-tree-sha1 = "4478f8bf24785d9eabe09044549b0e81b9e12d68"
+uuid = "7da242da-08ed-463a-9acd-ee780be4f1d9"
+version = "0.11.1"
+
+[[deps.EnzymeCore]]
+deps = ["Adapt"]
+git-tree-sha1 = "d0840cfff51e34729d20fd7d0a13938dc983878b"
+uuid = "f151be2c-9106-41f4-ab19-57ee4f262869"
+version = "0.3.0"
+
+[[deps.Enzyme_jll]]
+deps = ["Artifacts", "JLLWrappers", "LazyArtifacts", "Libdl", "TOML"]
+git-tree-sha1 = "b0f72433c4679db4df05c999f200d60cb78d1a27"
+uuid = "7cc45869-7501-5eee-bdea-0790c847d4ef"
+version = "0.0.57+0"
+
 [[deps.Expat_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "bad72f730e9e91c08d9427d5e8db95478a3c323d"
 uuid = "2e619515-83b5-522b-bb60-26c02a35a201"
 version = "2.4.8+0"
+
+[[deps.ExprTools]]
+git-tree-sha1 = "c1d06d129da9f55715c6c212866f5b1bddc5fa00"
+uuid = "e2ba6199-217a-4e67-a87a-7c52f15ade04"
+version = "0.1.9"
 
 [[deps.FFMPEG]]
 deps = ["FFMPEG_jll"]
@@ -1135,6 +1334,12 @@ git-tree-sha1 = "1cd7f0af1aa58abc02ea1d872953a97359cb87fa"
 uuid = "46192b85-c4d5-4398-a991-12ede77f4527"
 version = "0.1.4"
 
+[[deps.GPUCompiler]]
+deps = ["ExprTools", "InteractiveUtils", "LLVM", "Libdl", "Logging", "Scratch", "TimerOutputs", "UUIDs"]
+git-tree-sha1 = "5737dc242dadd392d934ee330c69ceff47f0259c"
+uuid = "61eb1bfa-7361-4325-ad38-22787b887f55"
+version = "0.19.4"
+
 [[deps.GR]]
 deps = ["Artifacts", "Base64", "DelimitedFiles", "Downloads", "GR_jll", "HTTP", "JSON", "Libdl", "LinearAlgebra", "Pkg", "Preferences", "Printf", "Random", "Serialization", "Sockets", "TOML", "Tar", "Test", "UUIDs", "p7zip_jll"]
 git-tree-sha1 = "0635807d28a496bb60bc15f465da0107fb29649c"
@@ -1202,9 +1407,9 @@ version = "0.2.2"
 
 [[deps.IRTools]]
 deps = ["InteractiveUtils", "MacroTools", "Test"]
-git-tree-sha1 = "0ade27f0c49cebd8db2523c4eeccf779407cf12c"
+git-tree-sha1 = "eac00994ce3229a464c2847e956d77a2c64ad3a5"
 uuid = "7869d1d1-7146-5819-86e3-90919afe41df"
-version = "0.4.9"
+version = "0.4.10"
 
 [[deps.IniFile]]
 git-tree-sha1 = "f550e6e32074c939295eb5ea6de31849ac2c9625"
@@ -1275,9 +1480,9 @@ version = "3.0.0+1"
 
 [[deps.LLVM]]
 deps = ["CEnum", "LLVMExtra_jll", "Libdl", "Printf", "Unicode"]
-git-tree-sha1 = "a8960cae30b42b66dd41808beb76490519f6f9e2"
+git-tree-sha1 = "26a31cdd9f1f4ea74f649a7bf249703c687a953d"
 uuid = "929cbde3-209d-540e-8aea-75f648917ca0"
-version = "5.0.0"
+version = "5.1.0"
 
 [[deps.LLVMExtra_jll]]
 deps = ["Artifacts", "JLLWrappers", "LazyArtifacts", "Libdl", "TOML"]
@@ -1455,6 +1660,12 @@ version = "1.0.2"
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
 
+[[deps.ObjectFile]]
+deps = ["Reexport", "StructIO"]
+git-tree-sha1 = "55ce61d43409b1fb0279d1781bf3b0f22c83ab3b"
+uuid = "d8793406-e978-5875-9003-1fc021f44a92"
+version = "0.3.7"
+
 [[deps.Ogg_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "887579a3eb005446d514ab7aeac5d1d027658b8f"
@@ -1568,6 +1779,12 @@ deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNu
 git-tree-sha1 = "5bb5129fdd62a2bbbe17c2756932259acf467386"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 version = "0.7.50"
+
+[[deps.PrecompileTools]]
+deps = ["Preferences"]
+git-tree-sha1 = "259e206946c293698122f63e2b513a7c99a244e8"
+uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
+version = "1.1.1"
 
 [[deps.Preferences]]
 deps = ["TOML"]
@@ -1716,6 +1933,12 @@ git-tree-sha1 = "521a0e828e98bb69042fec1809c1b5a680eb7389"
 uuid = "09ab397b-f2b6-538f-b94a-2f83cf4a842a"
 version = "0.6.15"
 
+[[deps.StructIO]]
+deps = ["Test"]
+git-tree-sha1 = "010dc73c7146869c042b49adcdb6bf528c12e859"
+uuid = "53d494c1-5632-5724-8f4c-31dff12d585f"
+version = "0.3.0"
+
 [[deps.TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
@@ -1747,6 +1970,12 @@ version = "0.1.1"
 [[deps.Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[[deps.TimerOutputs]]
+deps = ["ExprTools", "Printf"]
+git-tree-sha1 = "f548a9e9c490030e545f72074a41edfd0e5bcdd7"
+uuid = "a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f"
+version = "0.5.23"
 
 [[deps.TranscodingStreams]]
 deps = ["Random", "Test"]
@@ -1944,10 +2173,10 @@ uuid = "3161d3a3-bdf6-5164-811a-617609db77b4"
 version = "1.5.5+0"
 
 [[deps.Zygote]]
-deps = ["AbstractFFTs", "ChainRules", "ChainRulesCore", "DiffRules", "Distributed", "FillArrays", "ForwardDiff", "GPUArrays", "GPUArraysCore", "IRTools", "InteractiveUtils", "LinearAlgebra", "LogExpFunctions", "MacroTools", "NaNMath", "Random", "Requires", "SnoopPrecompile", "SparseArrays", "SpecialFunctions", "Statistics", "ZygoteRules"]
-git-tree-sha1 = "987ae5554ca90e837594a0f30325eeb5e7303d1e"
+deps = ["AbstractFFTs", "ChainRules", "ChainRulesCore", "DiffRules", "Distributed", "FillArrays", "ForwardDiff", "GPUArrays", "GPUArraysCore", "IRTools", "InteractiveUtils", "LinearAlgebra", "LogExpFunctions", "MacroTools", "NaNMath", "PrecompileTools", "Random", "Requires", "SparseArrays", "SpecialFunctions", "Statistics", "ZygoteRules"]
+git-tree-sha1 = "ebac1ae9f048c669317ad48c9bed815790a468d8"
 uuid = "e88e6eb3-aa80-5325-afca-941959d7151f"
-version = "0.6.60"
+version = "0.6.61"
 
 [[deps.ZygoteRules]]
 deps = ["ChainRulesCore", "MacroTools"]
@@ -2083,7 +2312,39 @@ version = "1.4.1+0"
 # ╟─8ed56f12-a076-4cff-bf7e-8e1e99674f34
 # ╟─69b448a1-99a2-4336-bb95-1adb0863943b
 # ╟─c9e073b7-038e-4357-b3f0-669c63413387
-# ╟─a16c4a8b-50ab-4dd5-850a-8e97448603bf
+# ╟─2abcf211-5ffd-464e-8948-83860fe186db
+# ╠═32f6945a-d918-4cdc-8c4d-8d3cd898392d
+# ╟─3c02c7dc-064e-4b11-8750-e01ac0c090c7
+# ╠═effe7e5e-a5e9-472d-ad4a-7ec7a9022b03
+# ╠═2037447c-d916-4c13-b620-5d27bf5debe6
+# ╠═9218e2f5-722e-4559-b4e6-bb3fcee6e0ea
+# ╟─25634d4c-1346-4678-a4c5-84e18a95f8d6
+# ╠═b953c179-3802-4ac9-a831-ffeac8e6746a
+# ╟─9a71568d-2ebf-4f0f-86f7-71d0d51c0bef
+# ╠═9eaa6fd1-d2a6-4603-a7a1-e128e38eeb73
+# ╟─7a168cc7-0615-4f1c-8c2d-6d3ad831c2b9
+# ╠═665fc505-3ccc-4b1a-b4d5-5124ff08bbe9
+# ╟─7fa49c99-fad0-4cbc-9207-940570676906
+# ╠═5754ef41-3835-40e3-a879-b071b4e12d5c
+# ╟─40bc8112-371b-4401-b393-d4fe0578089e
+# ╠═65d5b76b-cfda-4aac-ba54-733f578c6622
+# ╟─8bfa9912-71f2-4eff-a8c5-b6df81b3bf7e
+# ╠═5b59b307-c864-4775-95ca-30ea12feb16d
+# ╟─b24d757b-cbbb-4ff4-a11d-5bc55320be64
+# ╠═6211048c-71a6-488e-a549-b50934823c36
+# ╟─520d017e-a94d-4d81-b99c-90714578bd8f
+# ╠═86f443be-7a41-49c6-9792-86e6908028a3
+# ╟─a7396ce9-62bc-4be7-8db3-3801b23f028b
+# ╠═faf4aef3-133b-44ef-b4fe-8223de4ca86b
+# ╟─67215844-1c32-49eb-8d01-cc8c81f5e37d
+# ╟─513990ce-d7e5-4ca6-a079-e0b3197571ee
+# ╟─a2c9b337-7381-4d46-9981-5fad6043f76f
+# ╠═031bc83b-8754-4586-83c8-08fbcbe80bda
+# ╟─4ea887d9-956a-4ca4-96be-be8c4b1ba330
+# ╠═14e464f7-d262-4d80-abd3-41d138895673
+# ╟─3e2bdfbf-dc0a-40d6-b67c-d97dae8a67f3
+# ╠═46646317-7160-4a83-9468-009c12cd6691
+# ╟─06f2a81a-97bd-4e03-a470-5c3be869d61c
 # ╟─a4e1e575-14d7-4b0b-9f58-1fb34b0e78fd
 # ╟─17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 # ╟─00000000-0000-0000-0000-000000000001
