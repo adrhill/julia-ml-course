@@ -7,14 +7,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     quote
-        local iv = try
-            Base.loaded_modules[Base.PkgId(
-                Base.UUID("6e696c72-6542-2067-7265-42206c756150"),
-                "AbstractPlutoDingetjes",
-            )].Bonds.initial_value
-        catch
-            b -> missing
-        end
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
@@ -91,8 +84,8 @@ md"## Motivation
 To apply gradient-based optimization methods such as [stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) to a neural network,
 we need to compute the gradient of its loss function with respect to its parameters.
 
-Since Deep Learning models can get large and complicated, it would be nice to have **machinery that can take an arbitrary function
-$f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivatives**.
+Since deep learning models can get large and complicated, it would be nice to have **machinery that can take an arbitrary function
+$f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivative**.
 This is called automatic differentiation (AD).
 "
 
@@ -106,7 +99,7 @@ The list is sorted by type:
 1. *Symbolic*
 1. *Finite differencing*
 
-and other more exotic approaches. These are already complicated sounding terms, but within these categories, there are further differences:
+and other more exotic approaches. These are already abstract sounding terms, but within these categories, there are further differences:
 
 > Is the AD system *operator overloading* or *source-to-source*?
 > Which *representation* level does it operate on?
@@ -218,7 +211,7 @@ $\begin{align}
 
 # ╔═╡ b3e9e95a-cd70-4dfb-b5a3-7d8cbdaabc75
 takeaways(md"
-- for our practical purposes, we look at linear maps as functions or matrices
+- for our practical purposes, we can look at linear maps as functions or as matrices
 - linear maps are composable, corresponding to matrix multiplication and addition
 ")
 
@@ -740,7 +733,7 @@ Since our function is scalar-valued, we only need to compute a single VJP with $
 
 $\begin{align}\big(\mathcal{D}f_\tilde{x}\big)^T(e_1)
 = \Big(1 \cdot J_f\big|_\tilde{x}\Big) ^ T
-= J_f\big|_\tilde{x}^T \cdot 1
+= J_f\big|_\tilde{x}^T
 = \nabla f\big|_\tilde{x}
 \end{align}$
 
@@ -755,7 +748,7 @@ takeaways(
 - Given a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$
   - if $n \gg m$, reverse-mode AD is more efficient
   - if $n \ll m$, forward-mode AD is more efficient
-- In Deep Learning, $n$ is usually very large and $m=1$, making reverse-mode AD more efficient than forward-mode AD.
+- In Deep Learning, $n$ is usually very large and $m=1$, making reverse-mode more efficient than forward-mode AD.
 ",
 )
 
@@ -850,7 +843,7 @@ a light-weight dependency that allows you to define forward- and/or reverse-rule
 # ╔═╡ 2abcf211-5ffd-464e-8948-83860fe186db
 md"""## Code introspection ⁽⁺⁾
 Julia code can look at its own structure. This is called *reflection* or *introspection* and gives Julia its metaprogramming powers.
-Introspection can be applied at several levels: AST, IR or LLVM. Let's demonstrate this on a simple test function:
+Introspection can be applied at several levels: AST, IR, LLVM or native code. Let's demonstrate this on a simple test function:
 """
 
 # ╔═╡ 32f6945a-d918-4cdc-8c4d-8d3cd898392d
@@ -963,14 +956,17 @@ instead of $\big(\mathcal{D}f_h\big)^T$** and return the wrong VJP / gradient.
 
 In the best case, an error will be thrown when Zygote catches a mutating function:
 
-> Mutating arrays is not supported -- called `copyto!(Vector{Int64}, ...)`.
->
-> This error occurs when you ask Zygote to differentiate operations that change
-> the elements of arrays in place (e.g. setting values with `x .= ...`)
-> Possible fixes:
-> - avoid mutating operations (preferred)
-> - or read the documentation and solutions for this error
-> [https://fluxml.ai/Zygote.jl/latest/limitations](https://fluxml.ai/Zygote.jl/latest/limitations)
+```julia
+Mutating arrays is not supported -- called `copyto!(Vector{Int64}, ...)`.
+
+This error occurs when you ask Zygote to differentiate operations that change
+the elements of arrays in place (e.g. setting values with `x .= ...`)
+
+Possible fixes:
+- avoid mutating operations (preferred)
+- or read the documentation and solutions for this error
+  https://fluxml.ai/Zygote.jl/latest/limitations
+```
 
 In the worst case scenario, an incorrect gradient will be silently returned.
 
@@ -990,7 +986,7 @@ md"""## Enzyme.jl
 [Enzyme.jl](https://github.com/EnzymeAD/Enzyme.jl) is a new, experimental AD system that does *LLVM source to source* transformations, supporting both forward- and reverse-mode AD.
 It currently doesn't support ChainRules.jl, instead using its own [EnzymeRules](https://enzyme.mit.edu/index.fcgi/julia/stable/generated/custom_rule/).
 
-Since the package is under rapid development and the API hasn't fully stabilized, note that this example uses Enzyme `v0.11.1`.
+Since the package is under rapid development and the API hasn't fully stabilized, note that this example uses Enzyme `v0.11`.
 """
 
 # ╔═╡ 4ea887d9-956a-4ca4-96be-be8c4b1ba330
@@ -1027,8 +1023,7 @@ end
 
 # ╔═╡ 06f2a81a-97bd-4e03-a470-5c3be869d61c
 md"**Personal opinion:**
-Enzyme is in early development and the API still needs some polish.
-Wrapper types like `Active`, `Duplicated`, `BatchDuplicated` are not very intuitive and return values are inconsistent for different AD modes."
+Enzyme is very promising, but still in early development. The API still needs some polish."
 
 # ╔═╡ 1ec36193-87cc-40a6-8dbf-69ad88c5f034
 md"""## Finite differences
@@ -1053,7 +1048,7 @@ $J_f\big|_\tilde{x} \cdot e_i
 \approx \frac{f(\tilde{x} + \varepsilon e_i) - f(\tilde{x})}{\varepsilon} \quad .$
 
 
-### Pros & Cons
+### Caveats
 Computing a Jacobian or Gradient using finite differences requires $n+1$ evaluations of $f$
 and therefore gets expensive for functions with large input dimensionality $n$.
 
@@ -1079,7 +1074,7 @@ md"#### FiniteDiff.jl"
 
 # ╔═╡ 7a9c76e8-31a6-48cf-a7bc-5e6384d278e6
 md"Using FiniteDiff.jl to approximate the Jacobian of $g(x) = x_1^2 + 2 x_1 x_2\,$
-at $\tilde{x}=(1,2)$, we obtain the correct Jacobian $J_g\big|_\tilde{x} = (6, 2)$:"
+at $\tilde{x}=(1,2)$, we obtain the correct gradient $\nabla g\big|_\tilde{x} = (6, 2)$:"
 
 # ╔═╡ 39434efc-4638-4660-b871-b27ca8a85474
 FiniteDiff.finite_difference_jacobian(g, [1.0, 2.0])
@@ -1092,7 +1087,7 @@ md"#### FiniteDifferences.jl"
 
 # ╔═╡ e30c170d-fd6d-439f-bb30-b702b0f29502
 md"FiniteDifferences.jl requires the definition of a finite difference method (FDM), e.g. the *5th order central method*.
-Applying this method to $g$, we also obtain the correct Jacobian:"
+Applying this method to $g$, we obtain the correct gradient:"
 
 # ╔═╡ 33d3d6e5-473c-4599-8335-34b45bc64167
 fdm_method = central_fdm(5, 1)
@@ -1115,7 +1110,11 @@ struct Dual{T}
     der::T  # derivative
 end
 ```
-and overloads Julia Base functions such as addition and multiplication on this type to implement the product and quotient rules.
+and overloads Julia Base functions such as addition and multiplication on this `Dual` type to implement e.g. the product rule $(uv)'=u'v+uv'$:
+
+```julia
+Base.:*(f::Dual, g::Dual) = Dual(f.val * g.val, f.der * g.val + f.val * g.der)
+```
 
 Since you are going to learn more about dual numbers in the **homework, where you will implement your own version of ForwardDiff**,
 we will skip details and take a look at the API:
@@ -1132,7 +1131,7 @@ tip(md"ForwardDiff.jl is considered one of the most stable and reliable Julia AD
 
 # ╔═╡ ce2d9ef5-3835-4871-8744-18293c772133
 md"## Other AD packages
-Now that you are equipped with the knowledge to understand its information, take a look at the list of AD packages [juliadiff.org](https://juliadiff.org)!
+Now that you are equipped with knowledge about AD, take a look at the list of Julia AD packages at [juliadiff.org](https://juliadiff.org)!
 "
 
 # ╔═╡ 17a9dab3-46de-4c51-b16b-a0ce367bbcb3
