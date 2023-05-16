@@ -74,15 +74,15 @@ html"""
 md"## Motivation
 In the last lecture, we took a look at *automatic differentiation* (AD), the backbone of deep learning. AD is what allows us to compute gradients of a neural network's loss function with respect to its parameters.
 
-In this lecture, we are going to look at [Flux.jl](https://github.com/FluxML/Flux.jl), a package providing common deep learning abstractions such as diffent layer types, activation functions and a training API.
+In this lecture, we are going to look at [Flux.jl](https://github.com/FluxML/Flux.jl), a package providing common deep learning abstractions such as different layer types, activation functions and a training API.
 "
 
 # ╔═╡ bef89ab8-d64d-4fab-aa57-18b68187af4a
-md"""In this lecture, we are going to showcase Flux by implementing the "Hello world" of deep learning: 
+md"""In this lecture, we are going to showcase Flux by implementing the "Hello world" of deep learning:
 training a small convolutional neural network (CNN) on the MNIST dataset."""
 
 # ╔═╡ a1686b76-3116-49ad-a13e-813e8e0631f2
-md"# Loading a dataset 
+md"# Loading a dataset
 ## MLDatasets.jl
 We are going to load the [MNIST dataset of handwritten digits](http://yann.lecun.com/exdb/mnist/) from [MLDatasets.jl](https://github.com/JuliaML/MLDatasets.jl)."
 
@@ -93,7 +93,7 @@ dataset_train = MNIST()
 dataset_test = MNIST(; split=:test);
 
 # ╔═╡ 55940ef6-e927-4b87-bfef-24d1c9c66a09
-md"MLDatasets defaults to returning the train split. 
+md"MLDatasets defaults to returning the train split.
 
 We can use indexing to retrieve batched features and target labels from this dataset:"
 
@@ -101,9 +101,9 @@ We can use indexing to retrieve batched features and target labels from this dat
 dataset_train[1:10] # click on the arrow ▶ above this cell to unfold the tuple
 
 # ╔═╡ 178156f1-f248-4bc4-a0d4-e71f7c9fa2da
-md"We can see that each handwritten digit corresponds to a $28 \times 28$ matrix of floating point numbers between 0 and 1, 
+md"We can see that each handwritten digit corresponds to a $28 \times 28$ matrix of floating point numbers between 0 and 1,
 since we are working with grayscale images.
-The batch dimension comes last, which is also Flux.jl's convention. 
+The batch dimension comes last, which is also Flux.jl's convention.
 
 Using the slider below, you can select and visualize individual samples from the dataset:"
 
@@ -167,7 +167,7 @@ train_loader = Flux.DataLoader((x_train, y_train); batchsize=batchsize, shuffle=
 # ╔═╡ d0e98588-5a43-4a72-9df6-b72ffa9e35f5
 md"# Flux.jl
 ## Built-in layers
-As mentioned in the beginning of this lecture, [Flux.jl](https://github.com/FluxML/Flux.jl) 
+As mentioned in the beginning of this lecture, [Flux.jl](https://github.com/FluxML/Flux.jl)
 provides common deep learning abstractions.
 Part of these abstractions is a selection of [built-in layers](https://fluxml.ai/Flux.jl/stable/models/layers/):
 
@@ -183,7 +183,7 @@ as well as upsampling layers, embedding vectors and attention blocks for transfo
 
 # ╔═╡ fe717db4-3335-4f35-8049-e6d45681da4b
 md"### Example 1: Dense layer
-Let's define a fully connected dense layer that implements 
+Let's define a fully connected dense layer that implements
 
 $f(x)=\sigma(Wx + b) \quad ,$
 
@@ -193,11 +193,11 @@ We can define a `Dense` layer by specifying the input and output dimensionalitie
 "
 
 # ╔═╡ a637d1ca-9e1a-4752-a100-c0c8fbb0b8a7
-d1 = Dense(10 => 5) # d1: ℝ¹⁰ → ℝ⁵ 
+d1 = Dense(10 => 5) # d1: ℝ¹⁰ → ℝ⁵
 
 # ╔═╡ 376f348c-094a-4006-8ed2-d3fe179906f1
-md"By default, weights are randomly sampled `Float32` numbers using the 
-[uniform Glorot initialization](https://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf). Biases are set to zero. 
+md"By default, weights are randomly sampled `Float32` numbers using the
+[uniform Glorot initialization](https://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf). Biases are set to zero.
 This can be changed by passing another sampling function to the keyword argument `init`."
 
 # ╔═╡ d508682a-7724-42bd-9346-346278d2c3c5
@@ -253,8 +253,8 @@ Convolutional layers can be created in a similar manner to dense layers:"
 c4 = Conv((5, 5), 3 => 7, relu)
 
 # ╔═╡ 0c919d80-54d5-4af2-bd99-b1079a9727f7
-md"where `3 => 7` specifies the number of input and output channels 
-and `(5, 5)` the dimension of the convolutional filter. 
+md"where `3 => 7` specifies the number of input and output channels
+and `(5, 5)` the dimension of the convolutional filter.
 The `stride`, `pad` and `dilation` of the convolution can be specified as keyword arguments.
 
 Let's apply the `Conv` layer to some random input:"
@@ -275,12 +275,12 @@ md"""## Composing layers
 Flux layers can be composed using so-called *"dataflow layers"*, of which the most important are:
 - `Chain`: sequential application of contained layers
 - `Parallel`: parallel application of contained layers
-- `SkipConnection`: implements "shortcut" connection between contained layers inputs and outputs 
+- `SkipConnection`: implements "shortcut" connection between contained layers inputs and outputs
 
 These dataflow layers can be mixed and nested as desired to create complex model architectures.
 
 ### Example: ResNet-18
-To demonstrate this, let's take a look at the structure of a pre-trained [ResNet-18](https://arxiv.org/abs/1512.03385) model 
+To demonstrate this, let's take a look at the structure of a pre-trained [ResNet-18](https://arxiv.org/abs/1512.03385) model
 from [Metalhead.jl](https://github.com/FluxML/Metalhead.jl),
 a package for vision models in Flux.
 """
@@ -327,8 +327,8 @@ loss_fn(ŷ, y) = Flux.logitcrossentropy(ŷ, y)
 
 # ╔═╡ 86e75f44-66a4-4dd8-822c-8c2140ba88ea
 md"## Optimizer
-Flux re-exports gradient-based optimizers from [Optimisers.jl](https://github.com/FluxML/Optimisers.jl/), 
-which we have encountered in homework 3. 
+Flux re-exports gradient-based optimizers from [Optimisers.jl](https://github.com/FluxML/Optimisers.jl/),
+which we have encountered in homework 3.
 Here, we initialize [Adam](https://arxiv.org/abs/1412.6980) on our model:
 "
 
@@ -336,14 +336,14 @@ Here, we initialize [Adam](https://arxiv.org/abs/1412.6980) on our model:
 optim = Flux.setup(Adam(3e-4), model)
 
 # ╔═╡ 1ede0e20-221a-4246-85a3-fea0ecc30a90
-md"Click on the arrow `▶` above the cell to inspect the optimizer state, 
+md"Click on the arrow `▶` above the cell to inspect the optimizer state,
 which e.g. keeps track of optimizer momentum."
 
 # ╔═╡ e11b5f8f-2fb4-48b3-b414-3d0768f3974d
 md"## Training
 We will train the neural network for 5 epochs. One epoch corresponds to one pass through the entire training data.
 
-To stop Pluto from running it in the background, the training loop is only run when the following checkbox is ticked:  
+To stop Pluto from running it in the background, the training loop is only run when the following checkbox is ticked:
 "
 
 # ╔═╡ 72194b1d-dc3d-4266-b673-7568931bc215
@@ -372,7 +372,7 @@ if run_training
     # Train for 5 epochs
     for epoch in 1:5
 
-        # Iterate over batches returned by data loader 
+        # Iterate over batches returned by data loader
         for (i, (x, y)) in enumerate(train_loader)
 
             # Compute loss and gradients of model w.r.t. its parameters
@@ -381,7 +381,7 @@ if run_training
             # Update optimizer state
             Flux.update!(optim, model, grads[1])
 
-            # Keep track of losses by logging them in `losses` 
+            # Keep track of losses by logging them in `losses`
             push!(losses, loss)
 
             # Every fifty steps, evaluate the accuracy on the test set
@@ -405,12 +405,12 @@ md"The final accuracy on the test set is $(acc*100)%:"
 
 # ╔═╡ faaefe99-1f15-496b-916e-3bf09eb4b918
 md"""### Note on automatic differentiation
-In the training loop, `Flux.withgradient` was called. 
-This uses `Zygote.withgradient`, which we have seen in the previous lecture on AD. 
-It returns the primal value (the output of the loss function) 
+In the training loop, `Flux.withgradient` was called.
+This uses `Zygote.withgradient`, which we have seen in the previous lecture on AD.
+It returns the primal value (the output of the loss function)
 and the gradient of the loss function with respect to the model parameters.
 
-This happens automatically: by calling the model in the anonymous function 
+This happens automatically: by calling the model in the anonymous function
 `model -> loss_fn(model(x), y)`,
 Zygote is able to "observe" the influence of the model parameters on the loss.
 """
@@ -441,8 +441,8 @@ convert2image(MNIST, x2)
 ŷ2 = predict(model, x2)
 
 # ╔═╡ 6d32ff85-5d9e-422f-b778-11dde2112dcc
-md"""Digit $(i2)  is of target class y = $(y2). 
-The model predicts ŷ = $(ŷ2). 
+md"""Digit $(i2)  is of target class y = $(y2).
+The model predicts ŷ = $(ŷ2).
 $(y2 == ŷ2 ? "✅" : "❌")
 """
 
@@ -457,12 +457,12 @@ using BSON
 BSON.@save "model_parameters.bson" model
 ```
 
-and loaded using 
+and loaded using
 ```julia
 Flux.loadmodel!(model2, BSON.load("model_parameters.bson")[:model_state])
 ```
 
-Note that this will load the parameters into `model2` 
+Note that this will load the parameters into `model2`
 and therefore requires that `model1` and `model2` have the same architecture.
 """
 
@@ -483,7 +483,7 @@ tip(
 
 # ╔═╡ 13a9d7d2-de15-43f5-90d5-ff4d27384da1
 md"""## Array programming
-Each GPU backend implemens its own array type:
+Each GPU backend implements its own array type:
 
 | Package   | Array type | Mnemonic         |
 |:----------|:-----------|:-----------------|
@@ -491,17 +491,17 @@ Each GPU backend implemens its own array type:
 | AMDGPU.jl | `ROCArray` | `ROC` like ROCm  |
 | Metal.jl  | `MtlArray` | `Mtl` like Metal |
 
-Each of these array types **implements the Base array interface and all of its expected methods** though multiple dispatch. 
+Each of these array types **implements the Base array interface and all of its expected methods** though multiple dispatch.
 
-To perform computations with arrays on the GPU, it is therefore enough to copy an array to the GPU 
-and [work with it as usual](https://cuda.juliagpu.org/stable/usage/array/). 
+To perform computations with arrays on the GPU, it is therefore enough to copy an array to the GPU
+and [work with it as usual](https://cuda.juliagpu.org/stable/usage/array/).
 Performing linear algebra operations on `CuArray`s will automatically make use of NVIDIA's [cuBLAS](https://developer.nvidia.com/cublas)
 and [cuSOLVER](https://docs.nvidia.com/cuda/cusolver/index.html).
 """
 
 # ╔═╡ bac0551b-4d91-4f43-b00e-b68dde90e644
 md"""### Example: CUDA.jl
-The following examples have been taken from the 
+The following examples have been taken from the
 [CUDA.jl documentation](https://cuda.juliagpu.org/stable/usage/array/).
 
 Use the `CuArray` constructor to copy an array to the GPU:
@@ -558,7 +558,7 @@ To run the previous CNN training example on a GPU, we only have to modify two li
 ```julia
 train_loader = Flux.DataLoader(
 	(x_train, y_train) |> gpu, # move dataset to GPU
-	batchsize=batchsize, 
+	batchsize=batchsize,
 	shuffle=true,
 )
 ```
@@ -569,8 +569,8 @@ model = Chain(
 	Conv((5, 5), 6=>16, relu),
 	MaxPool((2, 2)),
 	Flux.flatten,
-	Dense(256, 120, relu), 
-	Dense(120, 84, relu), 
+	Dense(256, 120, relu),
+	Dense(120, 84, relu),
 	Dense(84, 10),
 ) |> gpu  # move model parameters to the GPU
 ```
@@ -581,7 +581,7 @@ Multiple dispatch will handle the rest. To copy arrays `x` back to CPU, call `cp
 # ╔═╡ 00453134-9a7c-4a95-ab3b-6ea837393eea
 md"## Custom GPU kernels
 For native kernel programming, take a look at the individual package documentation for each platform.
-To write GPU kernels that target **all** platforms (NVIDIA, AMD, Intel, Apple), 
+To write GPU kernels that target **all** platforms (NVIDIA, AMD, Intel, Apple),
 take a look at [KernelAbstractions.jl](https://github.com/JuliaGPU/KernelAbstractions.jl)."
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
