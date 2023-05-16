@@ -107,7 +107,7 @@ and other more exotic approaches. These are already abstract sounding terms, but
 > Does it allow *higher-order* AD?
 
 
-As you may not be familiar with these terms, **the goal of this lecture is to explain differences between various AD packages and outline their pros and cons.**
+As you may not be familiar with these terms, **the goal of this lecture is to explain differences in approaches between various AD packages and outline their pros and cons.**
 
 For this purpose, we will take a step back and start with a recapitulation of two fundamental mathematical concepts: *linear maps* and *derivatives*.
 """
@@ -290,7 +290,7 @@ is differentiable at $\tilde{x}$ if there is a number $f'(\tilde{x})$ such that
 $\lim_{h \rightarrow 0} \frac{f(\tilde{x} + h) - f(\tilde{x})}{h}
 = f'(\tilde{x}) \quad .$
 
-This number $f'(\tilde{x})$ is called the derivative.
+This number $f'(\tilde{x})$ is called the derivative of $f$ at $\tilde{x}$.
 
 We can now extend this notion to multivariate functions:
 A function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ is *totally* differentiable at a point $\tilde{x}$
@@ -367,7 +367,7 @@ As we have seen in the example on the previous slide, the total derivative
 
 $\mathcal{D}f_\tilde{x}(v) = J_f\big|_\tilde{x} \cdot v$
 
-computes a **Jacobian-Vector product**. It is one of the two core objects behind AD systems:
+computes a **Jacobian-Vector product**. It is one of the two core primitives behind AD systems:
 
 1. *Jacobian-Vector products* (JVPs), used in forward-mode AD
 2. *Vector-Jacobian products* (VJPs), used in reverse-mode AD
@@ -396,6 +396,8 @@ $\mathcal{D}h_\tilde{x}
 
 As we have seen in the section on linear maps, this composition of linear maps is also a linear map.
 It corresponds to simple matrix multiplication.
+
+A proof of the chain rule can be found on page 19 of Spivak's *Calculus on manifolds*.
 "
 
 # ╔═╡ ec1bee51-c2b4-47b1-a78a-51d444943787
@@ -408,7 +410,7 @@ $(uv)'=u'v+uv'$
 of two scalar functions $u(t)$, $v(t)$.
 We start out by defining
 
-$g(u, v) = u \cdot v \qquad f(t) = \begin{pmatrix} u(t) \\ v(t) \end{pmatrix}$
+$g(u, v) = u \cdot v \qquad f(t) = \begin{bmatrix} u(t) \\ v(t) \end{bmatrix}$
 
 such that
 
@@ -724,27 +726,27 @@ $\begin{align}
 &= \dfrac{\partial f}{\partial x_i}\Bigg|_\tilde{x}
 \end{align}$
 
-Obtaining the full gradient / Jacobian requires computing $n$ JVPs with $e_1$ to $e_n$.
+Obtaining the full gradient requires computing $n$ JVPs with $e_1$ to $e_n$.
 
 > **Computing gradients with forward-mode AD is expensive**: we need to evaluate $n\,$ JVPs, where $n$ corresponds to the input dimensionality.
 
 ### Computing gradients using VJPs
 Since our function is scalar-valued, we only need to compute a single VJP with $e_1=1$:
 
-$\begin{align}\big(\mathcal{D}f_\tilde{x}\big)^T(e_1)
+$\begin{align}\big(\mathcal{D}f_\tilde{x}\big)^T(1)
 = \Big(1 \cdot J_f\big|_\tilde{x}\Big) ^ T
 = J_f\big|_\tilde{x}^T
 = \nabla f\big|_\tilde{x}
 \end{align}$
 
-> **Computing gradients with reverse-mode AD is cheap**: we only need to evaluate a single JVP since the output dimension is $m=1$.
+> **Computing gradients with reverse-mode AD is cheap**: we only need to evaluate a single JVP since the output dimensionality of $f$ is $m=1$.
 """
 
 # ╔═╡ c365c5a2-43b7-4ddc-82f1-3ca0670117ba
 takeaways(
     md"
 - JVPs and VJPs are the building blocks of automatic differentiation
-- Gradients are computed using JVPs and VJPs
+- Gradients are computed using JVPs (forward-mode) or VJPs (reverse-mode AD)
 - Given a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$
   - if $n \gg m$, reverse-mode AD is more efficient
   - if $n \ll m$, forward-mode AD is more efficient
@@ -772,7 +774,7 @@ For every function `fⁱ(x)`, we need to match either
 - a *"forward rule"* that implements `forward_rule(f, x̃) = v -> 𝒟fₓ̃(v)`
 - a *"reverse rule"* $\,$ that implements `reverse_rule(f, x̃) = w -> (𝒟fₓ̃)ᵀ(w)`.
 
-Since in Julia, a function `f` is of type `typeof(f)`, we can use multiple dispatch to automatically match functions and their rules!
+Since in Julia, a function `f` is of type `typeof(f)`, we could use multiple dispatch to automatically match functions and their rules!
 
 Then,
 - for forward-mode AD, we can then simply iterate through all `fⁱ` and `𝒟fⁱₓ̃`, simultaneously computing `y` and a JVP `𝒟fₓ̃(v)`.
@@ -811,7 +813,7 @@ end
 We can observe that:
 - `frule` dispatches on the type of `sin`
 - `frule` returns $y = \sin(\tilde{x})$. This is often called the *primal output*
-- `frule` directly returns the result of the computation $\mathcal{D}f_\tilde{x}(v) = \cos(\tilde{x})\cdot v$
+- `frule` directly returns the result of the JVP computation $\mathcal{D}f_\tilde{x}(v) = \cos(\tilde{x})\cdot v$
 """
 
 # ╔═╡ 69b448a1-99a2-4336-bb95-1adb0863943b
@@ -831,7 +833,7 @@ We can observe that:
 - `rrule` dispatches on the type of `sin`
 - `rrule` also returns the primal output $y = \sin(\tilde{x})$
 - instead of directly returning the result of the computation $(\mathcal{D}f_\tilde{x})^T(w)$,
-  `rrule` returns a closure $(\mathcal{D}f_\tilde{x})^T$ that takes $w$ as an argument. This function is often called the *pullback*.
+  `rrule` returns a closure $(\mathcal{D}f_\tilde{x})^T$ that takes $w$ as an argument. This function that computes the VJP is often called the *pullback*.
 """
 
 # ╔═╡ c9e073b7-038e-4357-b3f0-669c63413387
@@ -842,7 +844,9 @@ a light-weight dependency that allows you to define forward- and/or reverse-rule
 
 # ╔═╡ 2abcf211-5ffd-464e-8948-83860fe186db
 md"""## Code introspection ⁽⁺⁾
-Julia code can look at its own structure. This is called *reflection* or *introspection* and gives Julia its metaprogramming powers.
+Many AD packages perform *source to source* transformations to generate pullback functions implementing $(\mathcal{D}f_\tilde{x})^T(v)$ from functions $f$ and $\tilde{x}$.  
+
+For this purpose, Julia code needs to look at its own compositional structure. This is called *reflection* or *introspection* and gives Julia its metaprogramming powers.
 Introspection can be applied at several levels: AST, IR, LLVM or native code. Let's demonstrate this on a simple test function:
 """
 
