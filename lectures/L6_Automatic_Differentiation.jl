@@ -7,7 +7,14 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     quote
-        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local iv = try
+            Base.loaded_modules[Base.PkgId(
+                Base.UUID("6e696c72-6542-2067-7265-42206c756150"),
+                "AbstractPlutoDingetjes",
+            )].Bonds.initial_value
+        catch
+            b -> missing
+        end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
@@ -155,14 +162,14 @@ example(
 
 Many common geometric transformations are linear maps, for example
 
-| Transformation | Matrix representation |
-|:-------|:-------|
-| Rotations by angle $\theta$ | $\begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}$|
-| Projection on $y$-axis | $\begin{pmatrix} 0 & 0 \\ 0 & 1 \end{pmatrix}$
-| Reflection through $y$-axis | $\begin{pmatrix} -1 & 0 \\ 0 & 1 \end{pmatrix}$
-| Stretching along $y$-axis | $\begin{pmatrix} 1 & 0 \\ 0 & k \end{pmatrix}$ |
-| Shearing parallel to $y$-axis | $\begin{pmatrix} 1 & 0 \\ k & 1 \end{pmatrix}$ |
-| Squeezing | $\begin{pmatrix} k & 0 \\ 0 & \frac{1}{k} \end{pmatrix}$ |
+| Transformation                | Matrix representation                                                               |
+|:------------------------------|:------------------------------------------------------------------------------------|
+| Rotations by angle $\theta$   | $\begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}$ |
+| Projection on $y$-axis        | $\begin{pmatrix} 0 & 0 \\ 0 & 1 \end{pmatrix}$                                      |
+| Reflection through $y$-axis   | $\begin{pmatrix} -1 & 0 \\ 0 & 1 \end{pmatrix}$                                     |
+| Stretching along $y$-axis     | $\begin{pmatrix} 1 & 0 \\ 0 & k \end{pmatrix}$                                      |
+| Shearing parallel to $y$-axis | $\begin{pmatrix} 1 & 0 \\ k & 1 \end{pmatrix}$                                      |
+| Squeezing                     | $\begin{pmatrix} k & 0 \\ 0 & \frac{1}{k} \end{pmatrix}$                            |
 
 for the basis $e_x = (1, 0)$, $e_y = (0, 1)$.
 ",
@@ -912,23 +919,27 @@ y, 𝒟gₓ̃ᵀ = Zygote.pullback(g, [1, 2])
 
 # ╔═╡ b24d757b-cbbb-4ff4-a11d-5bc55320be64
 md"""
-As we have learned in the slide *"Reverse-mode AD: Computing gradients"*,
-we can compute the gradient by computing a VJP with $e_1=1$:
+For $\tilde{x}=(1 , 2)$, the gradient is
 
-$\begin{align}
-\big(\nabla g\big|_\tilde{x}\big)^T
-&= 1 \cdot J_g\big|_\tilde{x} \\
-&= 1 \cdot \begin{bmatrix}
-		\frac{\partial g}{\partial x_1}\Big|_\tilde{x} &
+$\nabla g\big|_\tilde{x}
+= \begin{bmatrix}
+		\frac{\partial g}{\partial x_1}\Big|_\tilde{x} \\
 		\frac{\partial g}{\partial x_2}\Big|_\tilde{x}
-	\end{bmatrix} \\
-&= 1 \cdot \begin{bmatrix}
-		2\tilde{x}_1 + 2\tilde{x}_2 &
+	\end{bmatrix}
+= \begin{bmatrix}
+		2\tilde{x}_1 + 2\tilde{x}_2 \\
 		2\tilde{x}_1
 	\end{bmatrix}
-\end{align}$
+= \begin{bmatrix} 6 \\ 2 \end{bmatrix} \quad .$
 
-Therefore, for $\tilde{x}=(1 , 2)$, the gradient is $\nabla g\big|_\tilde{x} = (6, 2)$:
+As we have learned in the slide *"Reverse-mode AD: Computing gradients"*,
+the gradient corresponds to the transpose of the Jacobian, which we obtain by computing a VJP with $e_1=1$:
+
+$\begin{align}\big(\mathcal{D}g_\tilde{x}\big)^T(1)
+= \Big(1 \cdot J_g\big|_\tilde{x}\Big) ^ T
+= J_g\big|_\tilde{x}^T
+= \nabla g\big|_\tilde{x}
+\end{align}$
 """
 
 # ╔═╡ 6211048c-71a6-488e-a549-b50934823c36
@@ -941,6 +952,12 @@ and evaluate $\big(\mathcal{D}g_\tilde{x}\big)^T(1)$:"
 
 # ╔═╡ 86f443be-7a41-49c6-9792-86e6908028a3
 Zygote.gradient(g, [1, 2])
+
+# ╔═╡ 5aacbeaf-8085-4787-8475-9989881e070b
+md"To also return the primal output, call `withgradient`:"
+
+# ╔═╡ f1a10f5c-d96c-475c-9ef1-90e827b6d670
+Zygote.withgradient(g, [1, 2])
 
 # ╔═╡ a7396ce9-62bc-4be7-8db3-3801b23f028b
 md"""### Caveats
@@ -2513,6 +2530,8 @@ version = "1.4.1+0"
 # ╠═6211048c-71a6-488e-a549-b50934823c36
 # ╟─520d017e-a94d-4d81-b99c-90714578bd8f
 # ╠═86f443be-7a41-49c6-9792-86e6908028a3
+# ╟─5aacbeaf-8085-4787-8475-9989881e070b
+# ╠═f1a10f5c-d96c-475c-9ef1-90e827b6d670
 # ╟─a7396ce9-62bc-4be7-8db3-3801b23f028b
 # ╠═faf4aef3-133b-44ef-b4fe-8223de4ca86b
 # ╟─67215844-1c32-49eb-8d01-cc8c81f5e37d
