@@ -333,7 +333,7 @@ Here, we initialize [Adam](https://arxiv.org/abs/1412.6980) on our model:
 "
 
 # ╔═╡ 43f666fc-031e-4f9e-b744-c5d19a5b7533
-optim = Flux.setup(Adam(3e-4), model)
+optim = Flux.setup(Adam(3.0f-4), model)
 
 # ╔═╡ 1ede0e20-221a-4246-85a3-fea0ecc30a90
 md"Click on the arrow `▶` above the cell to inspect the optimizer state,
@@ -555,6 +555,10 @@ Flux's `gpu` function provides an even higher level abstraction:
 Based on the currently loaded GPU backend, calling `gpu(x)` will copy `x` to the GPU, if one is available.
 
 To run the previous CNN training example on a GPU, we only have to modify two lines of code:
+```julia
+using CUDA
+```
+
 ```julia
 train_loader = Flux.DataLoader(
 	(x_train, y_train) |> gpu, # move dataset to GPU
@@ -2355,6 +2359,7 @@ version = "1.4.1+0"
 # ╠═2e052a46-930c-4c2f-a6ab-12bf73198ac5
 # ╟─53658e3f-032f-47dd-b153-1f2b34ce7f0b
 # ╠═3d0446c5-d22c-468b-b490-924c5616df85
+# ╠═33f4211f-a8f0-4a87-850b-389bae9f17fd
 # ╟─4a8e2712-f6cf-477f-baa3-9084e41e231b
 # ╠═93bdc759-2dff-44e9-804b-03c8be74e508
 # ╠═4bee3907-e1f8-4552-9dfb-5283f71e4708

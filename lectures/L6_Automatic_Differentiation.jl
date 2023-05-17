@@ -81,11 +81,6 @@ html"""
 	</div>
 """
 
-# ╔═╡ 9d97daa0-73e3-40c0-b697-1ecadf505243
-md"---
-**Note:** This lecture demonstrates multiple automatic differentiation packages.
-Loading it for the first time can take several minutes."
-
 # ╔═╡ 3cffee7c-7394-445f-b00d-bb32e5e63783
 md"## Motivation
 To apply gradient-based optimization methods such as [stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) to a neural network,
@@ -94,6 +89,10 @@ we need to compute the gradient of its loss function with respect to its paramet
 Since deep learning models can get large and complicated, it would be nice to have **machinery that can take an arbitrary function
 $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$ and return its derivative**.
 This is called automatic differentiation (AD).
+
+---
+**Note:** This lecture demonstrates multiple automatic differentiation packages.
+Loading it for the first time can take several minutes.
 "
 
 # ╔═╡ 748b0576-7e95-4199-918e-acd6a19adf84
@@ -178,7 +177,7 @@ for the basis $e_x = (1, 0)$, $e_y = (0, 1)$.
 # ╔═╡ c1f8dc1e-52d4-4172-9e5b-c988d6cadcf7
 md"## Composition
 #### Connection to matrix multiplication
-> The composition $h = g \circ f$ of two linear maps $f: V \rightarrow W$, $g: W \rightarrow Z$ is also a linear map $h: V \rightarrow Z$.
+> The composition $h(x) = g(f(x))$ of two linear maps $f: V \rightarrow W$, $g: W \rightarrow Z$ is also a linear map $h: V \rightarrow Z$.
 
 In finite-dimensional vector spaces, the composition of linear maps corresponds to matrix multiplication:
 
@@ -247,7 +246,7 @@ f(x) = x^2 - 5 * sin(x) - 10 # you can change this function!
 md"You can play with this slider to select the point of linearization $\tilde{x}$:"
 
 # ╔═╡ e078cb31-46de-43a5-a76a-8504891a870c
-@bind x̃ Slider(-5:0.2:5, default=-1.5, show_value=true)
+@bind x̂ Slider(-5:0.2:5, default=-1.5, show_value=true)
 
 # ╔═╡ d4e8f116-62a7-42c8-9288-252e7326bcdd
 begin
@@ -265,17 +264,17 @@ begin
     )
 
     # Obtain the function 𝒟fₓ̃ᵀ
-    ŷ, 𝒟fₓ̃ᵀ = Zygote.pullback(f, x̃)
+    ŷ, 𝒟fₓ̂ᵀ = Zygote.pullback(f, x̂)
 
     # Plot Dfₓ̃(x)
-    plot!(p, xs, w -> 𝒟fₓ̃ᵀ(w)[1]; label=L"Derivative $\mathcal{D}f_\tilde{x}(x)$")
+    plot!(p, xs, w -> 𝒟fₓ̂ᵀ(w)[1]; label=L"Derivative $\mathcal{D}f_\tilde{x}(x)$")
 
     # Plot 1st order Taylor series approximation
-    taylor_approx(x) = f(x̃) + 𝒟fₓ̃ᵀ(x - x̃)[1] # f(x) ≈ f(x̃) + 𝒟f(x̃)(x-x̃)
+    taylor_approx(x) = f(x̂) + 𝒟fₓ̂ᵀ(x - x̂)[1] # f(x) ≈ f(x̃) + 𝒟f(x̃)(x-x̃)
     plot!(p, xs, taylor_approx; label=L"Taylor approx. around $\tilde{x}$")
 
     # Show point of linearization
-    vline!(p, [x̃]; style=:dash, c=:gray, label=L"\tilde{x}")
+    vline!(p, [x̂]; style=:dash, c=:gray, label=L"\tilde{x}")
 end
 
 # ╔═╡ e966986c-d113-43cf-96f5-a89cd7427978
@@ -369,18 +368,18 @@ for some input vector $v \in \mathbb{R}^2$.
 )
 
 # ╔═╡ ff39d133-eff4-4abc-b04e-360832d4dd2a
-md"## Jacobian-Vector products
+md"""## Jacobian-Vector products
 As we have seen in the example on the previous slide, the total derivative
 
 $\mathcal{D}f_\tilde{x}(v) = J_f\big|_\tilde{x} \cdot v$
 
-computes a **Jacobian-Vector product**. It is one of the two core primitives behind AD systems:
+computes a **Jacobian-Vector product**. It is also called the *"pushforward"* and is one of the two core primitives behind AD systems:
 
-1. *Jacobian-Vector products* (JVPs), used in forward-mode AD
-2. *Vector-Jacobian products* (VJPs), used in reverse-mode AD
+1. *Jacobian-Vector products* (JVPs) computed by the *pushforward*, used in forward-mode AD
+2. *Vector-Jacobian products* (VJPs) computed by the *pullback*, used in reverse-mode AD
 
 **Note:** In our notation, all vectors $v$ are column vectors and row vectors are written as transposed $v^T$.
-"
+"""
 
 # ╔═╡ f324744a-aae8-4ee3-9498-9bdab9a942e8
 tip(md"Jacobians can get very large for functions with high input and/or output dimensions.
@@ -600,7 +599,7 @@ e_i^T \cdot J_f\big|_\tilde{x}
 \end{bmatrix} \quad .
 \end{align}$
 
-> Computing the full $m \times n$ Jacobian requires computing $m\,$ JVPs: one for each row, as many as the **output dimensionality** of $f$.
+> Computing the full $m \times n$ Jacobian requires computing $m\,$ VJPs: one for each row, as many as the **output dimensionality** of $f$.
 """
 
 # ╔═╡ 9d035fb4-5ae2-4d8e-973c-c72d5cb77a44
@@ -631,7 +630,7 @@ where brackets are added to emphasize that the compositional structure can be se
 "
 
 # ╔═╡ ab09259f-51d9-47d9-93c8-34af8bbf71f9
-md"---
+md"""---
 Let's use the same notation to write down the Vector-Jacobian product:
 
 $\begin{align}
@@ -664,7 +663,8 @@ $\begin{align}
 	\big(\mathcal{D}f^{N  }_{h_{N-1}}\big)^T \Big) (w) \quad .
 \end{align}$
 
-"
+This linear map is also called the *"pullback"*
+"""
 
 # ╔═╡ d89c4e9b-c804-4dec-9add-cab1ff44719b
 md"## Reverse accumulation
@@ -720,7 +720,7 @@ $\Big(\nabla f\big|_\tilde{x}\Big)^T
 = J_f\big|_\tilde{x}$
 
 ### Computing gradients using JVPs
-Compute the $i$-th entry of the Jacobian using the standard basis vector $e_i$:
+Compute the $i$-th entry of the Jacobian by evaluating the *pushforward* with the standard basis vector $e_i$:
 
 $\begin{align}
 \mathcal{D}f_\tilde{x}(e_i)
@@ -738,7 +738,7 @@ Obtaining the full gradient requires computing $n$ JVPs with $e_1$ to $e_n$.
 > **Computing gradients with forward-mode AD is expensive**: we need to evaluate $n\,$ JVPs, where $n$ corresponds to the input dimensionality.
 
 ### Computing gradients using VJPs
-Since our function is scalar-valued, we only need to compute a single VJP with $e_1=1$:
+Since our function is scalar-valued, we only need to compute a single VJP by evaluating the *pullback* with $e_1=1$:
 
 $\begin{align}\big(\mathcal{D}f_\tilde{x}\big)^T(1)
 = \Big(1 \cdot J_f\big|_\tilde{x}\Big) ^ T
@@ -746,17 +746,17 @@ $\begin{align}\big(\mathcal{D}f_\tilde{x}\big)^T(1)
 = \nabla f\big|_\tilde{x}
 \end{align}$
 
-> **Computing gradients with reverse-mode AD is cheap**: we only need to evaluate a single JVP since the output dimensionality of $f$ is $m=1$.
+> **Computing gradients with reverse-mode AD is cheap**: we only need to evaluate a single VJP since the output dimensionality of $f$ is $m=1$.
 """
 
 # ╔═╡ c365c5a2-43b7-4ddc-82f1-3ca0670117ba
 takeaways(
     md"
 - JVPs and VJPs are the building blocks of automatic differentiation
-- Gradients are computed using JVPs (forward-mode) or VJPs (reverse-mode AD)
+- Jacobians and gradients are computed using JVPs (forward-mode) or VJPs (reverse-mode AD)
 - Given a function $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$
-  - if $n \gg m$, reverse-mode AD is more efficient
   - if $n \ll m$, forward-mode AD is more efficient
+  - if $n \gg m$, reverse-mode AD is more efficient
 - In Deep Learning, $n$ is usually very large and $m=1$, making reverse-mode more efficient than forward-mode AD.
 ",
 )
@@ -778,14 +778,14 @@ reverse_accumulation
 # ╔═╡ 344a0531-60fa-436b-bdc5-0aaa98df0463
 md"""
 For every function `fⁱ(x)`, we need to match either
-- a *"forward rule"* that implements `forward_rule(f, x̃) = v -> 𝒟fₓ̃(v)`
-- a *"reverse rule"* $\,$ that implements `reverse_rule(f, x̃) = w -> (𝒟fₓ̃)ᵀ(w)`.
+- a *"forward rule"* that returns the *pushforward*: `forward_rule(f, x̃) = v -> 𝒟fₓ̃(v)`
+- a *"reverse rule"* that returns the *pullback*: `reverse_rule(f, x̃) = w -> (𝒟fₓ̃)ᵀ(w)`.
 
 Since in Julia, a function `f` is of type `typeof(f)`, we could use multiple dispatch to automatically match functions and their rules!
 
 Then,
 - for forward-mode AD, we can then simply iterate through all `fⁱ` and `𝒟fⁱₓ̃`, simultaneously computing `y` and a JVP `𝒟fₓ̃(v)`.
-- for reverse-mode AD, we first need to iterate through all `fⁱ` and store all intermediate activations `hⁱ` and functions `(𝒟fⁱₓ̃)ᵀ`.
+- for reverse-mode AD, we first need to iterate through all `fⁱ` and store all intermediate activations `hⁱ` and pullback functions `(𝒟fⁱₓ̃)ᵀ`.
   Data structures that save these are commonly called *tape* or *Wengert lists*.
   We then have all the ingredients needed to compute a VJP `(𝒟fₓ̃)ᵀ(w)` in a second backward pass.
 """
@@ -839,8 +839,8 @@ end
 We can observe that:
 - `rrule` dispatches on the type of `sin`
 - `rrule` also returns the primal output $y = \sin(\tilde{x})$
-- instead of directly returning the result of the computation $(\mathcal{D}f_\tilde{x})^T(w)$,
-  `rrule` returns a closure $(\mathcal{D}f_\tilde{x})^T$ that takes $w$ as an argument. This function that computes the VJP is often called the *pullback*.
+- instead of directly returning the result of the VJP computation $(\mathcal{D}f_\tilde{x})^T(w)$,
+  `rrule` returns a closure that implements the pullback function $(\mathcal{D}f_\tilde{x})^T$.
 """
 
 # ╔═╡ c9e073b7-038e-4357-b3f0-669c63413387
@@ -851,7 +851,7 @@ a light-weight dependency that allows you to define forward- and/or reverse-rule
 
 # ╔═╡ 2abcf211-5ffd-464e-8948-83860fe186db
 md"""## Code introspection ⁽⁺⁾
-Many AD packages perform *source to source* transformations to generate pullback functions implementing $(\mathcal{D}f_\tilde{x})^T(v)$ from functions $f$ and $\tilde{x}$.  
+Many AD packages perform *source to source* transformations to generate pullback functions $(\mathcal{D}f_\tilde{x})^T$ from functions $f$ and $\tilde{x}$.  
 
 For this purpose, Julia code needs to look at its own compositional structure. This is called *reflection* or *introspection* and gives Julia its metaprogramming powers.
 Introspection can be applied at several levels: AST, IR, LLVM or native code. Let's demonstrate this on a simple test function:
@@ -911,11 +911,17 @@ md"Given a function $g(x) = x_1^2 + 2 x_1 x_2$"
 # ╔═╡ 65d5b76b-cfda-4aac-ba54-733f578c6622
 g(x) = x[1]^2 + 2 * x[1] * x[2]
 
+# ╔═╡ 3de239d4-40e3-42b1-946d-dbc328510d29
+md"and $\tilde{x} = (1, 2)$"
+
+# ╔═╡ 61ddd27b-2c90-4a6c-a8ad-cf8cf5fa4301
+x̃ = [1.0, 2.0]
+
 # ╔═╡ 8bfa9912-71f2-4eff-a8c5-b6df81b3bf7e
-md"we can compute the primal $y=g(\tilde{x})$ and the pullback $\big(\mathcal{D}g_\tilde{x}\big)^T$ for $\tilde{x}=(1, 2)$ using the function `pullback`:"
+md"we can compute the primal $y=g(\tilde{x})$ and the pullback $\big(\mathcal{D}g_\tilde{x}\big)^T$ using the function `pullback`:"
 
 # ╔═╡ 5b59b307-c864-4775-95ca-30ea12feb16d
-y, 𝒟gₓ̃ᵀ = Zygote.pullback(g, [1, 2])
+y, 𝒟gₓ̃ᵀ = Zygote.pullback(g, x̃)
 
 # ╔═╡ b24d757b-cbbb-4ff4-a11d-5bc55320be64
 md"""
@@ -943,7 +949,7 @@ $\begin{align}\big(\mathcal{D}g_\tilde{x}\big)^T(1)
 """
 
 # ╔═╡ 6211048c-71a6-488e-a549-b50934823c36
-∇gₓ̃ = 𝒟gₓ̃ᵀ(1)
+grad = 𝒟gₓ̃ᵀ(1)
 
 # ╔═╡ 520d017e-a94d-4d81-b99c-90714578bd8f
 md"If we are only interested in the gradient, Zygote also offers the convenience function `gradient`,
@@ -951,13 +957,13 @@ which does exactly what we did: compute the *pullback* $\big(\mathcal{D}g_\tilde
 and evaluate $\big(\mathcal{D}g_\tilde{x}\big)^T(1)$:"
 
 # ╔═╡ 86f443be-7a41-49c6-9792-86e6908028a3
-Zygote.gradient(g, [1, 2])
+Zygote.gradient(g, x̃)
 
 # ╔═╡ 5aacbeaf-8085-4787-8475-9989881e070b
 md"To also return the primal output, call `withgradient`:"
 
 # ╔═╡ f1a10f5c-d96c-475c-9ef1-90e827b6d670
-Zygote.withgradient(g, [1, 2])
+Zygote.withgradient(g, x̃)
 
 # ╔═╡ a7396ce9-62bc-4be7-8db3-3801b23f028b
 md"""### Caveats
@@ -1019,14 +1025,14 @@ we can use reverse-mode AD to correctly obtain the primal output $y=5$ and the g
 
 # ╔═╡ 14e464f7-d262-4d80-abd3-41d138895673
 begin
-    x̃2 = [1.0, 2.0]
+    # Allocate array grad_rev for gradient
+    grad_rev = similar(x̃)
 
-    # Mutate ∇gₓ̃2 in place
-    ∇gₓ̃2 = similar(x̃2)
-    out2 = Enzyme.autodiff(ReverseWithPrimal, g, Active, Duplicated(x̃2, ∇gₓ̃2))
+    # Mutate grad_rev in place
+    out_rev = Enzyme.autodiff(ReverseWithPrimal, g, Active, Duplicated(x̃, grad_rev))
 
-    @info out2
-    @info ∇gₓ̃2
+    @info out_rev # contains primal output y = g(x̃)
+    @info grad_rev
 end
 
 # ╔═╡ 3e2bdfbf-dc0a-40d6-b67c-d97dae8a67f3
@@ -1034,12 +1040,11 @@ md"We can also use forward-mode AD:"
 
 # ╔═╡ 46646317-7160-4a83-9468-009c12cd6691
 begin
-    x̃3 = [1.0, 2.0]
-    v3 = ([1.0, 0.0], [0.0, 1.0]) # standard basis vectors e₁, e₂
+    v = ([1.0, 0.0], [0.0, 1.0]) # standard basis vectors e₁, e₂
 
-    out3 = Enzyme.autodiff(Forward, g, BatchDuplicated, BatchDuplicated(x̃3, v3))
+    out_fwd = Enzyme.autodiff(Forward, g, BatchDuplicated, BatchDuplicated(x̃, v))
 
-    @info out3
+    @info out_fwd # contains primal output and gradient
 end
 
 # ╔═╡ 06f2a81a-97bd-4e03-a470-5c3be869d61c
@@ -1098,10 +1103,10 @@ md"Using FiniteDiff.jl to approximate the Jacobian of $g(x) = x_1^2 + 2 x_1 x_2\
 at $\tilde{x}=(1,2)$, we obtain the correct gradient $\nabla g\big|_\tilde{x} = (6, 2)$:"
 
 # ╔═╡ 39434efc-4638-4660-b871-b27ca8a85474
-FiniteDiff.finite_difference_jacobian(g, [1.0, 2.0])
+FiniteDiff.finite_difference_jacobian(g, x̃)
 
 # ╔═╡ 80a19e18-3721-42de-82ea-9e394375d0cb
-FiniteDiff.finite_difference_gradient(g, [1.0, 2.0])
+FiniteDiff.finite_difference_gradient(g, x̃)
 
 # ╔═╡ 1c953bd3-7d70-45ba-aae6-df7a98625093
 md"#### FiniteDifferences.jl"
@@ -1114,10 +1119,10 @@ Applying this method to $g$, we obtain the correct gradient:"
 fdm_method = central_fdm(5, 1)
 
 # ╔═╡ 31913258-b867-437c-bc7b-fcdcbf9c1e86
-FiniteDifferences.jacobian(fdm_method, g, [1.0, 2.0])
+FiniteDifferences.jacobian(fdm_method, g, x̃)
 
 # ╔═╡ 53c3cf1e-61bc-46cb-99b7-3dd8e52a7903
-FiniteDifferences.grad(fdm_method, g, [1.0, 2.0])
+FiniteDifferences.grad(fdm_method, g, x̃)
 
 # ╔═╡ a4e1e575-14d7-4b0b-9f58-1fb34b0e78fd
 md"## ForwardDiff.jl
@@ -1145,7 +1150,7 @@ we will skip details and take a look at the API:
 md"As expected, for $g(x) = x_1^2 + 2 x_1 x_2\,$ and $\tilde{x}=(1,2)$, we obtain $\nabla g\big|_\tilde{x} = (6, 2)$"
 
 # ╔═╡ bafd8dc3-7666-4d5e-a07f-d4e35b26a777
-ForwardDiff.gradient(g, [1.0, 2.0])
+ForwardDiff.gradient(g, x̃)
 
 # ╔═╡ 8aa5cd8a-ae0d-4c5c-a52b-6c00930b63cc
 tip(md"ForwardDiff.jl is considered one of the most stable and reliable Julia AD packages.")
@@ -2458,7 +2463,6 @@ version = "1.4.1+0"
 # ╟─24871322-7513-4b19-a337-90b1d00a1747
 # ╟─116c6f7e-eb6c-4c16-a4af-69a22eabd6d0
 # ╟─f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
-# ╟─9d97daa0-73e3-40c0-b697-1ecadf505243
 # ╟─3cffee7c-7394-445f-b00d-bb32e5e63783
 # ╟─748b0576-7e95-4199-918e-acd6a19adf84
 # ╟─0ca06dac-6e62-4ba5-bbe6-89ec8f0e8a26
@@ -2524,6 +2528,8 @@ version = "1.4.1+0"
 # ╠═5754ef41-3835-40e3-a879-b071b4e12d5c
 # ╟─40bc8112-371b-4401-b393-d4fe0578089e
 # ╠═65d5b76b-cfda-4aac-ba54-733f578c6622
+# ╟─3de239d4-40e3-42b1-946d-dbc328510d29
+# ╠═61ddd27b-2c90-4a6c-a8ad-cf8cf5fa4301
 # ╟─8bfa9912-71f2-4eff-a8c5-b6df81b3bf7e
 # ╠═5b59b307-c864-4775-95ca-30ea12feb16d
 # ╟─b24d757b-cbbb-4ff4-a11d-5bc55320be64
