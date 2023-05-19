@@ -70,7 +70,7 @@ jobs:
             Export_baked_notebookfile=false,
             Export_baked_state=false,
             # more parameters can go here
-          )
+          )'
       env:
         DATADEPS_ALWAYS_ACCEPT: true # for MLDatasets download
 
