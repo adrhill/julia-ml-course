@@ -34,14 +34,11 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-    # NOTE: Here you can install dependencies such as matplotlib if you use
-    # packages such as PyPlot.
-    # - run: pip install matplotlib
     
     - name: Install Julia
       uses: julia-actions/setup-julia@v1
       with:
-        version: "1" # This will automatically pick the latest Julia version
+        version: "1.8"
 
     - name: Cache Julia artifacts & such
       uses: julia-actions/cache@v1
@@ -57,7 +54,7 @@ jobs:
           restore-keys: |
               ${{ runner.os }}-pluto_state_cache-v2-${{ hashFiles('**/Project.toml', '**/Manifest.toml', '.github/workflows/*' ) }}
 
-    - name: Run & export Pluto notebooks
+    - name: Run & export Pluto notebooks – Lectures
       run: |
         julia --color=yes -e 'using Pkg
           Pkg.activate(mktempdir())
@@ -74,6 +71,19 @@ jobs:
             Export_baked_state=false,
             # more parameters can go here
           )
+      env:
+        DATADEPS_ALWAYS_ACCEPT: true # for MLDatasets download
+
+    - name: Run & export Pluto notebooks - Homework
+      run: |
+        julia --color=yes -e 'using Pkg
+          Pkg.activate(mktempdir())
+          Pkg.add([
+            Pkg.PackageSpec(name="PlutoSliderServer", version="0.3.2-0.3"),
+          ])
+
+          import PlutoSliderServer
+
           PlutoSliderServer.github_action("homework";
             Export_output_dir="website/__site/homework",
             Export_cache_dir="pluto_state_cache",
@@ -81,8 +91,6 @@ jobs:
             Export_baked_state=false,
             # more parameters can go here
           )'
-      env:
-        DATADEPS_ALWAYS_ACCEPT: true # for MLDatasets download
 
     # NOTE
     #   The steps below ensure that NodeJS and Franklin are loaded then it
