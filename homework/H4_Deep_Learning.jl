@@ -8,7 +8,7 @@ using InteractiveUtils
 begin
     using PlutoUI
     using PlutoTeachingTools
-    
+
     using Flux
     using Flux: glorot_uniform
 end
@@ -83,7 +83,7 @@ my_pair.first
 my_pair.second
 
 # ╔═╡ acc3841d-1d91-45dc-8db9-489992aa0ca1
-md"You will also have to initialize weight matrices using the uniform Glorot initilization. Simply call `glorot_uniform` with your desired Matrix size:"
+md"You will also have to initialize weight matrices using the uniform Glorot initialization. Simply call `glorot_uniform` with your desired Matrix size:"
 
 # ╔═╡ b7943bd4-eeb6-4f1c-91c9-871498c676b6
 glorot_uniform(3, 5)
@@ -110,11 +110,11 @@ In this exercise, we are going to implement our own version of [ForwardDiff.jl](
 
 # ╔═╡ 97beac12-3f37-4876-8ae7-b07c2c4975fd
 md"""### Interlude
-From the definition of differentiability, we know that 
+From the definition of differentiability, we know that
 
 $f'(a) = \lim_{h \rightarrow 0} \frac{f(a + h) - f(a)}{h} \quad .$
 
-For an infinitessimally small perturbation $ε$, we define define a dual number type $(a + ε⋅b)$ such that
+For an infinitesimally small perturbation $ε$, we define define a dual number type $(a + ε⋅b)$ such that
 
 $f(a + \varepsilon \cdot b ) = \underbrace{f(a)}_{ā} + \varepsilon \cdot \underbrace{b f'(a)}_{b̄}  \quad .$
 
@@ -124,7 +124,7 @@ Implementation-wise, this dual number type $a + εb$ is similar to the complex n
 
 To keep track of $a$ and $b$, we introduce a *dual number type* `Dual`, where
 - `val` keeps track of the primal output $ā$
-- `der` keeps track of the sentitivity  $b̄$
+- `der` keeps track of the sensitivity  $b̄$
 """
 
 # ╔═╡ 297892b3-5385-4391-a0e8-849cbbff271c
@@ -185,10 +185,10 @@ task("Please add your student information to the cell below.", 0)
 # ╔═╡ ed505128-7adc-4a4c-a27f-2e1f3229fa14
 task(
     md"Define your own `MyDense` layer that reimplements Flux's `Dense` layer:
-1. Define a struct `MyDense` that holds an activation function `σ`, a `weight` matrix and a `bias` vector. 
-1. Define an inner constructor that checks whether the shapes of the weights and biases match. The default activation function should be `identity`. 
-1. Define an outer constructor that takes a `Pair` of input and output shapes, 
-    replicating Flux's syntax `Dense(in => out)`. 
+1. Define a struct `MyDense` that holds an activation function `σ`, a `weight` matrix and a `bias` vector.
+1. Define an inner constructor that checks whether the shapes of the weights and biases match. The default activation function should be `identity`.
+1. Define an outer constructor that takes a `Pair` of input and output shapes,
+    replicating Flux's syntax `Dense(in => out)`.
     Use `glorot_uniform` to initialize the weight matrix and `zeros(Float32, size)` for the bias vector.
 1. Define a function `(d::MyDense)(x)` that computes the output of the Dense layer given an input batch `x`.
 
@@ -209,31 +209,31 @@ task(
     md"""
 Using operator overloading, implement `+`, `-`, `*` and `/` for the `Dual` number type. We will treat two dual numbers $f$ and $g$ like functions, such that
 -  $f(x) =$ `f.val`
--  $f'(x)=$ `f.der` 
+-  $f'(x)=$ `f.der`
 
 Implement the following four functions:
 
 ##### 1. Addition
-$(f + g) 
+$(f + g)
 	= \underbrace{f(x) + g(x)}_{ā}
-	+ ε \cdot \underbrace{\big( f'(x) + g'(x) \big)}_{b̄}$ 
+	+ ε \cdot \underbrace{\big( f'(x) + g'(x) \big)}_{b̄}$
 
 ##### 2. Subtraction
-$(f - g) 
+$(f - g)
 	= \underbrace{f(x) - g(x)}_{ā}
-	+ ε \cdot \underbrace{\big( f'(x) - g'(x) \big)}_{b̄}$ 
+	+ ε \cdot \underbrace{\big( f'(x) - g'(x) \big)}_{b̄}$
 
 ##### 3. Multiplication
-$(f \cdot g) 
+$(f \cdot g)
 	= \underbrace{f(x) ⋅ g(x)}_{ā}
-	+ ε \cdot \underbrace{\big(f'(x) ⋅ g(x) + f(x) ⋅ g'(x) \big)}_{b̄}$ 
+	+ ε \cdot \underbrace{\big(f'(x) ⋅ g(x) + f(x) ⋅ g'(x) \big)}_{b̄}$
 
 This corresponds to the product rule.
 
 ##### 4. Division
-$(f / g) 
+$(f / g)
 	= \underbrace{\frac{f(x)}{g(x)}}_{ā}
-	+ ε \cdot \underbrace{\frac{f'(x) ⋅ g(x) - f(x) ⋅ g'(x)}{g(x)^2}}_{b̄}$ 
+	+ ε \cdot \underbrace{\frac{f'(x) ⋅ g(x) - f(x) ⋅ g'(x)}{g(x)^2}}_{b̄}$
 
 This corresponds to the quotient rule.
 """,
