@@ -32,6 +32,9 @@ begin
     using ImageShow
     using Plots
     plotly()
+
+    # Allow MLDatasets to download MNIST in CI
+    ENV["DATADEPS_ALWAYS_ACCEPT"] = "true"
 end
 
 # ╔═╡ 5a94a1c6-c9eb-48a3-a13f-2a0222a3f5f8
@@ -2359,7 +2362,6 @@ version = "1.4.1+0"
 # ╠═2e052a46-930c-4c2f-a6ab-12bf73198ac5
 # ╟─53658e3f-032f-47dd-b153-1f2b34ce7f0b
 # ╠═3d0446c5-d22c-468b-b490-924c5616df85
-# ╠═33f4211f-a8f0-4a87-850b-389bae9f17fd
 # ╟─4a8e2712-f6cf-477f-baa3-9084e41e231b
 # ╠═93bdc759-2dff-44e9-804b-03c8be74e508
 # ╠═4bee3907-e1f8-4552-9dfb-5283f71e4708

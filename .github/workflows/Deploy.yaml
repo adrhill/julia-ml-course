@@ -81,6 +81,8 @@ jobs:
             Export_baked_state=false,
             # more parameters can go here
           )'
+      env:
+        DATADEPS_ALWAYS_ACCEPT: true # for MLDatasets download
 
     # NOTE
     #   The steps below ensure that NodeJS and Franklin are loaded then it
