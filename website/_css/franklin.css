@@ -390,6 +390,16 @@ code {
   border-left: 5px solid #4C9CF1;
 }
 
+/* ==================================================================
+  ADMONITIONS
+================================================================== */
+
+/* 
+Copyright (c) 2020 Fons van der Plas
+From MIT licensed Pluto.jl source code:
+https://github.com/fonsp/Pluto.jl/blob/f3d8946dd2743e605418d73cead26e6fcd79d11f/frontend/editor.css#L304-L365
+*/
+
 .admonition {
     border-radius: 8px;
     margin-block-start: 1em;
