@@ -1,4 +1,3 @@
-
 @def title = "Julia programming for Machine Learning"
 @def tags = ["index", "workflows"]
 
@@ -31,9 +30,8 @@ These workflows should empower you to write homework,  projects and even your th
 ~~~
 <div class="admonition warning">
   <p class="admonition-title">Warning</p>
-  <p>Unlike previous lectures, these notes are not designed as stand-alone content.<p>
-
-  Instead, they accompany a live demonstration in the 
+  <p>Unlike previous lectures, these notes are currently not designed as stand-alone content,
+  but to accompany a live demonstration in the 
   <i>Julia programming for Machine Learning</i> class at TU Berlin.</p>
 </div>
 ~~~
@@ -53,7 +51,7 @@ julia> # Default Julia-mode. Type ] to enter Pkg-mode.
 ```
 
 To exit the package-manage mode, press backspace.
-The name in parenthesis, here `@v1.8` is the name of the currently activated environment.
+The name in parenthesis, here `@v1.8`, is the name of the currently activated environment.
 `@v1.8` is the global environment of our Julia 1.8 installation.
 
 By typing `status` in Pkg-mode, we can print a list of installed packages:
@@ -65,9 +63,9 @@ Status `~/.julia/environments/v1.8/Project.toml`
   [295af30f] Revise v3.5.2
 ```
 
-In my case, I have two packages installed in my "global" environment.
+In my case, two packages are installed in the `@v1.8` environment.
 
-Let's take a look at the indicated file `~/.julia/environments/v1.8/Project.toml`
+Let's take a look at the indicated folder `~/.julia/environments/v1.8`
 in a new shell session.
 It contains two files: a `Project.toml` and a `Manifest.toml`.
 
@@ -78,12 +76,14 @@ $ ls
 Manifest.toml Project.toml
 ```
 
+These two files define virtual environments.
+
 ### Virtual environments
 Let's first take a look at the `Project.toml`.
-In this case, it just  contains a list of installed packages 
+In the case of our environment, it just  contains a list of installed packages 
 with *"universally unique identifiers"* (UUIDs).
 
-```bash
+```
 $ cat Project.toml
 ───────┬───────────────────────────────────────────────────────────────────────────────
        │ File: Project.toml
@@ -94,12 +94,14 @@ $ cat Project.toml
 ───────┴───────────────────────────────────────────────────────────────────────────────
 ```
 
+As we will see in the following sections, the `Project.toml` contains more information when used in packages.
+
 The `Manifest.toml` is a much longer file. It lists all packages in the dependency tree.
 For packages that are not part of Julia Base, Git tree hashes and versions are specified.
 
 **This makes our environment fully reproducible!**
 
-```bash
+```
 $ cat Manifest.toml
 ───────┬───────────────────────────────────────────────────────────────────────────────
        │ File: Manifest.toml
@@ -200,7 +202,7 @@ We can see that
 
 Pluto notebooks are therefore fully reproducible and also regular Julia files!
 
-```bash
+```
 $ cat empty_pluto.jl
 ───────┬───────────────────────────────────────────────────────────────────────────────
        │ File: empty_pluto.jl
@@ -263,23 +265,244 @@ $ cat empty_pluto.jl
 
 
 ## REPL-based workflows
+The most basic workflow uses the Julia REPL in combination with your favorite editor.
 
 ### Enhancing the REPL experience
+
+
 #### `startup.jl`
-#### OhMyRepl.jl
+If you have code that you want to be run every time you start Julia, 
+add it to your [startup file](https://docs.julialang.org/en/v1/manual/command-line-interface/#Startup-file)
+that is located at `~/.julia/config/startup.jl`.
+Note that you might have to first create this config folder.
+
+A common use-case for the `startup.jl` to load packages that are crucial for your workflow. 
+
 #### Revise.jl
+[Revise.jl](https://github.com/timholy/Revise.jl) will reload modified Julia code
+without having to restart Julia.
+```julia
+# First lines of ~/.julia/config/startup.jl
+try
+    using Revise
+catch e
+    @warn "Error initializing Revise" exception=(e, catch_backtrace())
+end
+```
+
+#### OhMyRepl.jl
+[OhMyRepl](https://github.com/KristofferC/OhMyREPL.jl) adds many features to your REPL,
+amongst other things:
+- syntax highlighting
+- (rainbow) bracket highlighting
+- fuzzy history search
+- stripping prompts from pasted code
+
+```julia
+# Add to ~/.julia/config/startup.jl
+atreplinit() do repl
+    try
+        @eval using OhMyREPL
+    catch e
+        @warn "Error initializing OhMyRepl" exception=(e, catch_backtrace())
+    end
+end
+```
+
+## VSCode
+In combination with the [Julia extension](https://www.julia-vscode.org/), 
+VSCode is the recommended editor for development in Julia. 
+It provides several shortcuts that make package development in Julia convenient.
+We will demonstrate the extension during the lecture.
 
 ## Writing packages
 ### PkgTemplates.jl
-### File structure
-### Semantic versioning
-### Package tests
-### Continuous integration
+[PkgTemplates.jl](https://github.com/JuliaCI/PkgTemplates.jl)
 
-## VSCode
-In combination with the Julia extension, 
-VSCode is the recommended editor for development in Julia. 
-It provides several shortcuts that make package development in Julia convenient.
+PkgTemplates can be heavily configured, however we are going to stick to the defaults:
+```julia
+using PkgTemplates
+
+t = Template()
+t("MyPackage")
+```
+
+At the end of the package generation, Julia will inform us that
+`[ Info: New package is at ~/.julia/dev/MyPackage`.
+
+### File structure
+Let's take a look at the structure of the generated files:
+```bash
+$ cd ~/.julia/dev/MyPackage
+
+$ tree -a -I '.git/' # show folder structure, ignoring .git folder 
+.
+├── .github
+│   └── workflows
+│       ├── CI.yml
+│       ├── CompatHelper.yml
+│       └── TagBot.yml
+├── .gitignore
+├── LICENSE
+├── Manifest.toml
+├── Project.toml
+├── README.md
+├── src
+│   └── MyPackage.jl
+└── test
+    └── runtests.jl
+
+5 directories, 10 files
+```
+
+In the lecture we will be discussing all files in detail:
+- `Project.toml` for packages
+  - semantic versioning
+  - compat entries
+- structure of a Julia package
+- package testing
+- continuous integration (CI)
+
+### Activating the project
+To start a REPL session that activates you  project environment,
+start julia with the flag `--project`:
+```bash
+$ cd ~/.julia/dev/MyProject
+
+$ julia --project
+```
+
+```julia-repl
+               _
+   _       _ _(_)_     |  Documentation: https://docs.julialang.org
+  (_)     | (_) (_)    |
+   _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
+  | | | | | | |/ _` |  |
+  | | |_| | | | (_| |  |  Version 1.8.5 (2023-01-08)
+ _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
+|__/                   |
+
+julia> # press ]
+
+(MyPackage) pkg> # project environment is active!
+```
+
+As we can see, the environment is directly active and there is no need to type `activate MyPackage`.
+
+~~~
+<div class="admonition tip">
+  <p class="admonition-title">Tip</p>
+  <p>I like to set a shell alias set for 
+  <code>julia --project --banner=no</code>.</p>
+</div>
+~~~
+
+Let's add a dependency to our project, for example CSV.jl:
+```julia-repl
+(MyPackage) pkg> add CSV
+    Updating registry at `~/.julia/registries/General.toml`
+   Resolving package versions...
+    Updating `~/.julia/dev/MyPackage/Project.toml`
+  [336ed68f] + CSV v0.10.10
+    Updating `~/.julia/dev/MyPackage/Manifest.toml`
+  [336ed68f] + CSV v0.10.10
+  [944b1d66] + CodecZlib v0.7.1
+  [9a962f9c] + DataAPI v1.15.0
+  [e2d170a0] + DataValueInterfaces v1.0.0
+  [48062228] + FilePathsBase v0.9.20
+  [842dd82b] + InlineStrings v1.4.0
+  [82899510] + IteratorInterfaceExtensions v1.0.0
+  [2dfb63ee] + PooledArrays v1.4.2
+  [91c51154] + SentinelArrays v1.3.18
+  [3783bdb8] + TableTraits v1.0.1
+  [bd369af6] + Tables v1.10.1
+  [3bb67fe8] + TranscodingStreams v0.9.13
+  [ea10d353] + WeakRefStrings v1.4.2
+  [76eceee3] + WorkerUtilities v1.6.1
+  [9fa8497b] + Future
+  [8dfed614] + Test
+```
+
+```
+# In folder ~/.julia/dev/MyPackage
+$ cat Project.toml
+───────┬─────────────────────────────────────────────────────────────────────────
+       │ File: Project.toml
+───────┼─────────────────────────────────────────────────────────────────────────
+   1   │ name = "MyPackage"
+   2   │ uuid = "c97c58cb-c2b5-45a4-93b4-32bd8ab523c1"
+   3   │ authors = ["Adrian Hill <git@adrianhill.de> and contributors"]
+   4   │ version = "1.0.0-DEV"
+   5   │
+   6 + │ [deps]
+   7 + │ CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+   8 + │
+   9   │ [compat]
+  10   │ julia = "1"
+  11   │
+  12   │ [extras]
+  13   │ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+  14   │
+  15   │ [targets]
+  16   │ test = ["Test"]
+───────┴────────────────────────────────────────────────────────────────────────
+```
+This time, the `Project.toml` looks a bit more complicated:
+- As expected, CSV.jl created an entry in the dependency section `[deps]`.
+- Our package has a name, a UUID, a version and information
+  about the package author.
+- We have an "extra" dependency on the package Tests.jl. More on this later.
+- There is a new `[compat]` section to specify package compatibility bounds.
+
+### Semantic versioning
+It is good practice (and required for package registration) 
+to enter compat entries for all dependencies.
+This allows us to update dependencies without having to worry about our code breaking.
+
+By convention, Julia packages are expected to follow
+[Semantic Versioning](https://semver.org/lang/de/) to specify verion numbers:
+
+> Given a version number MAJOR.MINOR.PATCH, increment the:
+> 1. MAJOR version when you make incompatible API changes
+> 1. MINOR version when you add functionality in a backward compatible manner
+> 1. PATCH version when you make backward compatible bug fixes
+> 1. Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
+
+> Major version zero (0.y.z) is for initial development.
+> Anything MAY change at any time. The public API SHOULD NOT be considered stable.
+
+### Package tests
+By convention, package tests are in a folder called `test/`.
+The main file that includes all other tests is called `runtest.jl`.
+To run this file, enter Pkg-mode and write `test`: 
+```julia-repl
+(MyPackage) pkg> test
+     Testing MyPackage
+      Status `/private/var/folders/74/wcz8c9qs5dzc8wgkk7839k5c0000gn/T/jl_TcJkwR/Project.toml`
+
+     ... # Julia resolves a temporary environment from scratch
+    
+     Testing Running tests...
+Test Summary: |Time
+MyPackage.jl  | None  0.0s
+     Testing MyPackage tests passed
+```
+
+Our tests passed since we didn't have any!
+
+Using the [Test.jl](https://docs.julialang.org/en/v1/stdlib/Test/) 
+standard library package and its macros `@test` and `@testset`, 
+we can add tests to our package, which will be demonstrated in the lecture.
+
+### Continuous integration
+The `.github/workflows/` folder contains three files, which specify so-called *"GitHub actions"*:
+- `CI.yml`: run tests, optinally build docs and determine code coverage.
+- `CompatHelper.yml`: Check whether `[compat]` entries are up to date.
+- `TagBot.yml`: tag new releases of your package.
+
+These file use GitHub's syntax to define what should be run / tested on their servers.
+These are either run on a timed schedule or when pushing commits and opening pull requests.
+
 
 ## Experiments with DrWatson.jl
 
