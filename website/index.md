@@ -5,7 +5,9 @@
 Welcome to the website of the *Julia programming for Machine Learning* course
 taught at the [TU Berlin Machine Learning Group](https://www.tu.berlin/ml).
 
-#### Table of contents
+~~~
+<h2>Table of Contents</h2>
+~~~
 \tableofcontents
 
 ## Goals
@@ -49,8 +51,8 @@ The lectures and the homework cover the following packages:
 | Zygote.jl        | Reverse-mode automatic differentiation   | JAX               |
 | MLDatasets.jl    | Dataset loader                           |                   |
 | Flux.jl          | Higher-level Deep Learning abstractions  | PyTorch, Keras    |
-| DrWatson.jl      | Workflow for scientific projects         |                   |
 | PkgTemplates.jl  | Package template                         |                   |
+| DrWatson.jl      | Workflow for scientific projects         |                   |
 
 ### Homework
 When learning a programming language, it helps to actually write code.

@@ -147,8 +147,12 @@ strong {
 ul,
 ol,
 dl {
-  margin-top: 0;
-  margin-bottom: 1rem;
+  padding-inline-start: 25px;
+  line-height: 1.45em;
+}
+
+li {
+  line-height: 1.45em;
 }
 
 dt {
