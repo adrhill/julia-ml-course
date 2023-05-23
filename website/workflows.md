@@ -30,8 +30,7 @@ These workflows should empower you to write homework,  projects and even your th
 ~~~
 <div class="admonition warning">
   <p class="admonition-title">Warning</p>
-  <p>Unlike previous lectures, these notes are currently not designed as stand-alone content,
-  but to accompany a live demonstration in the 
+  <p>These notes are designed to accompany a live demonstration in the 
   <i>Julia programming for Machine Learning</i> class at TU Berlin.</p>
 </div>
 ~~~
@@ -473,7 +472,7 @@ $ tree -a -I '.git/' # show folder structure, ignoring the .git folder
 
 ### Activating the package environment
 #### In VSCode
-The Julia VSCode extension provides a keyboard shortcut to start a REPL: `Alt+j Alt+o` (`cmd+j cmd+o` on macOS).
+The Julia VSCode extension provides a keyboard shortcut to start a REPL: `Alt+j Alt+o` (`option+j option+o` on macOS).
 
 #### In the REPL
 To start a REPL session that directly activates your local project environment,
@@ -828,6 +827,3 @@ Handling arguments in `ARGS` can be tedious.
 - help pages generated from docstrings
 
 Take a look at the [documentation](https://comonicon.org/stable/).
-
-## Further references
-- [Workflow tips in the Julia documentation](https://docs.julialang.org/en/v1/manual/workflow-tips/)
