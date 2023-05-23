@@ -130,8 +130,9 @@ h6 {
 }
 
 .franklin-content h3 {
-  margin-top: 1.6rem;
+  margin-top: 1.8rem;
   font-size: 1.6rem;
+  margin-bottom: 0.5rem;
 }
 
 .franklin-content h4 {
@@ -213,11 +214,14 @@ th {
 }
 
 .franklin-content blockquote {
-  background: #eeeeee;
-  border-left: 7px solid #a8a8a8;
-  margin: 1.5em 10px;
-  padding: 0.5em 10px;
-  font-style: italic;
+  margin-block-start: 0;
+  margin-block-end: 15px;
+  display: block;
+  padding: 15px;
+  border-radius: 15px;
+  border-left: 0;
+  color: var(--blockquote-color);
+  background-color: var(--blockquote-bg);
 }
 
 .franklin-content blockquote p {
@@ -313,9 +317,13 @@ td {
     KATEX
 ================================================================== */
 
-body { counter-reset: eqnum; }
+body {
+  counter-reset: eqnum;
+}
 
-.katex { font-size: 1em !important; }
+.katex {
+  font-size: 1em !important;
+}
 
 .katex-display .katex {
   /* Overwrite KaTeX settings. */
@@ -357,16 +365,25 @@ code {
 .hljs {
   font: JuliaMono;
   font-variant-ligatures: none;
-  font-size: 90%;
   line-height: 1.35em;
   border-radius: 10px;
 }
 
-.hljs-meta { font-weight: bold;}
+.hljs-meta {
+  font-weight: bold;
+}
 
-.hljs-meta.shell_ {color: #d25252;}
-.hljs-meta.pkg_ {color: #6c99bb;}
-.hljs-meta.prompt_ {color: #a5c261;}
+.hljs-meta.shell_ {
+  color: #d25252;
+}
+
+.hljs-meta.pkg_ {
+  color: #6c99bb;
+}
+
+.hljs-meta.prompt_ {
+  color: #a5c261;
+}
 
 .code-output {
   background: var(--output-background);
@@ -401,64 +418,75 @@ https://github.com/fonsp/Pluto.jl/blob/f3d8946dd2743e605418d73cead26e6fcd79d11f/
 */
 
 .admonition {
-    border-radius: 8px;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
+  border-radius: 8px;
+  margin-block-start: 2em;
+  margin-block-end: 3em;
 }
+
 .admonition .admonition-title {
-    font-family: "Vollkorn", sans-serif;
-    font-feature-settings: "lnum", "pnum";
-    color: var(--admonition-title-color);
-    font-weight: 600;
-    margin-block-end: 0px;
-    padding-left: 0.3em;
+  font-family: "Vollkorn", sans-serif;
+  font-feature-settings: "lnum", "pnum";
+  color: var(--admonition-title-color);
+  font-weight: 600;
+  margin-block-end: 0px;
+  padding-left: 0.3em;
 }
-.admonition .admonition-title ~ * {
-    margin-block-end: 0.5em;
-    margin-block-start: 0.5em;
-    transition: filter linear 0.1s;
+
+.admonition .admonition-title~* {
+  margin-block-end: 0.5em;
+  margin-block-start: 0.5em;
+  transition: filter linear 0.1s;
 }
 
 .admonition {
-    padding-left: 0.5rem;
-    background: var(--jl-message-color);
-    border: 5px solid var(--jl-message-accent-color);
+  padding-left: 0.5rem;
+  background: var(--jl-message-color);
+  border: 5px solid var(--jl-message-accent-color);
 }
+
 .admonition .admonition-title {
-    background: var(--jl-message-accent-color);
-    margin: -1px; /* Fixes a rendering glitch in Chrome */
-    margin-left: -0.55rem;
+  background: var(--jl-message-accent-color);
+  margin: -1px;
+  /* Fixes a rendering glitch in Chrome */
+  margin-left: -0.55rem;
 }
+
 .admonition.note,
 .admonition.info,
 .admonition.hint {
-    background: var(--jl-info-color);
-    border: 5px solid var(--jl-info-accent-color);
+  background: var(--jl-info-color);
+  border: 5px solid var(--jl-info-accent-color);
 }
+
 .admonition.note .admonition-title,
 .admonition.info .admonition-title,
 .admonition.hint .admonition-title {
-    background: var(--jl-info-accent-color);
-}
-.admonition.warning {
-    background: var(--jl-warn-color);
-    border: 5px solid var(--jl-warn-accent-color);
-}
-.admonition.warning .admonition-title {
-    background: var(--jl-warn-accent-color);
-}
-.admonition.danger {
-    background: var(--jl-danger-color);
-    border: 5px solid var(--jl-danger-accent-color);
-}
-.admonition.danger .admonition-title {
-    background: var(--jl-danger-accent-color);
+  background: var(--jl-info-accent-color);
 }
 
-.admonition.hint .admonition-title ~ * {
-    filter: blur(0.25em);
+.admonition.warning {
+  background: var(--jl-warn-color);
+  border: 5px solid var(--jl-warn-accent-color);
 }
-.admonition.hint:hover .admonition-title ~ *,
-.admonition.hint:focus-within .admonition-title ~ * {
-    filter: blur(0em);
+
+.admonition.warning .admonition-title {
+  background: var(--jl-warn-accent-color);
+}
+
+.admonition.danger {
+  background: var(--jl-danger-color);
+  border: 5px solid var(--jl-danger-accent-color);
+}
+
+.admonition.danger .admonition-title {
+  background: var(--jl-danger-accent-color);
+}
+
+.admonition.hint .admonition-title~* {
+  filter: blur(0.25em);
+}
+
+.admonition.hint:hover .admonition-title~*,
+.admonition.hint:focus-within .admonition-title~* {
+  filter: blur(0em);
 }

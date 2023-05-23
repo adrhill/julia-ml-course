@@ -76,9 +76,9 @@ $ ls
 Manifest.toml Project.toml
 ```
 
-These two files define virtual environments.
+These two files define environments.
 
-### Virtual environments
+### Environments
 Let's first take a look at the `Project.toml`.
 In the case of our environment, it just  contains a list of installed packages 
 with *"universally unique identifiers"* (UUIDs).
@@ -94,7 +94,8 @@ $ cat Project.toml
 ───────┴───────────────────────────────────────────────────────────────────────────────
 ```
 
-As we will see in the following sections, the `Project.toml` contains more information when used in packages.
+As we will see in the following sections, 
+the `Project.toml` contains more information when used in packages.
 
 The `Manifest.toml` is a much longer file. It lists all packages in the dependency tree.
 For packages that are not part of Julia Base, Git tree hashes and versions are specified.
@@ -134,7 +135,7 @@ $ cat Manifest.toml
   26   │ version = "4.1.1"
   ...
 ```
-Each virtual environment we create adds a folder to `~/.julia/environments`
+Each environment we create adds a folder to `~/.julia/environments`
 that contains a `Project.toml` and a `Manifest.toml`.
 
 ~~~
@@ -177,7 +178,7 @@ Adding packages to this environment will update both of these files:
 
 ### Temporary environments
 If you want to try an interesting new package you've seen on GitHub,
-the package manager offers a simple way to start a temporary virtual enviroment.
+the package manager offers a simple way to start a temporary environment.
 
 In your Julia REPL, enter package mode and type `activate --temp`.
 This will create an environment with a randomized name in a temporary folder.
@@ -187,10 +188,10 @@ This will create an environment with a randomized name in a temporary folder.
   Activating new project at `/var/folders/74/wcz8c9qs5dzc8wgkk7839k5c0000gn/T/jl_9AGcg1`
 
 (jl_9AGcg1) pkg>
-```
+``` 
 
-### Virtual environments in Pluto
-Pluto notebooks also contain reproducible virtual environments.
+### Environments in Pluto
+Pluto notebooks also contain reproducible environments.
 Let's take a look at a notebook called `empty_pluto.jl`
 that just contains a cell declaring `using LinearAlgebra`.
 
@@ -263,32 +264,103 @@ $ cat empty_pluto.jl
 ───────┴───────────────────────────────────────────────────────────────────────────────
 ```
 
-
 ## REPL-based workflows
 The most basic workflow uses the Julia REPL in combination with your favorite editor.
 
+### Loading Julia source code
+To load a source file, use the command `include`.
+To test this, I have created two almost identical files: 
+- a file `foo.jl`, which contains a function `foo`
+- a file `bar.jl`, which contains a function `bar` inside a module `Bar`
+
+```julia
+$ cat foo.jl
+───────┬───────────────────────────────────────────────────────────────────────────────
+       │ File: foo.jl
+───────┼───────────────────────────────────────────────────────────────────────────────
+   1   │ foo(x) = x
+───────┴───────────────────────────────────────────────────────────────────────────────
+```
+
+```julia
+$ cat bar.jl
+───────┬───────────────────────────────────────────────────────────────────────────────
+       │ File: bar.jl
+───────┼───────────────────────────────────────────────────────────────────────────────
+   1   │ module Bar # begin module
+   2   │
+   3   │ bar(x) = x
+   4   │
+   5   │ export bar # export function `bar`
+   6   │
+   7   │ end # end module
+───────┴───────────────────────────────────────────────────────────────────────────────
+```
+
+Let's compare the two approaches.
+The first one loads all contents of the file into the global namespace
+
+```julia-repl
+julia> include("foo.jl")
+foo (generic function with 1 method)
+
+julia> foo(2)
+2
+```
+
+whereas the second approach encapsulates everything inside the module `Bar`.
+Via `using .Bar`, we make all functions that are exported in `Bar` available:
+
+```julia-repl
+julia> include("bar.jl") # load module Bar
+Main.Bar
+
+julia> Bar.bar(2)  # we can access the function in the module...
+2
+
+julia> bar(2)      # ...but not directly
+ERROR: UndefVarError: bar not defined
+Stacktrace:
+ [1] top-level scope
+   @ REPL[4]:1
+
+julia> using .Bar  # import everything that is exported in module Bar...
+
+julia> bar(2)      # ...so we can use exports without name-spacing Bar
+2
+```
+
 ### Enhancing the REPL experience
-
-
-#### `startup.jl`
+#### Loading packages on startup
 If you have code that you want to be run every time you start Julia, 
 add it to your [startup file](https://docs.julialang.org/en/v1/manual/command-line-interface/#Startup-file)
 that is located at `~/.julia/config/startup.jl`.
 Note that you might have to first create this config folder.
 
-A common use-case for the `startup.jl` to load packages that are crucial for your workflow. 
+A common use-case for the `startup.jl` to load packages that are crucial for your workflow.
+Don't add too many packages: 
+they will increase the loading time of your REPL and might pollute the global namespace.
+There are however two packages I personally consider essential additions: 
+*Revise.jl* and *OhMyRepl.jl*.
+
 
 #### Revise.jl
-[Revise.jl](https://github.com/timholy/Revise.jl) will reload modified Julia code
-without having to restart Julia.
+[Revise.jl](https://github.com/timholy/Revise.jl) will keep track of changes in loaded files 
+and reload modified Julia code without having to start a new REPL session.
+
+To load Revise automatically, add the following code to your `startup.jl`:
+
 ```julia
 # First lines of ~/.julia/config/startup.jl
 try
     using Revise
 catch e
-    @warn "Error initializing Revise" exception=(e, catch_backtrace())
+    @warn "Error initializing Revise in startup.jl" exception=(e, catch_backtrace())
 end
 ```
+
+It is enough to add `using Revise`, 
+but the `try-catch` statement will return a helpful error message in case something goes wrong.
 
 #### OhMyRepl.jl
 [OhMyRepl](https://github.com/KristofferC/OhMyREPL.jl) adds many features to your REPL,
@@ -296,7 +368,7 @@ amongst other things:
 - syntax highlighting
 - (rainbow) bracket highlighting
 - fuzzy history search
-- stripping prompts from pasted code
+- stripping prompts when pasting code
 
 ```julia
 # Add to ~/.julia/config/startup.jl
@@ -304,22 +376,37 @@ atreplinit() do repl
     try
         @eval using OhMyREPL
     catch e
-        @warn "Error initializing OhMyRepl" exception=(e, catch_backtrace())
+        @warn "Error initializing OhMyRepl in startup.jl" exception=(e, catch_backtrace())
     end
 end
 ```
 
 ## VSCode
 In combination with the [Julia extension](https://www.julia-vscode.org/), 
-VSCode is the recommended editor for development in Julia. 
-It provides several shortcuts that make package development in Julia convenient.
+VSCode is the most commonly recommended editor for development in Julia. 
+It provides several features and shortcuts that make package development convenient:
+- debugging with breakpoints
+- running code (or only sections of the code)
+- code completion
+- code formatting
+- view *"workspace"* of global variables
+- view documentation
+- view plots
+- [keyboard shortcuts](https://www.julia-vscode.org/docs/stable/userguide/keybindings/)
+
 We will demonstrate the extension during the lecture.
 
 ## Writing packages
-### PkgTemplates.jl
-[PkgTemplates.jl](https://github.com/JuliaCI/PkgTemplates.jl)
+In Julia, packages are the natural medium for code that doesn't fit in a simple script.
+While this might sound excessive at first, it provides many conveniences.
 
-PkgTemplates can be heavily configured, however we are going to stick to the defaults:
+Thanks to templates, setting up the file structure for a Julia package takes seconds.  
+
+### PkgTemplates.jl
+[PkgTemplates.jl](https://github.com/JuliaCI/PkgTemplates.jl) 
+is a highly configurable package for project templates.
+In this example, we are going to stick to the defaults:
+
 ```julia
 using PkgTemplates
 
@@ -327,15 +414,23 @@ t = Template()
 t("MyPackage")
 ```
 
-At the end of the package generation, Julia will inform us that
-`[ Info: New package is at ~/.julia/dev/MyPackage`.
+At the end of the package generation, 
+Julia will inform us that our project has been created in the `~/.julia/dev` folder:
+
+```julia-repl
+[ Info: New package is at ~/.julia/dev/MyPackage
+```
+
+The output folder can be configured in the template.
+Take a look at the [PkgTemplates user guide](https://juliaci.github.io/PkgTemplates.jl/stable/user/) 
+to create a template customized to your needs.
 
 ### File structure
-Let's take a look at the structure of the generated files:
+Let's take a look at the structure of the files generated by PkgTemplates.jl:
 ```bash
 $ cd ~/.julia/dev/MyPackage
 
-$ tree -a -I '.git/' # show folder structure, ignoring .git folder 
+$ tree -a -I '.git/' # show folder structure, ignoring the .git folder 
 .
 ├── .github
 │   └── workflows
@@ -355,16 +450,33 @@ $ tree -a -I '.git/' # show folder structure, ignoring .git folder
 5 directories, 10 files
 ```
 
-In the lecture we will be discussing all files in detail:
-- `Project.toml` for packages
-  - semantic versioning
-  - compat entries
-- structure of a Julia package
-- package testing
-- continuous integration (CI)
+~~~
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <p>
+    In the lecture we will be discussing all files in detail:
+    <ul>
+      <li>
+        <code>Project.toml</code> for packages
+        <ul>
+          <li>compat entries</li>
+          <li>semantic versioning</li>
+        </ul>
+      </li>
+      <li>structure of Julia source code</li>
+      <li>package testing</li>
+      <li>continuous integration (CI)</li>
+    </ul>
+  </p>
+</div>
+~~~
 
-### Activating the project
-To start a REPL session that activates you  project environment,
+### Activating the package environment
+#### In VSCode
+The Julia VSCode extension provides a keyboard shortcut to start a REPL: `Alt+j Alt+o` (`cmd+j cmd+o` on macOS).
+
+#### In the REPL
+To start a REPL session that directly activates your local project environment,
 start julia with the flag `--project`:
 ```bash
 $ cd ~/.julia/dev/MyProject
@@ -373,6 +485,7 @@ $ julia --project
 ```
 
 ```julia-repl
+# Starts Julia REPL session
                _
    _       _ _(_)_     |  Documentation: https://docs.julialang.org
   (_)     | (_) (_)    |
@@ -387,17 +500,19 @@ julia> # press ]
 (MyPackage) pkg> # project environment is active!
 ```
 
-As we can see, the environment is directly active and there is no need to type `activate MyPackage`.
+The environment is directly active, there is no need to type `activate MyPackage`.
 
 ~~~
 <div class="admonition tip">
   <p class="admonition-title">Tip</p>
-  <p>I like to set a shell alias set for 
+  <p>I recommend setting a shell alias set for 
   <code>julia --project --banner=no</code>.</p>
 </div>
 ~~~
 
-Let's add a dependency to our project, for example CSV.jl:
+### `Project.toml` in packages
+Let's add a dependency to our package, for example CSV.jl:
+
 ```julia-repl
 (MyPackage) pkg> add CSV
     Updating registry at `~/.julia/registries/General.toml`
@@ -423,12 +538,14 @@ Let's add a dependency to our project, for example CSV.jl:
   [8dfed614] + Test
 ```
 
+This time, the `Project.toml` of our package looks a bit more complicated:
+
 ```
 # In folder ~/.julia/dev/MyPackage
 $ cat Project.toml
-───────┬─────────────────────────────────────────────────────────────────────────
+───────┬───────────────────────────────────────────────────────────────────────────────
        │ File: Project.toml
-───────┼─────────────────────────────────────────────────────────────────────────
+───────┼───────────────────────────────────────────────────────────────────────────────
    1   │ name = "MyPackage"
    2   │ uuid = "c97c58cb-c2b5-45a4-93b4-32bd8ab523c1"
    3   │ authors = ["Adrian Hill <git@adrianhill.de> and contributors"]
@@ -445,22 +562,29 @@ $ cat Project.toml
   14   │
   15   │ [targets]
   16   │ test = ["Test"]
-───────┴────────────────────────────────────────────────────────────────────────
+───────┴───────────────────────────────────────────────────────────────────────────────
 ```
-This time, the `Project.toml` looks a bit more complicated:
-- As expected, CSV.jl created an entry in the dependency section `[deps]`.
+- As expected, adding CSV.jl created an entry in the dependency section `[deps]`.
 - Our package has a name, a UUID, a version and information
   about the package author.
 - We have an "extra" dependency on the package Tests.jl. More on this later.
 - There is a new `[compat]` section to specify package compatibility bounds.
 
+~~~
+<div class="admonition tip">
+  <p class="admonition-title">Tip</p>
+  <p>When looking at a new package, 
+  checking out its dependencies in the <code>Project.toml</code> is a good starting point.</p>
+</div>
+~~~
+
 ### Semantic versioning
 It is good practice (and required for package registration) 
-to enter compat entries for all dependencies.
+to enter `[compat]` entries for all dependencies.
 This allows us to update dependencies without having to worry about our code breaking.
 
 By convention, Julia packages are expected to follow
-[Semantic Versioning](https://semver.org/lang/de/) to specify verion numbers:
+[Semantic Versioning](https://semver.org/lang/de/) to specify version numbers:
 
 > Given a version number MAJOR.MINOR.PATCH, increment the:
 > 1. MAJOR version when you make incompatible API changes
@@ -470,6 +594,62 @@ By convention, Julia packages are expected to follow
 
 > Major version zero (0.y.z) is for initial development.
 > Anything MAY change at any time. The public API SHOULD NOT be considered stable.
+
+Let's add a compat entry for CSV.jl. Using `status` in Pkg-mode, we can inspect the current version:
+```julia-repl
+(MyPackage) pkg> status
+Project MyPackage v1.0.0-DEV
+Status `~/.julia/dev/MyPackage/Project.toml`
+  [336ed68f] CSV v0.10.10
+``` 
+
+Let's declare in the `Project.toml` that only versions `0.10.X` of CSV.jl are permitted. 
+This will allow us to get updates that patch bug, but not updates with breaking changes.
+```toml
+[compat]
+CSV = "0.10"
+julia = "1"
+```
+
+### Structure of the source folder
+By convention, the *"main"* file of a project has the same name as the project.
+PkgTemplates already created this file `src/MyPackage.jl` for us: 
+```julia
+# Content of src/MyPackage.jl
+module MyPackage
+
+# Write your package code here.
+
+end
+```
+The file defines a module with the same name as our package.
+Inside this module, you will import dependencies, `include` other source files and export your functions. 
+Let's look at a toy example:
+
+```julia
+module MyPackage
+
+# 1.) Import functions you need
+using LinearAlgebra: cholesky 
+
+# 2.) Include source files
+include("my_source_code_1.jl")
+include("my_source_code_2.jl")
+include("my_source_code_3.jl")
+
+# 3.) Export functions you defined
+export my_function_1, my_function_2
+
+end # end module
+```
+
+~~~
+<div class="admonition tip">
+  <p class="admonition-title">Tip</p>
+  <p>When looking at the source code of a package, 
+  this should be the first file you read.</p>
+</div>
+~~~
 
 ### Package tests
 By convention, package tests are in a folder called `test/`.
@@ -494,19 +674,160 @@ Using the [Test.jl](https://docs.julialang.org/en/v1/stdlib/Test/)
 standard library package and its macros `@test` and `@testset`, 
 we can add tests to our package, which will be demonstrated in the lecture.
 
+~~~
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <p>
+    Package tests will be covered in the lecture. Take a look at the 
+    <a href="https://docs.julialang.org/en/v1/stdlib/Test/">unit test documentation</a>.
+  </p>
+</div>
+~~~
+
 ### Continuous integration
-The `.github/workflows/` folder contains three files, which specify so-called *"GitHub actions"*:
-- `CI.yml`: run tests, optinally build docs and determine code coverage.
+The `.github/workflows/` folder contains three files, which specify 
+[*GitHub actions*](https://github.com/features/actions):
+- `CI.yml`: run tests, optionally build docs and determine code coverage.
 - `CompatHelper.yml`: Check whether `[compat]` entries are up to date.
 - `TagBot.yml`: tag new releases of your package.
 
-These file use GitHub's syntax to define what should be run / tested on their servers.
-These are either run on a timed schedule or when pushing commits and opening pull requests.
+These files contain instructions that will be run on GitHub's computers.
+The most basic use-case is running package tests. 
+GitHub Actions either run on a timed schedule or at specific events, 
+for example when pushing commits and opening pull requests.
 
+~~~
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <p>GitHub Actions and CI will be showcased in the lecture.</p>
+</div>
+~~~
+
+### Package registration
+If you wrote a high quality, well tested package 
+and want to make it available to all Julia users through the package manager, 
+follow the [Registrator.jl instructions](https://github.com/JuliaRegistries/Registrator.jl). 
+
+People will then be able to install your package by writing
+
+```julia-repl
+(@v1.8) pkg> add MyPackage
+```
 
 ## Experiments with DrWatson.jl
+[DrWatson.jl](https://github.com/JuliaDynamics/DrWatson.jl) 
+describes itself as *"scientific project assistant software"*. It serves two purposes:
+1. It sets up a project structure that is specialized for scientific experiments, similar to PkgTemplates.
+1. It introduces several useful helper functions. Among these are boiler-plate functions for file loading and saving.
+
+The following two sections are directly taken from the [DrWatson documentation](https://juliadynamics.github.io/DrWatson.jl/stable/workflow/), which I recommend reading
+
+### File structure
+To initialize a DrWatson project, run:
+```julia
+using DrWatson
+
+initialize_project("MyScientificProject"; authors="Adrian Hill", force=true)
+```
+The default setup will initialize a file structure that looks as follows:
+```plaintext
+│projectdir          <- Project's main folder. It is initialized as a Git
+│                       repository with a reasonable .gitignore file.
+│
+├── _research        <- WIP scripts, code, notes, comments,
+│   |                   to-dos and anything in an alpha state.
+│   └── tmp          <- Temporary data folder.
+│
+├── data             <- **Immutable and add-only!**
+│   ├── sims         <- Data resulting directly from simulations.
+│   ├── exp_pro      <- Data from processing experiments.
+│   └── exp_raw      <- Raw experimental data.
+│
+├── plots            <- Self-explanatory.
+├── notebooks        <- Jupyter, Weave or any other mixed media notebooks.
+│
+├── papers           <- Scientific papers resulting from the project.
+│
+├── scripts          <- Various scripts, e.g. simulations, plotting, analysis,
+│   │                   The scripts use the `src` folder for their base code.
+│   └── intro.jl     <- Simple file that uses DrWatson and uses its greeting.
+│
+├── src              <- Source code for use in this project. Contains functions,
+│                       structures and modules that are used throughout
+│                       the project and in multiple scripts.
+│
+├── test             <- Folder containing tests for `src`.
+│   └── runtests.jl  <- Main test file, also run via continuous integration.
+│
+├── README.md        <- Optional top-level README for anyone using this project.
+├── .gitignore       <- by default ignores _research, data, plots, videos,
+│                       notebooks and latex-compilation related files.
+│
+├── Manifest.toml    <- Contains full list of exact package versions used currently.
+└── Project.toml     <- Main project file, allows activation and installation.
+                        Includes DrWatson by default.
+```
+### Workflow
+The DrWatson workflow is best summarized in the following picture from the 
+[documentation](https://juliadynamics.github.io/DrWatson.jl/stable/workflow/):
+
+![DrWatson workflow](https://juliadynamics.github.io/DrWatson.jl/stable/workflow.png)
 
 ## Calling scripts from the command line
+Working on compute-clusters often required scheduling "jobs" from the command-line.
+To run a Julia script in the file `my_script.jl`, run the following command:
+
+```bash
+$ julia my_script.jl arg1 arg2...
+```
+
+Inside your script, the additional command-line arguments `arg1` and `arg2` can be used through the global constant `ARGS`. 
+If `my_script.jl` contains the code
+
+```julia
+# Content of my_script.jl
+for a in ARGS
+  println(a)
+end
+```
+Calling it with arguments `foo`, `bar` from the command-line will print:
+```bash
+$ julia my_script.jl foo bar
+foo
+bar
+```
+
+### Command-line switches
+Julia provides several
+[command-line switches](https://docs.julialang.org/en/v1/manual/command-line-interface/#command-line-interface).
+For example, for parallel computing, `--threads` can be used to specify the number of CPU threads 
+and `--procs` for the number of worker processes. 
+
+The following command will run `my_script.jl` with 8 threads:
+
+```bash
+$ julia --threads 8 -- my_script.jl arg1 arg2
+```
+
+~~~
+<div class="admonition tip">
+  <p class="admonition-title">Parallel computing</p>
+  <p>In this lecture, we only covered GPU parallelization (Lecture 7 on <i>Deep Learning</i>).<p>
+  Refer to the 
+  <a href="https://docs.julialang.org/en/v1/manual/parallel-computing/">Julia documentation on parallel computing</a>
+  for more information on multi-threading and distributed computing.</p>
+</div>
+~~~
+
+### External packages
+Handling arguments in `ARGS` can be tedious.
+[Comonicon.jl](https://github.com/comonicon/Comonicon.jl) is a package to build simple command-line interfaces for Julia programs by using a macro `@main`. Among other features, it supports
+- positional arguments
+- optional arguments with defaults
+- boolean flags
+- help pages generated from docstrings
+
+Take a look at the [documentation](https://comonicon.org/stable/).
 
 ## Further references
 - [Workflow tips in the Julia documentation](https://docs.julialang.org/en/v1/manual/workflow-tips/)
