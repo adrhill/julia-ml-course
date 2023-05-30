@@ -28,8 +28,8 @@ These workflows should empower you to write homework,  projects and even your th
 \tableofcontents
 
 ~~~
-<div class="admonition warning">
-  <p class="admonition-title">Warning</p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
   <p>These notes are designed to accompany a live demonstration in the 
   <i>Julia programming for Machine Learning</i> class at TU Berlin.</p>
 </div>
@@ -770,7 +770,8 @@ The default setup will initialize a file structure that looks as follows:
 The DrWatson workflow is best summarized in the following picture from the 
 [documentation](https://juliadynamics.github.io/DrWatson.jl/stable/workflow/):
 
-![DrWatson workflow](https://juliadynamics.github.io/DrWatson.jl/stable/workflow.png)
+![DrWatson workflow](/assets/drwatson_workflow.png)
+
 
 ## Calling scripts from the command line
 Working on compute-clusters often required scheduling "jobs" from the command-line.
