@@ -615,6 +615,50 @@ tip(
 """,
 )
 
+# ╔═╡ b857984b-ec1b-4409-bdf0-438228950f39
+md"""## Broadcasting on Arrays
+We've already seen broadcasting on vectors in the previous lecture. 
+For higher-dimensional arrays, the behaviour is [a bit more complicated]((https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting)):
+
+>  Broadcast **expands singleton dimensions in array arguments to match the corresponding dimension in the other array** without using extra memory, and applies the given function elementwise
+
+Let's go through an example and broadcast addition on
+
+$\begin{align}
+P &\in \mathbb{R}^{2×3×1×1×1} \\
+Q &\in \mathbb{R}^{1×1×4×5} \quad .
+\end{align}$
+
+Julia will expand $P$ and $Q$ to 
+
+$\tilde{P},\,\tilde{Q} \in \mathbb{R}^{2×3×4×5×1}$ 
+
+
+without allocating extra memory, then add them:
+
+$R = \tilde{P} + \tilde{Q}$
+
+This results in $R \in \mathbb{R}^{2×3×4×5×1}$
+"""
+
+# ╔═╡ 02e99648-f457-469d-88b0-0cec5cb5826d
+P = rand(2, 3, 1, 1, 1);
+
+# ╔═╡ fc9e4870-9411-4feb-a459-8ce4124187f7
+Q = rand(1, 1, 4, 5);
+
+# ╔═╡ c25aec0f-b215-4bda-910d-e29268448623
+R = P .+ Q;
+
+# ╔═╡ bd968691-948a-4214-b49f-7faf52d407a4
+size(P)
+
+# ╔═╡ 4b39a76b-1206-495c-b68d-47efb85acfa5
+size(Q)
+
+# ╔═╡ eb9042f0-a46f-4104-88b4-dfc406df9481
+size(R)
+
 # ╔═╡ b12348a8-53dc-4a4d-8666-3849e94bdece
 md"""# Linear Algebra
 The LinearAlgebra.jl package is part of the Julia standard library, but needs to be explicitly loaded:
@@ -1596,6 +1640,13 @@ version = "17.4.0+0"
 # ╠═69668aa9-d245-4ed6-8389-d0cc0e802727
 # ╠═5cee46db-8312-4b08-a057-093379903881
 # ╟─4d822c49-07de-4127-ade7-c339fe10076e
+# ╟─b857984b-ec1b-4409-bdf0-438228950f39
+# ╠═02e99648-f457-469d-88b0-0cec5cb5826d
+# ╠═fc9e4870-9411-4feb-a459-8ce4124187f7
+# ╠═c25aec0f-b215-4bda-910d-e29268448623
+# ╠═bd968691-948a-4214-b49f-7faf52d407a4
+# ╠═4b39a76b-1206-495c-b68d-47efb85acfa5
+# ╠═eb9042f0-a46f-4104-88b4-dfc406df9481
 # ╟─b12348a8-53dc-4a4d-8666-3849e94bdece
 # ╠═33cfaba3-a1a8-417d-9ab5-3e879ee4f38d
 # ╟─e48d1f75-db8e-4b6e-9ad1-7546963fc49b

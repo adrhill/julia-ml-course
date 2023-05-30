@@ -870,7 +870,7 @@ md"It is also possible to pass an additional filtering function. For example, we
 v4 = [x^2 for x in 1:10 if iseven(x)]
 
 # ╔═╡ 34fc83bd-662e-40b0-bab6-9c18ae2f92c4
-md"""# Vectorization
+md"""# Broadcasting
 Any function `f(A)` can be applied element-wise over its inputs by using the syntax `f.(A)`:
 """
 
