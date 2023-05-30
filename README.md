@@ -52,9 +52,10 @@ The following packages are covered by the lectures and homework:
 | MLDatasets.jl        |       7 | Dataset loader                                         |
 | PkgTemplates.jl      |       8 | Package template                                       |
 | DrWatson.jl          |       8 | Workflow for scientific projects                       |
+| Debugger.jl          |       9 | Debugger                                               |
 | Infiltrator.jl       |       9 | Debugger                                               |
-| Cthulu.jl            |       9 | Debugger for type inference                            |
 | ProfileView.jl       |       9 | Profiler                                               |
+| Cthulhu.jl           |       9 | Type inference debugger                                |
 
 [site-url]: https://adrhill.github.io/julia-ml-course/
 [ml-group-url]: https://www.tu.berlin/ml
