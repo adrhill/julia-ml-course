@@ -28,7 +28,7 @@ To demonstrate the debugger, we are going to borrow an example from
 Ole Kröger's blog-post [*Debugging in Julia - Two different ways*](https://opensourc.es/blog/basics-debugging/).
 
 The following code is supposed to compute whether two numbers $a$ and $b$ are *amicable*,
-meaning that the sum of divisions of $a$ is $b$ and vice-versa.
+meaning that the sum of divisors of $a$ is $b$ and vice-versa.
 
 Knowing that 220 and 284 are amicable numbers, the following script should return `true`:
 
@@ -86,31 +86,33 @@ we should iterate over `1:(a-1)` instead of `1:a`.
 ~~~
 
 ### Debugger.jl
-If you prefer to work without IDEs, [Debugger.jl](https://github.com/JuliaDebug/Debugger.jl)
-is one of several alternatives.
+If you prefer to work with other editors, 
+[Debugger.jl](https://github.com/JuliaDebug/Debugger.jl)
+is one of several alternative debuggers in Julia.
 
 Using the `@enter` macro, we can enter a function call and step through it:
 
 ![Debugger.jl](/assets/debugger.png)
 
 The prompt changes to `1|debug>` and allows us to step through code using
-[custom debugger commands](https://github.com/JuliaDebug/Debugger.jl#debugger-commands).
-The screenshot above demonstrates two of these: `s` to step into the next call
-and `sr` to step until the next `return`.
+[Debugger.jl's commands](https://github.com/JuliaDebug/Debugger.jl#debugger-commands).
+The screenshot above demonstrates two of these: 
+* `s` to steps into the next call
+* `sr` to step until the next `return`
 
 Once again, we find out that `sum_divisors(220)` incorrectly returned `504`.
 
 ### Infiltrator.jl
 [Infiltrator.jl](https://github.com/JuliaDebug/Infiltrator.jl) is an alternative to
-Debugger.jl which allows you to set breakpoints in your code using the `@infiltrate` macro:
-
-![Infiltrator.jl](/assets/infiltrator.png)
+Debugger.jl which allows you to set breakpoints in your code using the `@infiltrate` macro.
 
 Calling a function which hits a breakpoint will activate the Infiltrator REPL-mode
 and change the prompt to `infil>`. 
 Typing `?` in this mode will bring up help.
 
-In this screenshot, we used `@locals` to print local variables,
+![Infiltrator.jl](/assets/infiltrator.png)
+
+In this example, we use `@locals` to print local variables,
 and find out that `sum_divisors(220)` incorrectly returned `504`.
 
 ## Profiling 
@@ -157,7 +159,7 @@ of our function call (point 4).
 Vertically, this graph visualizes the call stack of our function, 
 with the "root" function call at the top and "leaves" at the bottom.
 Hovering your mouse over a block will indicate the function name, 
-as well as its source file and line number in the file.
+as well as its source file and corresponding line number.
 
 The duration of each function call is visualized by the horizontal space 
 each block takes up in the graph. On this machine, most time was spent allocating 
@@ -202,7 +204,7 @@ julia> @time profile_test_sort(10)
 ```
 
 By changing the third line to `list = Float64[]`, the Julia compiler can infer that 
-it is working with `Vector{Float64}` and generate more performant code.
+it is working with a `Vector{Float64}` and generate more performant code.
 We can see in the profiler that the generated code is much simpler and type stable: 
 
 ![VSCode type inference 2](/assets/vscode_profile_stab_2.png)
@@ -215,8 +217,8 @@ julia> @time profile_test_sort(10)
 This corresponds to a 10x increase in performance!
 
 ### ProfileView.jl
-Instead of using VSCode, you can make use of 
-[ProfileView.jl](https://github.com/timholy/ProfileView.jl) to profile your code,
+Instead of using VSCode, we can make use of 
+[ProfileView.jl](https://github.com/timholy/ProfileView.jl) to profile our code,
 which uses the same `@profview` macro:
 
 ```julia-repl
@@ -297,17 +299,16 @@ Type instabilities in inner functions calls are not always visible.
 
 [Cthulhu.jl](https://github.com/JuliaDebug/Cthulhu.jl) is the advanced user's version
 of `@code_warntype`. It allows us to recursively "descend deeper" into our code
-until we find a point where inference failed.
+until we find a point at which inference failed.
 
-Calling `@descend` on your code will start a command-line interface
-to interactively explore your code with type-annotations.
+Calling `@descend` on a function will start a command-line interface
+to interactively explore our code with type-annotations.
 Since this interface is pretty dense in information, it can look intimidating:
 
 ![Cthulhu.jl example](/assets/cthulhu_1.png)
 
 At the top of the output (orange box), the original source code is shown with additional annotations of inferred types, e.g. `Union{Float64, Int64}`.
 By default, source code format is used, which can be nicer than `@code_warntype`'s IR.
-However, this can be can be changed:
 
 The second section (green box) shows the interactive interface of Cthulhu.jl.
 The letters in `[ ]` brackets are the keys that need to be typed to toggle options.
@@ -316,10 +317,10 @@ and code with poor type inferability in red:
 
 ![Cthulhu.jl highlighting](/assets/cthulhu_2.png)
 
-The bottom-most section (purple box) allows you to "descend" deeper into your code.
+The bottom-most section (purple box) allows us to move deeper into the code.
 Using the arrow keys, the cursor `•` (pink box) can be moved to select a specific function call.
-Hitting enter will recursively descend into your code.
-To ascend, place the cursor over `↩` and hit enter.
+Hitting enter will recursively "descend" into the code.
+To "ascend", place the cursor over `↩` and hit enter.
 
 ## Acknowledgements
 The code snippet used for debugging was taken from Ole Kröger's blog-post 
