@@ -115,6 +115,144 @@ Typing `?` in this mode will bring up help.
 In this example, we use `@locals` to print local variables,
 and find out that `sum_divisors(220)` incorrectly returned `504`.
 
+## Logging
+We've been using the logging macro `@info` frequently in this lecture.
+Three other logging macros exist: `@warn`, `@error` and `@debug`.
+We will demonstrate the use of the `@debug` macro on the example from the previous section:
+
+```julia
+# Content of logging.jl
+
+function is_amicable(a, b)
+    return sum_divisors(a) == b && sum_divisors(b) == a
+end
+
+function sum_divisors(a)
+    result = 0
+    for i = 1:a
+        if a % i == 0
+            result += i
+        end
+    end
+    @debug "Got sum of divisors $result for input $a"  # add debug message logging
+    return result
+end
+
+is_amicable(220, 284) # function call
+``` 
+
+### Enabling `@debug` messages
+By default, `@debug` messages are suppressed.
+Running the `logging.jl` file from the command line therefore doesn't output anything:
+
+```bash
+$ julia logging.jl
+# No output!
+```
+
+Debug logging can be enabled through the `JULIA_DEBUG` environment variable
+by specifying the module name, e.g. `Main`. 
+We can either do this by setting an environment variable 
+or by prefixing our command-line call to `julia`. 
+
+
+```bash
+$ JULIA_DEBUG=Main julia logging.jl
+┌ Debug: Got sum of divisors 504 for input 220
+└ @ Main ~/logging.jl:14
+```
+
+This correctly logged our debug message 
+as well as the source file and line of code on which it was called.
+
+Environment variables can also be set inside of your Julia source code,
+e.g. by adding the following line to the top of the `logging.jl` file:
+
+```julia
+ENV["JULIA_DEBUG"] = Main
+```
+
+### Saving logs to a file
+Using the Logging.jl module from Julia base, we can create a 
+[`SimpleLogger`](https://docs.julialang.org/en/v1/stdlib/Logging/#Logging.SimpleLogger)
+which writes logging messages to an IO object, which can be a text file.
+```julia
+using Logging
+
+io = open("log.txt", "w+") # open text file for writing
+logger = SimpleLogger(io)  # simplictic logger that writes into IO-Stream (e.g. our file)
+
+function is_amicable(a, b)
+    return sum_divisors(a) == b && sum_divisors(b) == a
+end
+
+function sum_divisors(a)
+    result = 0
+    for i = 1:a
+        if a % i == 0
+            result += i
+        end
+    end
+    @debug "Got sum of divisors $result for input $a"
+    return result
+end
+
+# Call function with logger
+with_logger(logger) do
+    is_amicable(220, 284)
+end
+
+# Write buffered messages to file
+flush(io)
+close(io)
+```
+
+Calling this with the `JULIA_DEBUG=Main` environment variable successfully creates a `log.txt` file:
+```bash
+$ cat log.txt
+┌ Debug: Got sum of divisors 504 for input 220
+└ @ Main /Users/funks/.julia/dev/DebugTestPackage/src/logging.jl:17
+```
+
+If we don't just want to log a single function call, we can also create a `global_logger`:
+
+```julia
+using Logging
+
+io = open("log.txt", "w+") # open text file for writing
+logger = SimpleLogger(io)  # simplictic logger that writes into IO-Stream (e.g. our file)
+global_logger(logger)      # use `logger` as global logger
+
+function is_amicable(a, b)
+    return sum_divisors(a) == b && sum_divisors(b) == a
+end
+
+function sum_divisors(a)
+    result = 0
+    for i = 1:a
+        if a % i == 0
+            result += i
+        end
+    end
+    @debug "Got sum of divisors $result for input $a"
+    return result
+end
+
+is_amicable(220, 284) # all function calls are logged
+
+# Write buffered messages to file
+flush(io)
+close(io)
+```
+
+~~~
+<div class="admonition warning">
+  <p class="admonition-title">Logging debug messages</p>
+  <p>Logging messages from the <code>@debug</code> macro always requires
+  setting the <code>JULIA_DEBUG</code> environment variable.</p>
+</div>
+~~~
+
 ## Profiling 
 To demonstrate profiling, we are going to use an example from the 
 [ProfileView.jl](https://github.com/timholy/ProfileView.jl) documentation:
