@@ -36,7 +36,7 @@ md"""# Feedback from you
 1. *What will the exam look like?*
     * Similar to "Python programming for ML". I will prepare an example in week 5. 
 1. *Broadcasting can be unintuitive.*
-    * I agree. I will remove the emphasis on solving Exercise 3 with broacasting. For-loops and comprehensions are a completely valid approach. We will see more broadcasting examples in the next slide.
+    * I agree. I will remove the emphasis on solving Exercise 3 with broadcasting. For-loops and comprehensions are a completely valid approach. We will see more broadcasting examples in the next slide.
 1. *Guidelines in Exercise 3.4 were somewhat misleading.*
     * Please give me more info, I'd love to fix it!
 """
