@@ -180,7 +180,7 @@ which writes logging messages to an IO object, which can be a text file.
 using Logging
 
 io = open("log.txt", "w+") # open text file for writing
-logger = SimpleLogger(io)  # simplictic logger that writes into IO-Stream (e.g. our file)
+logger = SimpleLogger(io)  # simplistic logger that writes into IO-Stream (e.g. our file)
 
 function is_amicable(a, b)
     return sum_divisors(a) == b && sum_divisors(b) == a
@@ -220,7 +220,7 @@ If we don't just want to log a single function call, we can also create a `globa
 using Logging
 
 io = open("log.txt", "w+") # open text file for writing
-logger = SimpleLogger(io)  # simplictic logger that writes into IO-Stream (e.g. our file)
+logger = SimpleLogger(io)  # simplistic logger that writes into IO-Stream (e.g. our file)
 global_logger(logger)      # use `logger` as global logger
 
 function is_amicable(a, b)
