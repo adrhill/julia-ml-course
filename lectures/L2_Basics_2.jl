@@ -476,10 +476,13 @@ md"""If we want to allocate a matrix of the same shape as another matrix, `simil
 """
 
 # ╔═╡ 25c98cd3-c439-4c3c-88ef-f55fbe597f9c
-out2 = similar(out1)
+out2 = similar(out1) # similar type and shape
 
 # ╔═╡ 1e517d20-ef94-48e6-95b9-dabaac9e912e
 out3 = similar(out1, Int) # similar shape, but different type
+
+# ╔═╡ de14c13d-2059-4d07-9b76-d4d0285965d2
+out4 = similar(out1, 4, 5) # similar type, but different shape
 
 # ╔═╡ a3af0ab4-330c-46ec-a686-5b2230297086
 md"""## Other array types ⁽⁺⁾
@@ -1605,6 +1608,7 @@ version = "17.4.0+0"
 # ╟─c87a91ab-094e-4826-b171-1015a918c050
 # ╠═25c98cd3-c439-4c3c-88ef-f55fbe597f9c
 # ╠═1e517d20-ef94-48e6-95b9-dabaac9e912e
+# ╠═de14c13d-2059-4d07-9b76-d4d0285965d2
 # ╟─a3af0ab4-330c-46ec-a686-5b2230297086
 # ╟─951c7a53-c90c-43b4-8028-a09a37f6a34c
 # ╠═7e9db4f6-b7a5-46b8-b386-c75c3aa9fcd6
