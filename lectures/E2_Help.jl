@@ -98,7 +98,7 @@ The `apropos` function is automatically called when passing a string in the REPL
 
 # ╔═╡ 3a09ac13-8d6d-46f9-a6d0-d9b07fdabb8d
 md"""## Method lookups – `methodswith`
-If we are working with a specific dat type, we might want to discover methods that can be applied to it.
+If we are working with a specific data type, we might want to discover methods that can be applied to it.
 
 Let's find out which methods can be applied to a data type called `Set`:
 """

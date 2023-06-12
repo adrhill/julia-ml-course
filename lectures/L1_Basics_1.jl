@@ -855,7 +855,7 @@ md"""The methods of function `f` can be shown using `methods(f)`, e.g. for the s
 methods(sin)
 
 # ╔═╡ 4b05bb8d-c6e8-4736-90e3-c79154aa36f3
-md"""## Comprehensions
+md"""# Comprehensions
 Comprehensions are a powerful and compact way to define arrays.
 The syntax somewhat resembles set notation in mathematics:
 """
@@ -897,6 +897,9 @@ add_two(x) = x + 2
 
 # ╔═╡ c39d3b94-e1c6-479f-a196-5ddc4c193b21
 add_two.(test_array)
+
+# ╔═╡ e03c8042-d8f6-49d3-b075-ff0689755176
+tip(md"We will cover broadcasting in more detail in lecture 2.")
 
 # ╔═╡ 0468b820-4879-4db4-b3a7-646f05eba11d
 md"""# Further resources
@@ -1486,6 +1489,7 @@ version = "17.4.0+0"
 # ╟─90964587-3913-41a2-9067-d83099bebe64
 # ╠═72380c6b-c07d-4fa7-9840-b4efeb0d5cec
 # ╠═c39d3b94-e1c6-479f-a196-5ddc4c193b21
+# ╟─e03c8042-d8f6-49d3-b075-ff0689755176
 # ╟─0468b820-4879-4db4-b3a7-646f05eba11d
 # ╟─9723d981-3c86-4ae9-ada9-8c9f95c31552
 # ╟─00000000-0000-0000-0000-000000000001
