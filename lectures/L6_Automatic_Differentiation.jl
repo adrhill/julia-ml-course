@@ -7,14 +7,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     quote
-        local iv = try
-            Base.loaded_modules[Base.PkgId(
-                Base.UUID("6e696c72-6542-2067-7265-42206c756150"),
-                "AbstractPlutoDingetjes",
-            )].Bonds.initial_value
-        catch
-            b -> missing
-        end
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
@@ -1012,6 +1005,7 @@ tip(
 md"""## Enzyme.jl
 [Enzyme.jl](https://github.com/EnzymeAD/Enzyme.jl) is a new, experimental AD system that does *LLVM source to source* transformations, supporting both forward- and reverse-mode AD.
 It currently doesn't support ChainRules.jl, instead using its own [EnzymeRules](https://enzyme.mit.edu/index.fcgi/julia/stable/generated/custom_rule/).
+Enzyme is highly performant and supports mutating functions.
 
 Since the package is under rapid development and the API hasn't fully stabilized, note that this example uses Enzyme `v0.11`.
 """
@@ -1021,7 +1015,22 @@ md"For $\tilde{x}=(1,2)$ and
 
 $g(x) = x_1^2 + 2 x_1 x_2 \quad ,$
 
-we can use reverse-mode AD to correctly obtain the primal output $y=5$ and the gradient $\nabla g\big|_\tilde{x} = (6, 2)$:"
+we can use both reverse- and forward-mode AD to correctly compute the gradient $\nabla g\big|_\tilde{x} = (6, 2)$:"
+
+# ╔═╡ 775bffca-9e9c-4188-b66d-78a50423377c
+Enzyme.gradient(Reverse, g, x̃)
+
+# ╔═╡ 2ce5077b-0955-4dd7-a11f-15c0771ad6ac
+Enzyme.gradient(Forward, g, x̃)
+
+# ╔═╡ 7491ba26-70dd-42af-8e1f-4b15cabb8844
+Enzyme.jacobian(Forward, g, x̃)
+
+# ╔═╡ c79fb7fc-653e-4f26-aa36-f7c2d8c65016
+md"Enzyme also exports `autodiff`, a lower-level API for VJPs and JVPs.
+This function is a bit more advanced as it puts the user in control of allocations to maximize performance.
+
+Enzyme's `autodiff` can be used with reverse-mode AD" 
 
 # ╔═╡ 14e464f7-d262-4d80-abd3-41d138895673
 begin
@@ -1035,8 +1044,8 @@ begin
     @info grad_rev
 end
 
-# ╔═╡ 3e2bdfbf-dc0a-40d6-b67c-d97dae8a67f3
-md"We can also use forward-mode AD:"
+# ╔═╡ 334494c9-47d2-4679-bbde-5d629c5c7b1f
+md"and forward-mode AD"
 
 # ╔═╡ 46646317-7160-4a83-9468-009c12cd6691
 begin
@@ -1046,10 +1055,6 @@ begin
 
     @info out_fwd # contains primal output and gradient
 end
-
-# ╔═╡ 06f2a81a-97bd-4e03-a470-5c3be869d61c
-md"**Personal opinion:**
-Enzyme is very promising, but still in early development. The API still needs some polish."
 
 # ╔═╡ 1ec36193-87cc-40a6-8dbf-69ad88c5f034
 md"""## Finite differences
@@ -2545,10 +2550,13 @@ version = "1.4.1+0"
 # ╟─a2c9b337-7381-4d46-9981-5fad6043f76f
 # ╠═031bc83b-8754-4586-83c8-08fbcbe80bda
 # ╟─4ea887d9-956a-4ca4-96be-be8c4b1ba330
+# ╠═775bffca-9e9c-4188-b66d-78a50423377c
+# ╠═2ce5077b-0955-4dd7-a11f-15c0771ad6ac
+# ╠═7491ba26-70dd-42af-8e1f-4b15cabb8844
+# ╟─c79fb7fc-653e-4f26-aa36-f7c2d8c65016
 # ╠═14e464f7-d262-4d80-abd3-41d138895673
-# ╟─3e2bdfbf-dc0a-40d6-b67c-d97dae8a67f3
+# ╟─334494c9-47d2-4679-bbde-5d629c5c7b1f
 # ╠═46646317-7160-4a83-9468-009c12cd6691
-# ╟─06f2a81a-97bd-4e03-a470-5c3be869d61c
 # ╟─1ec36193-87cc-40a6-8dbf-69ad88c5f034
 # ╟─2a166f56-e179-4986-857a-dcd6d577fb6b
 # ╟─f5253b44-981e-4fd2-bac8-094238c29ef1
