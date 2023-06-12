@@ -2,8 +2,9 @@
 @def tags = ["index"]
 
 # Julia programming for ML
-Welcome to the website of the *Julia programming for Machine Learning* course
-taught at the [TU Berlin Machine Learning Group](https://www.tu.berlin/ml).
+Welcome to the website for the *Julia programming for Machine Learning* course
+offered by Prof. Klaus-Robert Müller's 
+[Machine Learning Group](https://www.tu.berlin/ml) at TU Berlin.
 
 ~~~
 <h2>Table of Contents</h2>
@@ -37,31 +38,53 @@ In each session, two lectures are taught:
 | 4    |  6      | Automatic Differentiation                         | ✅               |
 |      |  7      | Deep Learning                                     | ✅               |
 | 5    |  8      | Workflows: Scripts, Experiments & Packages        |                 |
-|      |  9      | Testing, Profiling & Debugging                    |                 |
+|      |  9      | Profiling & Debugging                             |                 |
+
+The first three weeks focus on teaching the fundamentals of the Julia programming language. 
+These weeks consist of longer lectures, followed up by shorter, "guided tours" of the Julia ecosystem,
+including plotting, data-frames and classical machine learning algorithms.
+
+Week four is all about Deep Learning:
+A comprehensive lecture on automatic differentiation (AD) 
+sheds light on differences between Julia's various AD packages,
+before giving a brief overview of Flux's Deep Learning ecosystem.
+
+Finally, week five is all about starting your own Julia project,
+taking a look at the structure of Julia packages and different workflows 
+for reproducible machine learning research. 
+This is followed up by a demonstration of Julia's debugging and profiling utilities.
 
 The lectures and the homework cover the following packages:
 
-| Package          | Description                              | Python equivalent |
-|:-----------------|:-----------------------------------------|:------------------|
-| LinearAlgebra.jl | Linear algebra (standard library)        | numpy             |
-| Plots.jl         | Plotting & visualizations                | matplotlib        |
-| DataFrames.jl    | Working with and processing tabular data | pandas            |
-| MLJ.jl           | Classical Machine Learning methods       | scikit-learn      |
-| ForwardDiff.jl   | Forward-mode automatic differentiation   |                   |
-| Zygote.jl        | Reverse-mode automatic differentiation   | JAX               |
-| MLDatasets.jl    | Dataset loader                           |                   |
-| Flux.jl          | Higher-level Deep Learning abstractions  | PyTorch, Keras    |
-| PkgTemplates.jl  | Package template                         |                   |
-| DrWatson.jl      | Workflow for scientific projects         |                   |
+| Package              | Lecture |  Description                                           | Python equivalent |
+|:-----------------    |:-------:|:-------------------------------------------------------|:------------------|
+| LinearAlgebra.jl     |       2 | Linear algebra (standard library)                      | numpy             |
+| Plots.jl             |       3 | Plotting & visualizations                              | matplotlib        |
+| DataFrames.jl        |       3 | Working with and processing tabular data               | pandas            |
+| MLJ.jl               |       5 | Classical Machine Learning methods                     | scikit-learn      |
+| ChainRules.jl        |       6 | Forward- & reverse-rules for automatic differentiation |                   |
+| Zygote.jl            |       6 | Reverse-mode automatic differentiation                 | JAX, PyTorch      |
+| Enzyme.jl            |       6 | Forward- & reverse-mode automatic differentiation      | JAX               |
+| ForwardDiff.jl       |       6 | Forward-mode automatic differentiation                 |                   |
+| FiniteDiff.jl        |       6 | Finite differences                                     |                   |
+| FiniteDifferences.jl |       6 | Finite differences                                     |                   |
+| Flux.jl              |       7 | Deep Learning abstractions                             | PyTorch, Keras    |
+| MLDatasets.jl        |       7 | Dataset loader                                         |                   |
+| PkgTemplates.jl      |       8 | Package template                                       |                   |
+| DrWatson.jl          |       8 | Workflow for scientific projects                       |                   |
+| Debugger.jl          |       9 | Debugger                                               |                   |
+| Infiltrator.jl       |       9 | Debugger                                               |                   |
+| ProfileView.jl       |       9 | Profiler                                               |                   |
+| Cthulhu.jl           |       9 | Type inference debugger                                |                   |
 
 ### Homework
-When learning a programming language, it helps to actually write code.
+When learning a programming language, it helps to write code.
 The lectures from week 1 to 4 are accompanied by homework notebooks that test
 your understanding of the contents. 
 These notebooks contain automated feedback in the form of tests that need to be passed.
 
-For TU Berlin students, homework will be evaluated on a slightly different test suite
-to avoid hard-coded answers. 
+For TU Berlin students, the homework will also be evaluated on a second, 
+slightly different test suite to avoid cheating and hard-coded answers. 
 
 Designing homework exercises takes a lot of time, so 
 **please don't upload any answers to the homework to the internet.**

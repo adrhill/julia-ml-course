@@ -44,7 +44,7 @@ The following packages are covered by the lectures and homework:
 | MLJ.jl               |       5 | Classical Machine Learning methods                     |
 | ChainRules.jl        |       6 | Forward- & reverse-rules for automatic differentiation |
 | Zygote.jl            |       6 | Reverse-mode automatic differentiation                 |
-| Enzyme.jl            |       6 | Forwards- & reverse-mode automatic differentiation     |
+| Enzyme.jl            |       6 | Forward- & reverse-mode automatic differentiation      |
 | ForwardDiff.jl       |       6 | Forward-mode automatic differentiation                 |
 | FiniteDiff.jl        |       6 | Finite differences                                     |
 | FiniteDifferences.jl |       6 | Finite differences                                     |
