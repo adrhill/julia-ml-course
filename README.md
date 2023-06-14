@@ -1,14 +1,24 @@
-<h1 align="center">
-    Julia programming for Machine Learning
-</h1>
-<p align="center">
-    <a href="https://adrhill.github.io/julia-ml-course/">
-        <img src="https://img.shields.io/badge/-Go%20to%20course%20website-informational" />
-    </a>
-    <a href="https://isis.tu-berlin.de/course/view.php?id=34292">
-        <img src="https://img.shields.io/badge/TU%20Berlin-ISIS%20page-red" />
-    </a>
-</p>
+<div align="center">
+  <a href="https://adrhill.github.io/julia-ml-course/">
+    <img
+      src="website/_assets/logo/logo.svg"
+      alt="JuML Logo"
+      height="100"
+    />
+  </a>
+  <br />
+  <p>
+    <h1>
+      <b>
+        Julia programming for Machine Learning
+      </b>
+    </h1>
+    
+[![Go to course website](https://img.shields.io/badge/-Go%20to%20course%20website-informational)](https://adrhill.github.io/julia-ml-course/)
+[![TU Berlin ISIS page](https://img.shields.io/badge/TU%20Berlin-ISIS%20page-red)](https://isis.tu-berlin.de/course/view.php?id=34292)
+    
+  </p>
+</div>
 
 Course material and website for the [Julia programming for Machine Learning][site-url] course (JuML) at the [TU Berlin Machine Learning group][ml-group-url].
 
