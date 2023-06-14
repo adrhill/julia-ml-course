@@ -2,7 +2,7 @@
 @def tags = ["index"]
 
 # Julia programming for ML
-Welcome to the website for the *Julia programming for Machine Learning* course
+Welcome to the *Julia programming for Machine Learning* course
 offered by Prof. Klaus-Robert Müller's 
 [Machine Learning Group](https://www.tu.berlin/ml) at TU Berlin.
 
@@ -143,7 +143,6 @@ Alternatively, write me on [ISIS](https://isis.tu-berlin.de/) or open an issue o
 #### What does the symbol `⁽⁺⁾` in some slide titles mean?
 This symbol indicates optional–often more advanced–content that can be skipped.
 
-
 ## Acknowledgements
 The format of this website as well as the contents of this course are influenced by the following lectures:
 - [*Introduction to Computational Thinking*](https://computationalthinking.mit.edu/Fall22/) 
@@ -151,4 +150,8 @@ The format of this website as well as the contents of this course are influenced
 - [*Scientific Computing*](https://www.wias-berlin.de/people/fuhrmann/SciComp-WS2122/) 
   at TU Berlin by Jürgen Fuhrmann
 
-Many thanks to Fons van der Plas for helping me build this website!
+Many thanks to 
+- [Fons van der Plas](https://github.com/fonsp) for making Pluto and helping me build this website
+- [Niklas Schmitz](https://github.com/niklasschmitz) for feedback on the AD lecture
+- [Théo Galy-Fajou](https://github.com/theogf) and [Johnny Chen](https://github.com/johnnychen94) for their mentorship
+- everyone who contributed to the packages covered in this lecture
