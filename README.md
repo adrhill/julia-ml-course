@@ -14,8 +14,8 @@
       </b>
     </h1>
     
-[![Go to course website](https://img.shields.io/badge/-Go%20to%20course%20website-informational)](https://adrhill.github.io/julia-ml-course/)
-[![TU Berlin ISIS page](https://img.shields.io/badge/TU%20Berlin-ISIS%20page-red)](https://isis.tu-berlin.de/course/view.php?id=34292)
+[![Go to course website][goto-badge]][site-url]
+[![TU Berlin ISIS page][isis-badge]][isis-url]
     
   </p>
 </div>
@@ -30,21 +30,34 @@ on the course website.
 The course is taught in five weekly sessions of three hours.
 In each session, two lectures are taught:
 
-| Lecture | Content                                           |
-|:-------:|:--------------------------------------------------|
-|  0      | General Information, Installation & Getting Help  |
-|  1      | Basics 1: Types, Control-flow & Multiple Dispatch |
-|  2      | Basics 2: Arrays & Linear Algebra                 |
-|  3      | Plotting & DataFrames                             |
-|  4      | Basics 3: Data structures and custom types        |
-|  5      | Classical Machine Learning                        |
-|  6      | Automatic Differentiation                         |
-|  7      | Deep Learning                                     |
-|  8      | Workflows: Scripts, Experiments & Packages        |
-|  9      | Testing, Profiling & Debugging                    |
+| Week | Lecture | Content                                           |
+|:----:|:-------:|:--------------------------------------------------|
+| 1    |  0      | General Information, Installation & Getting Help  |
+|      |  1      | Basics 1: Types, Control-flow & Multiple Dispatch |
+| 2    |  2      | Basics 2: Arrays, Linear Algebra                  |
+|      |  3      | Plotting & DataFrames                             |
+| 3    |  4      | Basics 3: Data structures and custom types        |
+|      |  5      | Classical Machine Learning                        |
+| 4    |  6      | Automatic Differentiation                         |
+|      |  7      | Deep Learning                                     |
+| 5    |  8      | Workflows: Scripts, Experiments & Packages        |
+|      |  9      | Profiling & Debugging                             |
 
-The lectures are accompanied by four homework notebooks.
-The following packages are covered by the lectures and homework:
+The first three weeks focus on teaching the fundamentals of the Julia programming language. 
+These weeks consist of longer lectures, followed up by shorter, "guided tours" of the Julia ecosystem,
+including plotting, data-frames and classical machine learning algorithms.
+
+Week four is all about Deep Learning:
+A comprehensive lecture on automatic differentiation (AD) 
+sheds light on differences between Julia's various AD packages,
+before giving a brief overview of Flux's Deep Learning ecosystem.
+
+Finally, week five is all about starting your own Julia project,
+taking a look at the structure of Julia packages and different workflows 
+for reproducible machine learning research. 
+This is followed up by a demonstration of Julia's debugging and profiling utilities.
+
+The lectures and the homework cover the following packages:
 
 | Package              | Lecture |  Description                                           |
 |:-----------------    |:-------:|:-------------------------------------------------------|
@@ -69,3 +82,7 @@ The following packages are covered by the lectures and homework:
 
 [site-url]: https://adrhill.github.io/julia-ml-course/
 [ml-group-url]: https://www.tu.berlin/ml
+[isis-url]: https://isis.tu-berlin.de/course/view.php?id=34292
+
+[goto-badge]: https://img.shields.io/badge/-Go%20to%20course%20website-informational
+[isis-badge]: https://img.shields.io/badge/TU%20Berlin-ISIS%20page-red
