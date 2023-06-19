@@ -454,15 +454,20 @@ tip(md"""Make sure you ran the training loop in the slide on *"Training"*!""")
 
 # ╔═╡ f1f9c1ab-a678-4fd3-8eae-4c769b8c79c1
 md"""## Saving and loading trained parameters
-Model parameters can be saved in `.bson` format using the [BSON.jl](https://github.com/JuliaIO/BSON.jl) package
+Model parameters can be saved in `.jld2` format using the [JLD2.jl](https://github.com/JuliaIO/JLD2.jl) package
 ```julia
-using BSON
-BSON.@save "model_parameters.bson" model
+using JLD2
+
+model_state = Flux.state(model1)
+
+jldsave("my_model.jld2"; model_state)
 ```
 
 and loaded using
 ```julia
-Flux.loadmodel!(model2, BSON.load("model_parameters.bson")[:model_state])
+model_state = JLD2.load("my_model.jld2", "model_state")
+
+Flux.loadmodel!(model2, model_state)
 ```
 
 Note that this will load the parameters into `model2`
@@ -584,6 +589,11 @@ model = Chain(
 
 Multiple dispatch will handle the rest. To copy arrays `x` back to CPU, call `cpu(x)`
 """
+
+# ╔═╡ 2fef2f0e-e338-4184-b8c7-a3f6a3499f50
+tip(
+    md"Saving model parameters to a `.jld2` file requires moving the model back to the CPU."
+)
 
 # ╔═╡ 00453134-9a7c-4a95-ab3b-6ea837393eea
 md"## Custom GPU kernels
@@ -2418,6 +2428,7 @@ version = "1.4.1+0"
 # ╟─13a9d7d2-de15-43f5-90d5-ff4d27384da1
 # ╟─bac0551b-4d91-4f43-b00e-b68dde90e644
 # ╟─ed806777-12fb-4cb5-814d-76f870b24c4f
+# ╟─2fef2f0e-e338-4184-b8c7-a3f6a3499f50
 # ╟─00453134-9a7c-4a95-ab3b-6ea837393eea
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
