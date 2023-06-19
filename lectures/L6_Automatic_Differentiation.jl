@@ -1027,10 +1027,11 @@ Enzyme.gradient(Forward, g, x̃)
 Enzyme.jacobian(Forward, g, x̃)
 
 # ╔═╡ c79fb7fc-653e-4f26-aa36-f7c2d8c65016
-md"Enzyme also exports `autodiff`, a lower-level API for VJPs and JVPs.
+md"### Low-level API
+Enzyme also exports `autodiff`, a lower-level API for VJPs and JVPs.
 This function is a bit more advanced as it puts the user in control of allocations to maximize performance.
 
-Enzyme's `autodiff` can be used with reverse-mode AD" 
+Enzyme's `autodiff` can be used with reverse-mode AD"
 
 # ╔═╡ 14e464f7-d262-4d80-abd3-41d138895673
 begin
@@ -1055,6 +1056,12 @@ begin
 
     @info out_fwd # contains primal output and gradient
 end
+
+# ╔═╡ 451a3386-064d-430a-8a0e-97b135d76f4b
+tip(md"Since Enzyme differentiates at the LLVM level, 
+it can differentiate any LLVM-based language, e.g. C, C++, Swift, Julia and Rust.
+More information can be found on the [Enzyme website](https://enzyme.mit.edu).
+")
 
 # ╔═╡ 1ec36193-87cc-40a6-8dbf-69ad88c5f034
 md"""## Finite differences
@@ -2557,6 +2564,7 @@ version = "1.4.1+0"
 # ╠═14e464f7-d262-4d80-abd3-41d138895673
 # ╟─334494c9-47d2-4679-bbde-5d629c5c7b1f
 # ╠═46646317-7160-4a83-9468-009c12cd6691
+# ╟─451a3386-064d-430a-8a0e-97b135d76f4b
 # ╟─1ec36193-87cc-40a6-8dbf-69ad88c5f034
 # ╟─2a166f56-e179-4986-857a-dcd6d577fb6b
 # ╟─f5253b44-981e-4fd2-bac8-094238c29ef1
