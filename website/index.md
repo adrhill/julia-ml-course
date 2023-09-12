@@ -105,7 +105,7 @@ If you do not register on time, you cannot pass the course.
   - **Lectures:** Wednesday 09:15 - 11:45 (online)
   - **Office hours:** Monday 14:15 - 15:45 (online)
 
-More information and links to the Zoom meetings can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=34292).
+More information and links to the Zoom meetings can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=35533).
 
 ## FAQ
 #### Why should I learn Julia?

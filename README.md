@@ -82,7 +82,7 @@ The lectures and the homework cover the following packages:
 
 [site-url]: https://adrhill.github.io/julia-ml-course/
 [ml-group-url]: https://www.tu.berlin/ml
-[isis-url]: https://isis.tu-berlin.de/course/view.php?id=34292
+[isis-url]: https://isis.tu-berlin.de/course/view.php?id=35533
 
 [goto-badge]: https://img.shields.io/badge/-Go%20to%20course%20website-informational
 [isis-badge]: https://img.shields.io/badge/TU%20Berlin-ISIS%20page-red
