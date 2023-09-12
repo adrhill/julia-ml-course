@@ -97,7 +97,7 @@ Using the `@enter` macro, we can enter a function call and step through it:
 The prompt changes to `1|debug>` and allows us to step through code using
 [Debugger.jl's commands](https://github.com/JuliaDebug/Debugger.jl#debugger-commands).
 The screenshot above demonstrates two of these: 
-* `s` to steps into the next call
+* `s` to step into the next call
 * `sr` to step until the next `return`
 
 Once again, we find out that `sum_divisors(220)` incorrectly returned `504`.
