@@ -203,7 +203,7 @@ end
 
 # ╔═╡ 9511b49a-936c-4c43-b03b-eab3cb86ef8a
 md"""## Views
-Making a copy of an array is slow since we need to write it to memory.
+Making a copy of an array is slow since we need to write all entries to memory.
 Instead, we can use views to provide "a window" onto the relevant data in memory:
 """
 
@@ -242,9 +242,25 @@ begin
 end
 
 # ╔═╡ 43c078fb-7964-48e0-92fd-55d306f36b1d
+#! format: off
 tip(
-    md"If a method requires a lot of calls to `@view`, you can also use the `@views` macro (with an extra `s`) on a function, loop, or `begin ... end` block to turn every indexing operation inside of it into a view!",
+md"If a method requires a lot of calls to `@view`, 
+you can also use the `@views` macro (with an extra `s`) on a function, loop, or `begin ... end` block 
+to turn every indexing operation inside of it into a view!
+
+**Example:**
+The previous code block could have been written as
+
+```julia
+@views begin # every indexing operation in this code block will create a view
+	x2 = collect(1:10)
+	y2 = x2[2:4] # creates view onto x2 due to @views 
+	y2[1] = 42
+end
+```
+",
 )
+#! format: on
 
 # ╔═╡ b9a0dd69-02e5-4535-99f1-fa11cbe69b15
 md"""## Type promotion ⁽⁺⁾
@@ -328,7 +344,7 @@ M2 = [
 ]
 
 # ╔═╡ 402547f6-fcde-420a-a4ea-10e199f5e2db
-md"""## N-dimensional Arrays
+md"""## N-dimensional arrays
 Arrays of dimension 3 and larger are called tensors.
 
 ### Manual definition ⁽⁺⁾
@@ -353,6 +369,13 @@ md"or to reshape arrays and ranges:"
 
 # ╔═╡ 10f75ce8-fe3a-4014-9c67-17c8f8b1bb71
 reshape(1:18, 2, 3, 3)
+
+# ╔═╡ 423e562d-5563-4d4b-9c2e-6f52d312ded5
+md"The `reshape` functions takes as many parameters as dimensions you want to reshape to.
+
+For example, to reshape an array $A$ to shape $p \times q \times r \times s$,
+call `reshape(A, p, q, r, s)`.
+"
 
 # ╔═╡ ecd6d456-e9a0-4218-b90a-a1cd70815dc9
 md"""## Basic operations
@@ -496,7 +519,18 @@ Sparse arrays are arrays that contain mostly zeros, making it faster and more me
 """
 
 # ╔═╡ cfa047b9-e15d-403a-a2f0-9dbc0879a382
-SA = sparse([1, 2, 3], [2, 4, 8], [5, 6, 7]) # rows, columns, values
+SA = sparse([1, 3, 2, 2], [2, 8, 4, 6], [2, 3, 4, 5]) # rows, columns, values
+
+# ╔═╡ c30ff6f2-b034-4d3a-85db-6a6052bab764
+md" Thinking of the inputs as a table can be helpful:
+
+| Entry | Row | Column | Value |
+|:-----:|:---:|:------:|:-----:|
+| 1     | 1   | 2      | 2     |
+| 2     | 3   | 8      | 3     |
+| 3     | 2   | 4      | 4     |
+| 4     | 2   | 6      | 5     |
+"
 
 # ╔═╡ 22929fda-ddc7-4c1e-bc30-b6f6c30c2e3a
 md"""### OffsetArrays.jl
@@ -617,50 +651,6 @@ tip(
 - `eachindex` - iterate over all indices of an array
 """,
 )
-
-# ╔═╡ b857984b-ec1b-4409-bdf0-438228950f39
-md"""## Broadcasting on Arrays
-We've already seen broadcasting on vectors in the previous lecture. 
-For higher-dimensional arrays, the behaviour is [a bit more complicated]((https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting)):
-
->  Broadcast **expands singleton dimensions in array arguments to match the corresponding dimension in the other array** without using extra memory, and applies the given function elementwise
-
-Let's go through an example and broadcast addition on
-
-$\begin{align}
-P &\in \mathbb{R}^{2×3×1×1×1} \\
-Q &\in \mathbb{R}^{1×1×4×5} \quad .
-\end{align}$
-
-Julia will expand $P$ and $Q$ to 
-
-$\tilde{P},\,\tilde{Q} \in \mathbb{R}^{2×3×4×5×1}$ 
-
-
-without allocating extra memory, then add them:
-
-$R = \tilde{P} + \tilde{Q}$
-
-This results in $R \in \mathbb{R}^{2×3×4×5×1}$
-"""
-
-# ╔═╡ 02e99648-f457-469d-88b0-0cec5cb5826d
-P = rand(2, 3, 1, 1, 1);
-
-# ╔═╡ fc9e4870-9411-4feb-a459-8ce4124187f7
-Q = rand(1, 1, 4, 5);
-
-# ╔═╡ c25aec0f-b215-4bda-910d-e29268448623
-R = P .+ Q;
-
-# ╔═╡ bd968691-948a-4214-b49f-7faf52d407a4
-size(P)
-
-# ╔═╡ 4b39a76b-1206-495c-b68d-47efb85acfa5
-size(Q)
-
-# ╔═╡ eb9042f0-a46f-4104-88b4-dfc406df9481
-size(R)
 
 # ╔═╡ b12348a8-53dc-4a4d-8666-3849e94bdece
 md"""# Linear Algebra
@@ -863,6 +853,50 @@ begin
     distribution = Laplace(μ, θ)
     rand(distribution, 50000) |> histogram
 end
+
+# ╔═╡ b857984b-ec1b-4409-bdf0-438228950f39
+md"""# Broadcasting on arrays
+We've already seen broadcasting on vectors in the previous lecture. 
+For higher-dimensional arrays, the behaviour is [a bit more complicated]((https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting)):
+
+>  Broadcast **expands singleton dimensions in array arguments to match the corresponding dimension in the other array** without using extra memory, and applies the given function elementwise
+
+Let's go through an example and broadcast addition on
+
+$\begin{align}
+P &\in \mathbb{R}^{2×3×1×1×1} \\
+Q &\in \mathbb{R}^{1×1×4×5} \quad .
+\end{align}$
+
+Julia will expand $P$ and $Q$ to 
+
+$\tilde{P},\,\tilde{Q} \in \mathbb{R}^{2×3×4×5×1}$ 
+
+
+without allocating extra memory, then add them:
+
+$R = \tilde{P} + \tilde{Q}$
+
+This results in $R \in \mathbb{R}^{2×3×4×5×1}$.
+"""
+
+# ╔═╡ 02e99648-f457-469d-88b0-0cec5cb5826d
+P = rand(2, 3, 1, 1, 1);
+
+# ╔═╡ fc9e4870-9411-4feb-a459-8ce4124187f7
+Q = rand(1, 1, 4, 5);
+
+# ╔═╡ c25aec0f-b215-4bda-910d-e29268448623
+R = P .+ Q;
+
+# ╔═╡ bd968691-948a-4214-b49f-7faf52d407a4
+size(P)
+
+# ╔═╡ 4b39a76b-1206-495c-b68d-47efb85acfa5
+size(Q)
+
+# ╔═╡ eb9042f0-a46f-4104-88b4-dfc406df9481
+size(R)
 
 # ╔═╡ b2cdd7d0-e009-4fca-a16b-ddd19cabc6a0
 md"""# Further resources
@@ -1571,6 +1605,7 @@ version = "17.4.0+0"
 # ╠═14c1da48-e07c-43bd-b8f4-eb393ddbd9b5
 # ╟─047b7fb9-9b51-49a7-859d-51c16ac31fff
 # ╠═10f75ce8-fe3a-4014-9c67-17c8f8b1bb71
+# ╟─423e562d-5563-4d4b-9c2e-6f52d312ded5
 # ╟─ecd6d456-e9a0-4218-b90a-a1cd70815dc9
 # ╠═8c2e00ba-342b-42ce-8a06-07f8c82c321f
 # ╠═f014020d-060b-44cd-8efe-e87483937307
@@ -1613,6 +1648,7 @@ version = "17.4.0+0"
 # ╟─951c7a53-c90c-43b4-8028-a09a37f6a34c
 # ╠═7e9db4f6-b7a5-46b8-b386-c75c3aa9fcd6
 # ╠═cfa047b9-e15d-403a-a2f0-9dbc0879a382
+# ╟─c30ff6f2-b034-4d3a-85db-6a6052bab764
 # ╟─22929fda-ddc7-4c1e-bc30-b6f6c30c2e3a
 # ╠═5d74be37-f1c2-4a14-afda-2501df203e4f
 # ╠═2118b306-0a10-4aa9-9198-52c062f18cd2
@@ -1644,13 +1680,6 @@ version = "17.4.0+0"
 # ╠═69668aa9-d245-4ed6-8389-d0cc0e802727
 # ╠═5cee46db-8312-4b08-a057-093379903881
 # ╟─4d822c49-07de-4127-ade7-c339fe10076e
-# ╟─b857984b-ec1b-4409-bdf0-438228950f39
-# ╠═02e99648-f457-469d-88b0-0cec5cb5826d
-# ╠═fc9e4870-9411-4feb-a459-8ce4124187f7
-# ╠═c25aec0f-b215-4bda-910d-e29268448623
-# ╠═bd968691-948a-4214-b49f-7faf52d407a4
-# ╠═4b39a76b-1206-495c-b68d-47efb85acfa5
-# ╠═eb9042f0-a46f-4104-88b4-dfc406df9481
 # ╟─b12348a8-53dc-4a4d-8666-3849e94bdece
 # ╠═33cfaba3-a1a8-417d-9ab5-3e879ee4f38d
 # ╟─e48d1f75-db8e-4b6e-9ad1-7546963fc49b
@@ -1707,6 +1736,13 @@ version = "17.4.0+0"
 # ╟─8ba035af-aed3-4b6c-a3bb-f73a46415d3b
 # ╠═cbfc8bdf-2b6c-4dae-89da-c27342ec6afe
 # ╠═5da0c56f-c6f4-4bff-9446-99180624b002
+# ╟─b857984b-ec1b-4409-bdf0-438228950f39
+# ╠═02e99648-f457-469d-88b0-0cec5cb5826d
+# ╠═fc9e4870-9411-4feb-a459-8ce4124187f7
+# ╠═c25aec0f-b215-4bda-910d-e29268448623
+# ╠═bd968691-948a-4214-b49f-7faf52d407a4
+# ╠═4b39a76b-1206-495c-b68d-47efb85acfa5
+# ╠═eb9042f0-a46f-4104-88b4-dfc406df9481
 # ╟─b2cdd7d0-e009-4fca-a16b-ddd19cabc6a0
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
