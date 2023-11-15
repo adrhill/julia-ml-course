@@ -334,16 +334,30 @@ md"""### Irrational numbers
 typeof(π)
 
 # ╔═╡ b41bee43-f510-483f-9a12-d9d577367272
-md"### Rational numbers"
+md"### Rational numbers
+For integers $p$ and $q$, 
+rational numbers $\frac{p}{q}$ can be expressed as fractions using the syntax `p//q`.
+"
 
 # ╔═╡ 271cf99f-92ea-4e8c-ba0d-c4d848c5bb31
-r = 1//3
+r = 1//3 # one third
 
 # ╔═╡ fa9944fe-60c2-463e-af0c-cd836eade2f0
 typeof(r)
 
+# ╔═╡ 9358e01f-71b4-4ee1-96ca-2f754f011c71
+md"This avoids rounding errors due to the finite precision of floating-point numbers and floating-point arithmetic:
+"
+
+# ╔═╡ 6e16fd91-bd6b-43c2-9f07-e54cfe1ad503
+1 / 10 + 2 / 10 # error due to floating-point arithmetic
+
+# ╔═╡ f02acec5-adf4-4b3c-9d68-18032d5b7017
+1//10 + 2//10 # no error!
+
 # ╔═╡ be8ed1b2-f2f7-4b38-b47c-c2d78730af23
-md"When casting to floating point numbers, we introduce rounding errors"
+md"We also introduce rounding errors
+when casting rational numbers to floating point numbers:"
 
 # ╔═╡ 83130d05-383a-4461-be95-3b8f296a8238
 Float32(r)
@@ -468,14 +482,20 @@ sizeof(collect(my_range)) # 1000 Int64s => 64000 bit => 8000 bytes
 
 # ╔═╡ 9a12c858-74df-41b7-9ca6-6fdd47b430fb
 md"""### Custom step size
-We can also construct ranges with custom step sizes using the syntax `start:step_size:stop`. This also supports negative step sizes:
+We can also construct ranges with custom step sizes using the syntax `start:step:stop` where `step` is the step size between subsequent numbers.
 """
+
+# ╔═╡ c52cd9c7-aa09-4881-b7a3-ee94c9124790
+collect(1:2:10) # range from 1 to 10 with a step size of 2
+
+# ╔═╡ 64f1fb95-4267-45da-a8cf-7707bc18ac96
+md"Ranges also support negative step sizes:"
 
 # ╔═╡ 34c689ca-eba3-46e7-a246-cd58d5f03cdc
 collect(2:-0.2:1)
 
 # ╔═╡ e73639d0-5dd2-42f6-abc2-6b67a9489fd5
-md""""If even more control is desired, the `range` function can be used.
+md"""If even more control is desired, the `range` function can be used.
 This function supports any three arguments out ouf `start`, `stop`, `step` and `length`:"""
 
 # ╔═╡ 57e3ddbf-e2ba-4407-90ba-5cbee3ceb605
@@ -798,7 +818,8 @@ sqrt(sum(1:10))
 
 # ╔═╡ 995b1f73-f3a2-4671-a824-b85cccdbd8d8
 md"""### Pipes
-We can also use the piping operator `|>` to chain functions:
+We can also use the piping operator `|>` to chain functions.
+Using pipes, `g(f(x))` can be written as `f(x) |> g`.
 """
 
 # ╔═╡ 5fe2af35-2e93-46be-b0fa-c6b6af2f9866
@@ -880,23 +901,23 @@ test_array = [1, 2, 3, 4, 5]
 # ╔═╡ f8f62831-b5e1-4747-8b98-d6cff3d24d6c
 sin.(test_array)
 
-# ╔═╡ 3c9837fd-cf97-4289-90b7-1295d7371cae
-md"This also applies to the operators we have learned today"
-
-# ╔═╡ 584889ca-7ef1-4c37-8f33-f91ca2f156d2
-test_array .^ 2
-
-# ╔═╡ 5789f130-dab3-4042-a283-ae88d433a4d8
-2 .^ test_array
-
 # ╔═╡ 90964587-3913-41a2-9067-d83099bebe64
-md"and to user defined functions:"
+md"this also works on user defined functions"
 
 # ╔═╡ 72380c6b-c07d-4fa7-9840-b4efeb0d5cec
 add_two(x) = x + 2
 
 # ╔═╡ c39d3b94-e1c6-479f-a196-5ddc4c193b21
 add_two.(test_array)
+
+# ╔═╡ 3c9837fd-cf97-4289-90b7-1295d7371cae
+md"as well as on the operators we have learned about today. Simply add a dot before an operator:"
+
+# ╔═╡ 584889ca-7ef1-4c37-8f33-f91ca2f156d2
+test_array .^ 2
+
+# ╔═╡ 5789f130-dab3-4042-a283-ae88d433a4d8
+2 .^ test_array
 
 # ╔═╡ e03c8042-d8f6-49d3-b075-ff0689755176
 tip(md"We will cover broadcasting in more detail in lecture 2.")
@@ -1355,6 +1376,9 @@ version = "17.4.0+0"
 # ╟─b41bee43-f510-483f-9a12-d9d577367272
 # ╠═271cf99f-92ea-4e8c-ba0d-c4d848c5bb31
 # ╠═fa9944fe-60c2-463e-af0c-cd836eade2f0
+# ╟─9358e01f-71b4-4ee1-96ca-2f754f011c71
+# ╠═6e16fd91-bd6b-43c2-9f07-e54cfe1ad503
+# ╠═f02acec5-adf4-4b3c-9d68-18032d5b7017
 # ╟─be8ed1b2-f2f7-4b38-b47c-c2d78730af23
 # ╠═83130d05-383a-4461-be95-3b8f296a8238
 # ╟─033e9b34-7c10-4bbb-9004-36f6c4ee4052
@@ -1390,6 +1414,8 @@ version = "17.4.0+0"
 # ╠═2c82b252-dd51-44f2-a20c-a0ffb65ee210
 # ╠═5a5b2ebd-1da6-42ca-90d6-e63645ded46b
 # ╟─9a12c858-74df-41b7-9ca6-6fdd47b430fb
+# ╠═c52cd9c7-aa09-4881-b7a3-ee94c9124790
+# ╟─64f1fb95-4267-45da-a8cf-7707bc18ac96
 # ╠═34c689ca-eba3-46e7-a246-cd58d5f03cdc
 # ╟─e73639d0-5dd2-42f6-abc2-6b67a9489fd5
 # ╠═57e3ddbf-e2ba-4407-90ba-5cbee3ceb605
@@ -1437,7 +1463,7 @@ version = "17.4.0+0"
 # ╠═2bac36e1-0217-42aa-8d76-cf8128e73365
 # ╟─569644b7-23ba-4fc9-be70-637a41090676
 # ╠═1f7cbb1c-257e-4e69-81a2-eec48e18eca5
-# ╟─cf46afbb-f73b-4ef2-9f6c-ceb78a964af0
+# ╠═cf46afbb-f73b-4ef2-9f6c-ceb78a964af0
 # ╠═99d7a398-b532-4829-9bc0-87ab510a88cf
 # ╠═c559c6d6-acef-490f-9a29-f3cac37e249e
 # ╠═558e5589-9eed-4c03-a145-a868d251d58e
@@ -1483,12 +1509,12 @@ version = "17.4.0+0"
 # ╟─34fc83bd-662e-40b0-bab6-9c18ae2f92c4
 # ╠═a0a77ce0-c509-4230-a268-113147e04089
 # ╠═f8f62831-b5e1-4747-8b98-d6cff3d24d6c
-# ╟─3c9837fd-cf97-4289-90b7-1295d7371cae
-# ╠═584889ca-7ef1-4c37-8f33-f91ca2f156d2
-# ╠═5789f130-dab3-4042-a283-ae88d433a4d8
 # ╟─90964587-3913-41a2-9067-d83099bebe64
 # ╠═72380c6b-c07d-4fa7-9840-b4efeb0d5cec
 # ╠═c39d3b94-e1c6-479f-a196-5ddc4c193b21
+# ╟─3c9837fd-cf97-4289-90b7-1295d7371cae
+# ╠═584889ca-7ef1-4c37-8f33-f91ca2f156d2
+# ╠═5789f130-dab3-4042-a283-ae88d433a4d8
 # ╟─e03c8042-d8f6-49d3-b075-ff0689755176
 # ╟─0468b820-4879-4db4-b3a7-646f05eba11d
 # ╟─9723d981-3c86-4ae9-ada9-8c9f95c31552
