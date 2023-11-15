@@ -5,7 +5,7 @@ const pluto_shield = "https://img.shields.io/badge/view-Standalone%20Notebook-be
 const issue_shield = "https://img.shields.io/badge/open-GitHub%20issue-beige"
 const issue_url = "https://github.com/adrhill/julia-ml-course/issues"
 
-function generate_iframes(d::Date = today())
+function generate_iframes(d::Date=today())
     dir = @__DIR__ # expected to be /website
     lectures = filter(endswith(".jl"), readdir(joinpath(dir, "..", "lectures")))
     homework = filter(endswith(".jl"), readdir(joinpath(dir, "..", "homework")))
