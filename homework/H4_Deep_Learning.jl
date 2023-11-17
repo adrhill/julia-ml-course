@@ -23,13 +23,13 @@ html"""
 			Homework 4: Deep Learning
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Summer Semester 2023<br>
+			TU Berlin, Winter Semester 23/24<br>
 		</p>
 	</div>
 """
 
 # ╔═╡ ce8fd3c2-4fe8-4408-8479-efc81f1a4147
-md"Due date: **Monday, May 29th 2023 at 23:59**"
+md"Due date: **Monday, December 18th 2023 at 23:59**"
 
 # ╔═╡ 42a8576f-d0ab-4915-864f-c1c2fd65e4e4
 md"### Student information"
@@ -288,7 +288,7 @@ gradient(f, -1)
 
 # ╔═╡ 68ad8a8f-8d0a-49d4-b79e-53491ecffc01
 md"""# Feedback
-This is the first iteration of the *"Julia programming for ML"* class. Please help us make the course better!
+This is the second iteration of the *"Julia programming for ML"* class. Please help us make the course better!
 
 You can write whatever you want in the following string. Feel free to add or delete whatever you want.
 """

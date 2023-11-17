@@ -48,13 +48,13 @@ html"""
 			Homework 3: Custom types
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Summer Semester 2023<br>
+			TU Berlin, Winter Semester 23/24<br>
 		</p>
 	</div>
 """
 
 # ╔═╡ bdcb27c5-0603-49ac-b831-d78c558b31f0
-md"Due date: **Wednesday, May 17th 2023 at 23:59**"
+md"Due date: **Monday, December 11th 2023 at 23:59**"
 
 # ╔═╡ ddd6e83e-5a0d-4ff0-afe4-dedfc860994c
 md"### Student information"
@@ -681,7 +681,7 @@ This example had no stochasticity and other optimization algorithms would have b
 
 # ╔═╡ edb7814a-eddf-4c87-8857-19bb0a0c0241
 md"""# Feedback
-This is the first iteration of the *"Julia programming for ML"* class. Please help us make the course better!
+This is the second iteration of the *"Julia programming for ML"* class. Please help us make the course better!
 
 You can write whatever you want in the following string. Feel free to add or delete whatever you want.
 """

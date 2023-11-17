@@ -35,7 +35,7 @@ begin
 
     # Allow MLDatasets to download MNIST in CI
     ENV["DATADEPS_ALWAYS_ACCEPT"] = "true"
-end
+end;
 
 # ╔═╡ 5a94a1c6-c9eb-48a3-a13f-2a0222a3f5f8
 using Flux
@@ -68,7 +68,7 @@ html"""
 			Adrian Hill
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Summer Semester 2023
+			TU Berlin, Winter Semester 23/24
 		</p>
 	</div>
 """

@@ -101,9 +101,9 @@ Homework assignments must be submitted every week.
 You must be enrolled on ISIS to submit homework. 
 If you do not register on time, you cannot pass the course.
 
-- **Course Period:**  April 26th - May 24th 2023
-  - **Lectures:** Wednesday 09:15 - 11:45 (online)
-  - **Office hours:** Monday 14:15 - 15:45 (online)
+- **Course Period:**  November 21st - December 19th 2023 
+  - **Lectures:** Tuesday 14:15 - 16:45 PM
+  - **Office hours:** Monday 10:15 - 11:45 AM
 
 More information and links to the Zoom meetings can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=35533).
 
@@ -153,5 +153,6 @@ The format of this website as well as the contents of this course are influenced
 Many thanks to 
 - [Fons van der Plas](https://github.com/fonsp) for making Pluto and helping me build this website
 - [Niklas Schmitz](https://github.com/niklasschmitz) for feedback on the AD lecture
+- [Janes Sanne](https://github.com/JeanAnNess) for his help as a teaching assistant
 - [Théo Galy-Fajou](https://github.com/theogf) and [Johnny Chen](https://github.com/johnnychen94) for their mentorship
 - everyone who contributed to the packages covered in this lecture
