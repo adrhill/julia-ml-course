@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -7,14 +7,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     quote
-        local iv = try
-            Base.loaded_modules[Base.PkgId(
-                Base.UUID("6e696c72-6542-2067-7265-42206c756150"),
-                "AbstractPlutoDingetjes",
-            )].Bonds.initial_value
-        catch
-            b -> missing
-        end
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
@@ -728,6 +721,54 @@ md"How does a high/low bandwidth affect the prediction? How does regularization 
 
 You can also implement [more kernel functions](https://en.wikipedia.org/wiki/Positive-definite_kernel#Examples_of_p.d._kernels) and pass them to the `kernel_ridge` keyword-argument `kernel` to see how the prediction changes.
 "
+
+# ╔═╡ 41a7bd3b-56f5-45e7-ac8d-313bb3a46181
+md"### Exercise 4 – Principal Component Analysis
+Note: This exercise does not provide automated feedback"
+
+# ╔═╡ af5e47f0-010b-4e69-bed3-95fdf9fce3fe
+task(
+    md"Implement Principal Component Analysis (PCA) in the function `pca` below.
+
+Recap: PCA uses $k$ orthogonal principal components to find the decomposition of the data that maximizes variance in the data. 
+
+##### Step 1
+Inside the function `pca`, calculate the centered data matrix $\hat{X}$.
+
+##### Step 2
+Compute the linear kernel $K$.
+
+$K = \hat{X}^T \hat{X}$
+
+##### Step 3
+Perform an eigendecomposition of $C$ to obtain the eigenvectors and eigenvalues. Select eigenvectos $v$ corresponding to the $k$ largest eigenvalues.
+    
+$W_k = \hat{X} \cdot v$
+
+##### Step 4
+Calculate the reduced-dimensional representation $H$ by using the centered data $\hat{X}$ and the array of directions of maximal variance $W_k$.
+
+$H = W_k^T \cdot \hat{X}$
+",
+    4, 
+)
+
+# ╔═╡ 216dcbf9-91aa-40fe-bef2-6dea56a35be7
+function pca(X; k=3)  # Don't change this line
+    # Write your code here
+	
+    W_k = missing # Replace `missing` with your code
+    H = missing # Replace `missing` with your code
+    
+    return W_k, H # Don't change this line
+end
+
+# ╔═╡ dda486b4-5838-429b-aec8-450d2f0c55be
+hint(md"
+* the `LinearAlgebra` packagage offers valueable functions such as `mean` and `eigen`
+* sorting the eigenvectors based on the indices of the sorted eigenvalues allows you to select the top $k$ most significant eigenvectors with ease. 
+* `sortperm` is a useful `Base` function to return the indices of a sorted array.
+")
 
 # ╔═╡ edb7814a-eddf-4c87-8857-19bb0a0c0241
 md"""# Feedback
@@ -2383,6 +2424,10 @@ version = "1.4.1+0"
 # ╠═2f57e6de-c874-4f90-8e71-70cd1d002359
 # ╠═2000a153-4b4d-4aec-a503-eaf3cc9d89c3
 # ╟─0fe33d6c-d65d-4f29-857d-34ea792a1f48
+# ╟─41a7bd3b-56f5-45e7-ac8d-313bb3a46181
+# ╟─af5e47f0-010b-4e69-bed3-95fdf9fce3fe
+# ╠═216dcbf9-91aa-40fe-bef2-6dea56a35be7
+# ╟─dda486b4-5838-429b-aec8-450d2f0c55be
 # ╟─edb7814a-eddf-4c87-8857-19bb0a0c0241
 # ╠═f60be2e0-9b43-46b5-96ef-7747ab56e164
 # ╟─00000000-0000-0000-0000-000000000001
