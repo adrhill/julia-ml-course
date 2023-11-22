@@ -19,6 +19,8 @@ begin
     using PlutoUI
     using PlutoTeachingTools
 
+    using Distributions: MvNormal
+	using Statistics
     using LinearAlgebra
     using BenchmarkTools
 
@@ -753,7 +755,7 @@ $H = W_k^T \cdot \hat{X}$
 )
 
 # ╔═╡ 216dcbf9-91aa-40fe-bef2-6dea56a35be7
-function pca(X; k=3)  # Don't change this line
+function pca(X; k=2)  # Don't change this line
     # Write your code here
     
     return W_k, H # Don't change this line
@@ -761,10 +763,41 @@ end
 
 # ╔═╡ dda486b4-5838-429b-aec8-450d2f0c55be
 hint(md"
-* the `LinearAlgebra` and `Statistics` packagages offer valueable functions such as `mean` and `eigen` (Note: you might need to import Statistics).
+* the `LinearAlgebra` and `Statistics` packagages offer valueable functions such as `mean` and `eigen`.
 * sorting the eigenvectors based on the indices of the sorted eigenvalues allows you to select the top $k$ most significant eigenvectors with ease. 
 * `sortperm` is a useful `Base` function to return the indices of a sorted array.
 ")
+
+# ╔═╡ df1540c4-d458-428c-b230-6c42557557e1
+md"### Visualisation"
+
+# ╔═╡ c7511891-1b8f-4b0e-a684-1f2196d90922
+md"If you have successfully implemented PCA you should see a plot based on a randomized sample of a gaussian distribution with mean and covariance. Feel free to play around with their values."
+
+# ╔═╡ 4639b31c-9ef9-47a8-b9a9-b65b2e6d13fa
+begin
+	sample_size = 100
+	cov_matrix = [8 2; 2 4]  #make sure this is positive semidefinit and symmetrical
+	mean_vector = [0, 10]
+end
+
+# ╔═╡ 6fd61dac-2ab1-464a-a20c-c0e1d7d23e8b
+begin
+	# generate 2D data
+	X_normalDist = rand(MvNormal(mean_vector, cov_matrix), sample_size)
+	# use pca on data
+	W_example, H_example = pca(X_normalDist, k=2)
+	
+	# Plot result
+	scatter(X_normalDist[1, :], X_normalDist[2, :]; label="Data", xlabel="x", ylabel="y", legend=:bottomright, ratio = 1)
+	scaling_factor = minimum([maximum(abs.(W_example[:, 1])),maximum(abs.(W_example[:, 2])), 10])
+	pc1 = 10 * W_example[:, 1] / norm(W_example[:, 1])
+	pc2 = 10 * W_example[:, 2] / norm(W_example[:, 2])
+	
+	# display principal components
+	plot!([-pc1[1] + mean_vector[1], pc1[1] + mean_vector[1]], [-pc1[2] + mean_vector[2], pc1[2] + mean_vector[2]], line=:black, label="1st PC")
+	plot!([-pc2[1] + mean_vector[1], pc2[1] + mean_vector[1]], [-pc2[2] + mean_vector[2], pc2[2] + mean_vector[2]], line=:dash, label="2nd PC")
+end
 
 # ╔═╡ edb7814a-eddf-4c87-8857-19bb0a0c0241
 md"""# Feedback
@@ -792,16 +825,19 @@ I didn't like:
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 ImageMagick = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 TestImages = "5e47fb64-e119-507b-a336-dd2b206d9990"
 
 [compat]
 BenchmarkTools = "~1.3.2"
+Distributions = "~0.25.103"
 ImageMagick = "~1.2.2"
 Images = "~0.25.2"
 Plots = "~1.38.11"
@@ -2424,6 +2460,10 @@ version = "1.4.1+0"
 # ╟─af5e47f0-010b-4e69-bed3-95fdf9fce3fe
 # ╠═216dcbf9-91aa-40fe-bef2-6dea56a35be7
 # ╟─dda486b4-5838-429b-aec8-450d2f0c55be
+# ╟─df1540c4-d458-428c-b230-6c42557557e1
+# ╟─c7511891-1b8f-4b0e-a684-1f2196d90922
+# ╠═4639b31c-9ef9-47a8-b9a9-b65b2e6d13fa
+# ╠═6fd61dac-2ab1-464a-a20c-c0e1d7d23e8b
 # ╟─edb7814a-eddf-4c87-8857-19bb0a0c0241
 # ╠═f60be2e0-9b43-46b5-96ef-7747ab56e164
 # ╟─00000000-0000-0000-0000-000000000001
