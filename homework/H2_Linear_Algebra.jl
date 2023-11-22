@@ -724,11 +724,11 @@ You can also implement [more kernel functions](https://en.wikipedia.org/wiki/Pos
 
 # ╔═╡ 41a7bd3b-56f5-45e7-ac8d-313bb3a46181
 md"### Exercise 4 – Principal Component Analysis
-Note: This exercise does not provide automated feedback"
+Note: This exercise does not provide automated feedback in order to get you to practice programming in julia on your own."
 
 # ╔═╡ af5e47f0-010b-4e69-bed3-95fdf9fce3fe
 task(
-    md"Implement Principal Component Analysis (PCA) in the function `pca` below.
+    md"Implement [Principal Component Analysis](https://en.wikipedia.org/wiki/Principal_component_analysis) (PCA) in the function `pca` below.
 
 Recap: PCA uses $k$ orthogonal principal components to find the decomposition of the data that maximizes variance in the data. 
 
@@ -742,12 +742,11 @@ $K = \hat{X}^T \hat{X}$
 
 ##### Step 3
 Perform an eigendecomposition of $C$ to obtain the eigenvectors and eigenvalues. Select eigenvectos $v$ corresponding to the $k$ largest eigenvalues.
-    
-$W_k = \hat{X} \cdot v$
 
 ##### Step 4
 Calculate the reduced-dimensional representation $H$ by using the centered data $\hat{X}$ and the array of directions of maximal variance $W_k$.
 
+$W_k = \hat{X} \cdot v$
 $H = W_k^T \cdot \hat{X}$
 ",
     4, 
@@ -756,16 +755,13 @@ $H = W_k^T \cdot \hat{X}$
 # ╔═╡ 216dcbf9-91aa-40fe-bef2-6dea56a35be7
 function pca(X; k=3)  # Don't change this line
     # Write your code here
-	
-    W_k = missing # Replace `missing` with your code
-    H = missing # Replace `missing` with your code
     
     return W_k, H # Don't change this line
 end
 
 # ╔═╡ dda486b4-5838-429b-aec8-450d2f0c55be
 hint(md"
-* the `LinearAlgebra` packagage offers valueable functions such as `mean` and `eigen`
+* the `LinearAlgebra` and `Statistics` packagages offer valueable functions such as `mean` and `eigen` (Note: you might need to import Statistics).
 * sorting the eigenvectors based on the indices of the sorted eigenvalues allows you to select the top $k$ most significant eigenvectors with ease. 
 * `sortperm` is a useful `Base` function to return the indices of a sorted array.
 ")
