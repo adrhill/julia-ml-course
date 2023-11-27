@@ -802,34 +802,46 @@ hint(
 )
 
 # ╔═╡ df1540c4-d458-428c-b230-6c42557557e1
-md"### Visualisation"
+md"### Exercise 4.2 – Visualization"
 
-# ╔═╡ c7511891-1b8f-4b0e-a684-1f2196d90922
-md"If you have successfully implemented PCA you should see a plot based on a randomized sample of a gaussian distribution with mean and covariance. Feel free to play around with their values."
+# ╔═╡ a60e422c-e4e2-42d2-b490-54f3123aa11a
+task(
+    md"
+Try to replicate the following plot as on the dataset `X_test` as close as you can.
+	
+![PCA Plot](https://i.imgur.com/FEyXwwX.png)
+
+
+The plot doesn't have to be identical, but it should:
+* visualize the sample mean $\mu_X$
+* visualize the directions of the principal components $w_1$ and $w_2$ in $W_k$
+* add axis labels
+* add a legend
+",
+    2,
+)
+
+# ╔═╡ f3d0483f-ba78-4d3d-a23e-ec051923175d
+n_samples = 100
+
+# ╔═╡ 6bbaa57a-0b06-452c-8196-d204fe07beb9
+hint(md"The principal components $w_1$ and $w_2$ need to be plotted starting from $\mu_X$.")
 
 # ╔═╡ 4639b31c-9ef9-47a8-b9a9-b65b2e6d13fa
-begin
-	sample_size = 100
-	cov_matrix = [8 2; 2 4]  #make sure this is positive semidefinit and symmetrical
-	mean_vector = [0, 10]
-end
+my_distribution = MixtureModel(
+    [MvNormal([0.0, 10.0], [3.0 2.0; 2.0 3.0]), MvNormal([15.0, 20.0], [7.0 0.3; 0.3 4.0])],
+    [0.5, 0.5],
+);
+
+# ╔═╡ 474cd2c3-b35b-4d01-b62a-e7171b4ee476
+X_test = rand(my_distribution, n_samples)
 
 # ╔═╡ 6fd61dac-2ab1-464a-a20c-c0e1d7d23e8b
 begin
-	# generate 2D data
-	X_normalDist = rand(MvNormal(mean_vector, cov_matrix), sample_size)
-	# use pca on data
-	W_example, H_example = pca(X_normalDist, k=2)
-	
-	# Plot result
-	scatter(X_normalDist[1, :], X_normalDist[2, :]; label="Data", xlabel="x", ylabel="y", legend=:bottomright, ratio = 1)
-	scaling_factor = minimum([maximum(abs.(W_example[:, 1])),maximum(abs.(W_example[:, 2])), 10])
-	pc1 = 10 * W_example[:, 1] / norm(W_example[:, 1])
-	pc2 = 10 * W_example[:, 2] / norm(W_example[:, 2])
-	
-	# display principal components
-	plot!([-pc1[1] + mean_vector[1], pc1[1] + mean_vector[1]], [-pc1[2] + mean_vector[2], pc1[2] + mean_vector[2]], line=:black, label="1st PC")
-	plot!([-pc2[1] + mean_vector[1], pc2[1] + mean_vector[1]], [-pc2[2] + mean_vector[2], pc2[2] + mean_vector[2]], line=:dash, label="2nd PC")
+    # Plot dataset
+    scatter(X_test[1, :], X_test[2, :]; ratio=1)
+
+    # TODO: Plot PCA here!
 end
 
 # ╔═╡ edb7814a-eddf-4c87-8857-19bb0a0c0241
