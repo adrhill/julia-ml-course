@@ -725,48 +725,81 @@ You can also implement [more kernel functions](https://en.wikipedia.org/wiki/Pos
 "
 
 # ╔═╡ 41a7bd3b-56f5-45e7-ac8d-313bb3a46181
-md"### Exercise 4 – Principal Component Analysis
-Note: This exercise does not provide automated feedback in order to get you to practice programming in julia on your own."
+md"## Exercise 4: Principal Component Analysis
+### Overview
+Assume an input dataset $$X = [x_1, x_2, \ldots x_n] \in \mathbb{R}^{d\times n}$$, where
+*  $d$ is the dimensionality of each data point: $x_i \in \mathbb{R}^d$
+*  $n$ is the number of data points in $X$
+
+Substracting the mean over all data points gives us the *mean-centered* data matrix $\hat{X}$.
+	
+**Idea:** PCA with $k$ principal components finds the projection $W_k = [w_1, w_2, \ldots, w_k]$ that maximizes the variance in the projected data $W_k^T\hat{X}$. 
+	
+![PCA Plot](https://i.imgur.com/FEyXwwX.png)
+
+In the example above, this maximization of variance would correspond to a projection $W_1^T\hat{X} = w_1^T\hat{X}$ of all datapoints onto the red arrow, reducing the dimensionality from 2D to 1D. 
+"
+
+# ╔═╡ 067c7894-2e3f-43de-998f-4f1a250bc0f7
+Markdown.MD(
+    Markdown.Admonition(
+        "warning",
+        "Note",
+        [
+            md"This exercise does not provide automated feedback in order to get you to practice programming in Julia on your own!",
+        ],
+    ),
+)
+
+# ╔═╡ 4a9735f7-0d2b-4557-a293-f0e0c6c19179
+md"### Exercise 4.1 – Implementation"
 
 # ╔═╡ af5e47f0-010b-4e69-bed3-95fdf9fce3fe
 task(
     md"Implement [Principal Component Analysis](https://en.wikipedia.org/wiki/Principal_component_analysis) (PCA) in the function `pca` below.
 
-Recap: PCA uses $k$ orthogonal principal components to find the decomposition of the data that maximizes variance in the data. 
-
 ##### Step 1
-Inside the function `pca`, calculate the centered data matrix $\hat{X}$.
+Calculate the mean-centered data matrix $\hat{X}=[\hat{x}_1, \hat{x}_2, \ldots, \hat{x}_n]$ such that
+
+$\hat{x}_i = x_i - \mu_x \quad ,$
+
+where $\mu_x$ is the sample mean vector of the data $X$.
+You can use the `mean` function for this purpose.
 
 ##### Step 2
-Compute the linear kernel $K$.
-
-$K = \hat{X}^T \hat{X}$
+Compute the sample covariance matrix $C = \hat{X}\hat{X}^T$.
 
 ##### Step 3
-Perform an eigendecomposition of $C$ to obtain the eigenvectors and eigenvalues. Select eigenvectos $v$ corresponding to the $k$ largest eigenvalues.
+Compute an eigendecomposition of $C$ into eigenvectors $w_i$ and eigenvalues $\lambda_i$
+using the function `eigen`. 
+
+	
+Select the eigenvectors $w_i$ corresponding to the $k$ largest eigenvalues $\lambda_i$,
+such that $\lambda_1\ge\lambda_2\ge\ldots\ge\lambda_k$:
+
+$W_k = [w_1, w_2, \ldots, w_k]$
 
 ##### Step 4
-Calculate the reduced-dimensional representation $H$ by using the centered data $\hat{X}$ and the array of directions of maximal variance $W_k$.
-
-$W_k = \hat{X} \cdot v$
-$H = W_k^T \cdot \hat{X}$
+Calculate the projection $H = W_k^T \hat{X}$ of the mean-centered data $\hat{X}$ onto $W_k$.
 ",
-    4, 
+    4,
 )
 
 # ╔═╡ 216dcbf9-91aa-40fe-bef2-6dea56a35be7
-function pca(X; k=2)  # Don't change this line
+function pca(X, k=2)  # Don't change this line
     # Write your code here
-    
-    return W_k, H # Don't change this line
+
+    return W, H # Don't change this line
 end
 
 # ╔═╡ dda486b4-5838-429b-aec8-450d2f0c55be
-hint(md"
-* the `LinearAlgebra` and `Statistics` packagages offer valueable functions such as `mean` and `eigen`.
-* sorting the eigenvectors based on the indices of the sorted eigenvalues allows you to select the top $k$ most significant eigenvectors with ease. 
-* `sortperm` is a useful `Base` function to return the indices of a sorted array.
-")
+hint(
+    md"""
+* The `mean` function allows you to compute the mean along an axis of an array. Refer to the documentation for examples.
+* Read the documentation of `eigen` thoroughly. Eigenvectors are sorted by *increasing* eigenvalues. You can make use of clever indexing to obtain them in decreasing order.
+* Accessing docstrings is described in the lecture *"Getting Help"*.
+""",
+)
 
 # ╔═╡ df1540c4-d458-428c-b230-6c42557557e1
 md"### Visualisation"
