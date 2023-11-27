@@ -19,17 +19,17 @@ begin
     using PlutoUI
     using PlutoTeachingTools
 
-    using Distributions: MvNormal
-	using Statistics
     using LinearAlgebra
+    using Statistics
+    using Distributions
     using BenchmarkTools
 
     using Images
     using ImageMagick
     using TestImages
 
+    using LaTeXStrings
     using Plots
-    plotly()
 end
 
 # ╔═╡ f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
@@ -415,7 +415,7 @@ y = [0.003, 0.094, 0.444, 0.905, 0.820, -0.474, -0.883, -0.931, -0.616, -0.269]
 md"Let's visualize the data we are given in a scatter plot:"
 
 # ╔═╡ 87236fbd-e09c-4b81-b065-5954b2057b9b
-scatter(X, y; label="Data", xlabel="x", ylabel="y")
+scatter(X, y; label="Data", xlabel=L"x", ylabel=L"y")
 
 # ╔═╡ 4e1f60e5-77c1-467a-9500-69c00f74700c
 md"### Exercise 3.1 – Kernel function"
@@ -714,7 +714,7 @@ predict = kernel_ridge(X, y; λ=10^ex);
 
 # ╔═╡ 2000a153-4b4d-4aec-a503-eaf3cc9d89c3
 begin
-    p = scatter(X, y; label="Dataset", xlabel="x", ylabel="y", ylims=(-1, 1))
+    p = scatter(X, y; label="Dataset", xlabel=L"x", ylabel=L"y", ylims=(-1, 1))
     plot!(p, predict, -0.1, 1.1; label="Prediction", title="Kernel ridge regression")
 end
 
