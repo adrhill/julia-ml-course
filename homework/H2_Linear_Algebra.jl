@@ -789,7 +789,7 @@ Calculate the projection $H = W_k^T \hat{X}$ of the mean-centered data $\hat{X}$
 function pca(X, k=2)  # Don't change this line
     # Write your code here
 
-    return W, H # Don't change this line
+    return Wk, H # Don't change this line
 end
 
 # ╔═╡ dda486b4-5838-429b-aec8-450d2f0c55be
@@ -825,7 +825,7 @@ The plot doesn't have to be identical, but it should:
 n_samples = 100
 
 # ╔═╡ 6bbaa57a-0b06-452c-8196-d204fe07beb9
-hint(md"The principal components $w_1$ and $w_2$ need to be plotted starting from $\mu_X$.")
+hint(md"The principal components $w_1$ and $w_2$ need to be plotted starting from $\mu_x$.")
 
 # ╔═╡ 4639b31c-9ef9-47a8-b9a9-b65b2e6d13fa
 my_distribution = MixtureModel(
