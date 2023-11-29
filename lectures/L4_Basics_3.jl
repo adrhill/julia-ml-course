@@ -436,10 +436,18 @@ md"Addition on all of these structs computes the same correct result:"
 md"But the performance varies a lot:"
 
 # ╔═╡ dc0fb8ff-860a-468d-96a5-2f0a3a8780b4
-md"Note that `PointParametric` has the same performance as `PointConcrete`, while being a lot more flexible:"
+md"These differences in performance depend on whether Julia can infer the types of the struct fields (here `x` and `y`). 
+If types can be infered, Julia can generate more specialized and therefore more performant code:
+
+* fields of `PointNoType` can be of `Any` type: Julia can't specialize code ❌
+* fields of `PointAbstract` can be of any `Real` number type: Julia can't specialize code ❌
+* fields of `PointConcrete` are always of type `Int64`: Julia can specialize code ✅
+* `a_param` and `b_param` are of type `PointParametric{Int64}`, whose fields are always of type `Int64`: Julia can specialize code ✅
+
+Note that `PointParametric` has the same performance as `PointConcrete`, while being a lot more flexible:"
 
 # ╔═╡ 75bd89b2-a3ab-4360-a56c-84b344b13201
-PointParametric(1.2, 3.4) # Works with all subtypes of `Real`, very performant!
+PointParametric(1.2, 3.4) # Works with all subtypes of `Real` and is very performant!
 
 # ╔═╡ 2a729410-9c0e-4a83-b2d6-ca077314ca8c
 PointConcrete(1.2, 3.4) # Error: can only create a PointConcrete with Int64s
