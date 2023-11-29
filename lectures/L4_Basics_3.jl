@@ -11,6 +11,9 @@ begin
     using LinearAlgebra
 end
 
+# ╔═╡ d41a8c69-7a7f-4d6a-9fa2-6b12d99dd485
+using BenchmarkTools
+
 # ╔═╡ 83497498-2c14-49f4-bb5a-c252f655e006
 ChooseDisplayMode()
 
@@ -48,7 +51,10 @@ In Julia, dictionaries are defined using `key => value` pairs:
 
 # ╔═╡ 1fb9d847-8edd-447a-a437-77361a2978f4
 capitals = Dict(
-    "France" => "Paris", "Germany" => "Berlin", "Lebanon" => "Beirut", "Vietnam" => "Hanoi"
+    "France"  => "Paris", 
+	"Germany" => "Berlin", 
+	"Lebanon" => "Beirut", 
+	"Vietnam" => "Hanoi"
 )
 
 # ╔═╡ 2ac3cca3-5176-4e52-a999-1d0fe910ab00
@@ -187,12 +193,16 @@ md"This is somewhat problematic: we can name our cat using integer numbers!"
 weird_name_cat = Cat(1.2)
 
 # ╔═╡ f7e354e6-a8fc-4706-b9ab-3e6a8c66eea5
-md"Let's do better by using **type annotations** when we define our `Dog` type:"
+md"## Type annotations
+Let's do better by using **type annotations** when we define our `Dog` type:"
 
 # ╔═╡ 3e34efc1-8ae8-4383-bd4c-2821f18d0580
 struct Dog <: AbstractMammal
     name::String # <- additional type annotation!
 end
+
+# ╔═╡ ec7c5f29-9aec-4c08-ad18-5820c6be7b7f
+md"This ensures we can only use `String`s for the name:"
 
 # ╔═╡ 761f7302-00fd-4b48-95d1-b770f8cbf65c
 david = Dog("David")
@@ -371,6 +381,72 @@ end
 You can find out more in the [Julia documentation](https://docs.julialang.org/en/v1/manual/types/#Parametric-Abstract-Types).",
 )
 
+# ╔═╡ 11143f56-581e-42de-bb79-f37b09c6ad27
+md"## Performance"
+
+# ╔═╡ 4aab2185-68ce-40a7-b1df-db1675483f53
+warning_box(
+    md"""
+If you want to get the best performance out of your Julia code, 
+**only use parametric and concrete types** for type annotations and 
+**never abstract types** (e.g. `Number`, `Real`).
+
+Using no type annotations should also be avoided, since this defaults to the abstract type `Any`.
+""",
+)
+
+# ╔═╡ 1b6cf30e-371b-45a9-a713-6127ee6ceb54
+md"Let's demonstrate this by implementing multiple variants of a struct `Point`, which keeps track of 2D-coodinates and allows them to be added:"
+
+# ╔═╡ b785c165-1292-4b01-891e-772fef4d82dc
+# Bad performance: no type annotations used, defaults to abstract type `Any`
+struct PointNoType
+    x # same as x::Any
+    y # same as y::Any
+end
+
+# ╔═╡ fbb610ca-46f1-4bff-b89e-9bd087a5dd3c
+# Bad performance: abstract type used in type annotation
+struct PointAbstract
+    x::Real
+    y::Real
+end
+
+# ╔═╡ 6a60c1a2-662e-4997-a161-16b84b7abb83
+# Good performance, but not flexible: only works with concrete type Int64
+struct PointConcrete
+    x::Int64
+    y::Int64
+end
+
+# ╔═╡ 9f4488cd-8c48-4bba-939f-3112cbfce356
+# Good performance and very flexible: uses parametric type
+struct PointParametric{T<:Real}
+    x::T
+    y::T
+end
+
+# ╔═╡ 10071880-d0cb-4478-b55b-3d208a7eb14f
+md"Let's define the same addition operation on all of these points:"
+
+# ╔═╡ 3e4f26c5-3e3d-4589-8e06-8a1bdda56d76
+md"Addition on all of these structs computes the same correct result:"
+
+# ╔═╡ 46299f80-60b7-4b1a-b38c-01dd07895acc
+md"But the performance varies a lot:"
+
+# ╔═╡ dc0fb8ff-860a-468d-96a5-2f0a3a8780b4
+md"Note that `PointParametric` has the same performance as `PointConcrete`, while being a lot more flexible:"
+
+# ╔═╡ 75bd89b2-a3ab-4360-a56c-84b344b13201
+PointParametric(1.2, 3.4) # Works with all subtypes of `Real`, very performant!
+
+# ╔═╡ 2a729410-9c0e-4a83-b2d6-ca077314ca8c
+PointConcrete(1.2, 3.4) # Error: can only create a PointConcrete with Int64s
+
+# ╔═╡ da550590-054f-4a29-bd20-17f572f12a57
+tip(md"Parametric composite types are usually the way to go!")
+
 # ╔═╡ bca3a7e7-4db3-4135-bf29-263dfece9407
 md"## Extending functions on custom types ⁽⁺⁾
 Using multiple dispatch, we can extend functions from Julia Base or other packages by adding new methods using our own types.
@@ -441,6 +517,39 @@ times_two_plus_one(5.0)
 
 # ╔═╡ 629f1cf4-d69c-4077-ae97-a338bb0241cc
 times_two_plus_one()
+
+# ╔═╡ 04f218cd-12ef-4d3e-9aaa-e8f109fe1084
+begin
+    add(a::PointNoType, b::PointNoType) = PointNoType(a.x + b.x, a.y + b.y)
+    add(a::PointAbstract, b::PointAbstract) = PointAbstract(a.x + b.x, a.y + b.y)
+    add(a::PointConcrete, b::PointConcrete) = PointConcrete(a.x + b.x, a.y + b.y)
+    add(a::PointParametric, b::PointParametric) = PointParametric(a.x + b.x, a.y + b.y)
+end
+
+# ╔═╡ e3e4925e-5f1e-41ae-a189-e9f56e5e22db
+begin
+    a_notype   = b_notype   = PointNoType(1, 2)
+    a_abstract = b_abstract = PointAbstract(1, 2)
+    a_concrete = b_concrete = PointConcrete(1, 2)
+    a_param    = b_param    = PointParametric(1, 2)
+
+    @info add(a_notype, b_notype)
+    @info add(a_abstract, b_abstract)
+    @info add(a_concrete, b_concrete)
+    @info add(a_param, b_param)
+end
+
+# ╔═╡ c1cab48b-3b1e-42ed-8519-98803cd3a864
+@benchmark add(a_notype, b_notype)
+
+# ╔═╡ a6dd3b8a-de4d-491b-9a60-5c5b9d6a7f6a
+@benchmark add(a_abstract, b_abstract)
+
+# ╔═╡ 95f977ae-3d3d-4121-a0d7-94626ebfaaec
+@benchmark add(a_concrete, b_concrete)
+
+# ╔═╡ 37799c0c-82bb-425b-bcf1-f2035b1588cc
+@benchmark add(a_param, b_param)
 
 # ╔═╡ d78fabda-bd83-4367-b2a8-e9edddcb658f
 warning_box(
@@ -541,11 +650,13 @@ While both philosophies have similarities, they require very different design ap
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
+BenchmarkTools = "~1.3.2"
 PlutoTeachingTools = "~0.2.13"
 PlutoUI = "~0.7.53"
 """
@@ -556,7 +667,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "5fb61e6b1f6410af977a7a74ad60f5ada11a653c"
+project_hash = "834b47ea3696827608bf4deecfeb563d8a51144e"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -573,6 +684,12 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+
+[[deps.BenchmarkTools]]
+deps = ["JSON", "Logging", "Printf", "Profile", "Statistics", "UUIDs"]
+git-tree-sha1 = "d9a9701b899b30332bbcb3e1679c41cce81fb0e8"
+uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+version = "1.3.2"
 
 [[deps.CodeTracking]]
 deps = ["InteractiveUtils", "UUIDs"]
@@ -791,6 +908,10 @@ version = "1.4.1"
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
+[[deps.Profile]]
+deps = ["Printf"]
+uuid = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
+
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
@@ -907,7 +1028,7 @@ version = "17.4.0+0"
 # ╟─205278da-aed8-4d3a-87f0-11e6fa9ac8cb
 # ╠═cbc9050f-09bd-4005-9f61-48abe24ecfff
 # ╠═b3fc9128-cecd-48aa-9a40-e5fec2a3bf7d
-# ╟─a9d08d3e-3331-4cb4-9ce3-19da7772f58e
+# ╠═a9d08d3e-3331-4cb4-9ce3-19da7772f58e
 # ╟─df9f43fa-79dd-4d34-9fa8-3ec62e524395
 # ╠═f97e1a47-0492-45d2-bf6a-88d3d2b9795b
 # ╟─7c93015c-9689-4324-b45f-f80ee6f384f7
@@ -929,6 +1050,7 @@ version = "17.4.0+0"
 # ╠═b8c58bae-a699-4d03-8e1a-bc9d97d6c9e5
 # ╟─f7e354e6-a8fc-4706-b9ab-3e6a8c66eea5
 # ╠═3e34efc1-8ae8-4383-bd4c-2821f18d0580
+# ╟─ec7c5f29-9aec-4c08-ad18-5820c6be7b7f
 # ╠═761f7302-00fd-4b48-95d1-b770f8cbf65c
 # ╠═f866d17d-967d-40d8-9006-25a9cbe4729b
 # ╟─5cf374cd-e578-4b44-a6ae-d9935411da5e
@@ -967,6 +1089,27 @@ version = "17.4.0+0"
 # ╠═8972793d-3b6d-40b9-8f59-37687e55718f
 # ╠═dde9a6ae-e888-41be-8baa-c50746aa1672
 # ╟─1db85444-9817-442f-b291-96e27e0f1bdc
+# ╟─11143f56-581e-42de-bb79-f37b09c6ad27
+# ╟─4aab2185-68ce-40a7-b1df-db1675483f53
+# ╟─1b6cf30e-371b-45a9-a713-6127ee6ceb54
+# ╠═b785c165-1292-4b01-891e-772fef4d82dc
+# ╠═fbb610ca-46f1-4bff-b89e-9bd087a5dd3c
+# ╠═6a60c1a2-662e-4997-a161-16b84b7abb83
+# ╠═9f4488cd-8c48-4bba-939f-3112cbfce356
+# ╟─10071880-d0cb-4478-b55b-3d208a7eb14f
+# ╠═04f218cd-12ef-4d3e-9aaa-e8f109fe1084
+# ╠═d41a8c69-7a7f-4d6a-9fa2-6b12d99dd485
+# ╟─3e4f26c5-3e3d-4589-8e06-8a1bdda56d76
+# ╠═e3e4925e-5f1e-41ae-a189-e9f56e5e22db
+# ╟─46299f80-60b7-4b1a-b38c-01dd07895acc
+# ╠═c1cab48b-3b1e-42ed-8519-98803cd3a864
+# ╠═a6dd3b8a-de4d-491b-9a60-5c5b9d6a7f6a
+# ╠═95f977ae-3d3d-4121-a0d7-94626ebfaaec
+# ╠═37799c0c-82bb-425b-bcf1-f2035b1588cc
+# ╟─dc0fb8ff-860a-468d-96a5-2f0a3a8780b4
+# ╠═75bd89b2-a3ab-4360-a56c-84b344b13201
+# ╠═2a729410-9c0e-4a83-b2d6-ca077314ca8c
+# ╟─da550590-054f-4a29-bd20-17f572f12a57
 # ╟─bca3a7e7-4db3-4135-bf29-263dfece9407
 # ╠═09a0bacf-d445-4939-a1bc-2e48a6a39415
 # ╟─473b7481-8630-41b0-82a4-fa39bc7a646e
