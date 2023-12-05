@@ -674,7 +674,9 @@ This example had no stochasticity and other optimization algorithms would have b
 
 # ╔═╡ 822d03c6-48f8-47b0-8f25-b2de45e4c589
 Markdown.MD(Markdown.Admonition("Task", "Optional task (3 extra points)", [
-	md"Implement the *Adam* optimizer, which was introduced in [this paper](https://arxiv.org/abs/1412.6980) by Kingma and Ba."
+	md"Implement the *Adam* optimizer, which was introduced 
+	in [this paper](https://arxiv.org/abs/1412.6980) by Kingma and Ba. 
+	Add it to the visualization above and compare it to Optimizer.jl's Adam implementation."
 ]))
 
 # ╔═╡ edb7814a-eddf-4c87-8857-19bb0a0c0241
