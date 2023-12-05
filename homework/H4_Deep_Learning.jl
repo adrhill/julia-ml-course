@@ -227,10 +227,17 @@ Pluto will require these function to be written in one `begin ... end` block.
     4,
 )
 
+# ╔═╡ deabad72-32ff-4781-b269-5a514828742d
+task(
+    md"1. Define a LeNet-5 model analogous to the one in lecture 7 on deep learning, using `MyDense` instead of `Dense` layers.
+2. Create a random input batch of size `(28, 28, 1 128)` and pass it through your model.",
+    2,
+)
+
 # ╔═╡ 5d30d4e2-bc3f-4c4a-a443-4b7cee842a7c
 task(
     md"""
-In this task you will be training your `model` on Fashion MNIST:
+In this task you will be training your `model` (the LeNet-5 model from the previous task) on Fashion MNIST:
 
 ##### Step 1: Loading Model
 First you will have to load Fashion MNIST with the help of MLDatasets. You will need a `dataset_train` and `dataset_test`.
@@ -251,7 +258,7 @@ Make the dataset compatible with Flux.
 - Use Adam, which you have already encountered in HW3, as Optimiser
 
 ##### Step 5: Training
-**Do not hand in the Notebook with the `training` checkbox enabled** 
+**Do not hand in the Notebook with the `Run training` checkbox enabled** 
 	
 - Train for 5 epochs.
 - Iterate over the batches which are returned by your data loader
@@ -274,13 +281,6 @@ implement a function `falsePositiveRate` which calculates the percentage of fals
 - Find the class with the highest rate of false positives.
 """,
     5,
-)
-
-# ╔═╡ deabad72-32ff-4781-b269-5a514828742d
-task(
-    md"1. Define a LeNet-5 model analogous to the one in lecture 7 on deep learning, using `MyDense` instead of `Dense` layers.
-2. Create a random input batch of size `(28, 28, 1 128)` and pass it through your model.",
-    2,
 )
 
 # ╔═╡ cd91fbe6-a7a0-4a75-864d-58ba5c74e388
@@ -2273,11 +2273,11 @@ version = "1.4.1+1"
 # ╟─985887e1-0053-4144-b928-928613270084
 # ╠═9ca8f33d-ce51-4a5f-9c4b-289696b519c8
 # ╟─b8fff122-f50f-4c4f-a1fc-4c78adffdd55
+# ╟─deabad72-32ff-4781-b269-5a514828742d
 # ╟─4cff4711-6603-4186-b16e-d59ec4ea5d55
 # ╟─5d30d4e2-bc3f-4c4a-a443-4b7cee842a7c
 # ╟─a22aa164-de0d-4e20-85a5-dcec0d12ee43
 # ╠═fe22ab4f-6119-4397-ac25-ce840a176777
-# ╟─deabad72-32ff-4781-b269-5a514828742d
 # ╟─67739adb-289c-42cc-a714-bc5f3c25b63b
 # ╟─97beac12-3f37-4876-8ae7-b07c2c4975fd
 # ╠═297892b3-5385-4391-a0e8-849cbbff271c
