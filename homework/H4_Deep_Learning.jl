@@ -133,13 +133,6 @@ if run_training
 	# Write your code here
 end 
 
-# ╔═╡ 4e3366d7-3869-4478-b936-fe76a9cd0e91
-# Step 9 False Positives
-function falsePositives(model, x_test, y_test, target = 0)
-	# Write your code here
-	return missing
-end 
-
 # ╔═╡ 67739adb-289c-42cc-a714-bc5f3c25b63b
 md"""## Exercise 2 – Automatic differentiation
 In this exercise, we are going to implement our own version of [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) to compute gradients of scalar-valued functions $f: \mathbb{R} \rightarrow \mathbb{R}$.
@@ -2284,7 +2277,6 @@ version = "1.4.1+1"
 # ╟─5d30d4e2-bc3f-4c4a-a443-4b7cee842a7c
 # ╟─a22aa164-de0d-4e20-85a5-dcec0d12ee43
 # ╠═fe22ab4f-6119-4397-ac25-ce840a176777
-# ╠═4e3366d7-3869-4478-b936-fe76a9cd0e91
 # ╟─deabad72-32ff-4781-b269-5a514828742d
 # ╟─67739adb-289c-42cc-a714-bc5f3c25b63b
 # ╟─97beac12-3f37-4876-8ae7-b07c2c4975fd
