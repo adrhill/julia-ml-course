@@ -106,38 +106,50 @@ tip(
 )
 
 # ╔═╡ df9f43fa-79dd-4d34-9fa8-3ec62e524395
-md"# Sets"
+md"# Sets
+Similar to sets in mathematics, the `Set` type describes a collection of elements. 
+
+All elements in a `Set` are unique and their ordering doesn't matter:"
+
+# ╔═╡ 2c6b9f60-1ac6-48f4-9bcc-094de38ae12e
+s1 = Set([0, 1, 2, 3])
+
+# ╔═╡ 367580eb-b42a-4805-8c80-19718ae2aa3b
+s2 = Set([3, 3, 2, 2, 1, 1, 0, 0])
+
+# ╔═╡ 807e24a6-24ad-4bd5-ab9a-4a13a59ebac5
+s2 == s1
+
+# ╔═╡ 7b1c146f-180d-41c0-b01e-fdfb4a90e7e2
+md"We can add and remove elements from a set:"
 
 # ╔═╡ f97e1a47-0492-45d2-bf6a-88d3d2b9795b
 begin
     # Define a set
-    s1 = Set([1, 2, 3, 4])
-    @info s1
+    s3 = Set([1, 2, 3, 4])
+    @info s3
 
     # Add a new number to the set
-    push!(s1, 6)
-    @info s1
+    push!(s3, 6)
+    @info s3
 
     # Remove number from set
-    pop!(s1, 2)
-    @info s1
+    pop!(s3, 2)
+    @info s3
 
     # All elements of a set are unique, we can't add duplicates
-    push!(s1, 3)
-    @info s1
+    push!(s3, 3)
+    @info s3
 end
 
 # ╔═╡ 7c93015c-9689-4324-b45f-f80ee6f384f7
 md"We can take unions and intersections of sets:"
 
-# ╔═╡ 2c6b9f60-1ac6-48f4-9bcc-094de38ae12e
-s2 = Set([0, 1, 2, 3])
-
 # ╔═╡ f045620a-ad4d-4387-bfb7-acd6def46a0d
-union(s1, s2)
+union(s1, s3)
 
 # ╔═╡ cdc36828-b390-4662-b86a-2562520ea597
-intersect(s1, s2)
+intersect(s1, s3)
 
 # ╔═╡ ff75d121-3e12-4b7c-92ee-bd524a17eccf
 tip(
@@ -288,7 +300,9 @@ is_mammal.([david, carlos, paula, patty])
 
 # ╔═╡ 6a3ac4fb-ad86-468c-8583-6fe0623b4bfd
 md"## Mutable types
-Structs can be made mutable. However, these objects will generally be allocated on the heap.
+Structs can be made mutable, meaning that their fields can be modified after their creation. 
+
+The downside of this flexibility is a loss in performance since these objects will generally be allocated on the heap.
 "
 
 # ╔═╡ e2a2bb59-100a-4ed3-a30c-8f5525c73cb4
@@ -473,7 +487,7 @@ md"### Base operators
 Our `MyComplex` data type is useless if we can't compute anything with it, so let's implement addition and multiplication of complex numbers for the purpose of demonstration.
 
 To extend operators from Julia Base, we need to import them explicitly.
-We can then use the functional forms `+(a, b)` and `*(a, b)` of addition and multiplication to redefine them for `MySimpleComplex`.
+We can then use the functional forms `+(a, b)` and `*(a, b)` of addition and multiplication to redefine them for `MyComplex`.
 
 We are simply defining additional methods using multiple dispatch!
 "
@@ -1038,9 +1052,12 @@ version = "17.4.0+0"
 # ╠═b3fc9128-cecd-48aa-9a40-e5fec2a3bf7d
 # ╟─a9d08d3e-3331-4cb4-9ce3-19da7772f58e
 # ╟─df9f43fa-79dd-4d34-9fa8-3ec62e524395
+# ╠═2c6b9f60-1ac6-48f4-9bcc-094de38ae12e
+# ╠═367580eb-b42a-4805-8c80-19718ae2aa3b
+# ╠═807e24a6-24ad-4bd5-ab9a-4a13a59ebac5
+# ╟─7b1c146f-180d-41c0-b01e-fdfb4a90e7e2
 # ╠═f97e1a47-0492-45d2-bf6a-88d3d2b9795b
 # ╟─7c93015c-9689-4324-b45f-f80ee6f384f7
-# ╠═2c6b9f60-1ac6-48f4-9bcc-094de38ae12e
 # ╠═f045620a-ad4d-4387-bfb7-acd6def46a0d
 # ╠═cdc36828-b390-4662-b86a-2562520ea597
 # ╟─ff75d121-3e12-4b7c-92ee-bd524a17eccf
