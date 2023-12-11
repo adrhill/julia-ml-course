@@ -88,8 +88,8 @@ ENV["DATADEPS_ALWAYS_ACCEPT"] = "true";
 md"""## Exercise 1 – Deep Learning"""
 
 # ╔═╡ cdae0b09-dc52-4d22-9f3b-8c5b75bc6d1d
-md"### Interlude
-For exercise 1.1, you will have to make use of input arguments that are pairs. Pairs are defined using the syntax `first => second`.
+md"### Interlude – Pairs
+For exercise 1.1, you will have to make use of input arguments that are of type `Pair`. Pairs are defined using the syntax `first => second`.
 
 Let's demonstrate the necessary functionality of pairs:
 "
@@ -171,7 +171,8 @@ convert2image(MNIST, x), y
 
 # ╔═╡ efb62b97-c6fc-495f-a0ae-bf0c2e5485d3
 md"#### Preprocessing
-We preprocess the data for use with Flux.jl:"
+We preprocess the data for use with Flux.jl by one-hot encoding the targets `y` 
+and reshaping the features `x` to WHCN (width, height, color channels, batch size) format:"
 
 # ╔═╡ a173003f-9b32-4042-a263-b5af35106587
 function preprocess(dataset)
