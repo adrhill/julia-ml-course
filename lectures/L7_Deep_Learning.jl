@@ -41,7 +41,7 @@ ChooseDisplayMode()
 
 # ╔═╡ a5181893-fad3-4cd2-8ce2-27de76f0c7d1
 # Allow MLDatasets to download MNIST in CI
-ENV["DATADEPS_ALWAYS_ACCEPT"] = "true"
+ENV["DATADEPS_ALWAYS_ACCEPT"] = "true";
 
 # ╔═╡ 96b32c06-6136-4d44-be87-f2f67b374bbd
 TableOfContents()
@@ -352,9 +352,9 @@ md"### Test set accuracy
 In the training loop, the accuracy on the test set was evaluated as"
 
 # ╔═╡ 056e48cc-9adf-4021-a0eb-b234e1b6ecf5
-function accuracy(m)
+function accuracy(model)
     # Use onecold to return class index
-    ŷ = Flux.onecold(m(x_test))
+    ŷ = Flux.onecold(model(x_test))
     y = Flux.onecold(y_test)
 
     return mean(ŷ .== y)
@@ -2378,7 +2378,7 @@ version = "1.4.1+1"
 # ╔═╡ Cell order:
 # ╠═755b8685-0711-48a2-a3eb-f80af39f10e1
 # ╟─83497498-2c14-49f4-bb5a-c252f655e006
-# ╠═a5181893-fad3-4cd2-8ce2-27de76f0c7d1
+# ╟─a5181893-fad3-4cd2-8ce2-27de76f0c7d1
 # ╟─96b32c06-6136-4d44-be87-f2f67b374bbd
 # ╟─3dc98bc8-0b4d-4282-b0aa-1cbdb5d72cfc
 # ╟─f7347c06-c1b7-11ed-3b8e-fbf167ce9cba

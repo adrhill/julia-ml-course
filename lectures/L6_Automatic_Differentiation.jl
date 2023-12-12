@@ -7,14 +7,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     quote
-        local iv = try
-            Base.loaded_modules[Base.PkgId(
-                Base.UUID("6e696c72-6542-2067-7265-42206c756150"),
-                "AbstractPlutoDingetjes",
-            )].Bonds.initial_value
-        catch
-            b -> missing
-        end
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
@@ -123,7 +116,7 @@ md"# Linear maps"
 
 # ╔═╡ 26727cec-1565-4a7d-b19d-1184a3749d4f
 md"## Properties
-Linear maps, also called linear transformations (*lineare Abbildungen* in German) are functions with the following properties:
+Linear maps, also called linear transformations (*lineare Abbildungen* in German) are functions $f$ with the following properties:
 
 | Property    | Equation                       | property satisfied                                                                                                                                                                                  | property not satisfied                                                                                                                                                                              |
 |:------------|:-------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -549,7 +542,7 @@ $\begin{align}
 	e_n &= (0, 0, 0, \ldots, 1) \quad ,
 \end{align}$
 
-we obtain the $i$-th column in the Jacobian / Gradient
+we obtain the $i$-th column in the Jacobian
 
 $\begin{align}
 \mathcal{D}f_\tilde{x}(e_i)
@@ -2520,9 +2513,9 @@ version = "1.18.0+0"
 
 [[deps.libpng_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "94d180a6d2b5e55e447e2d27a29ed04fe79eb30c"
+git-tree-sha1 = "f7c281e9c61905521993a987d38b5ab1d4b53bef"
 uuid = "b53b4c65-9356-5827-b1ea-8c7a1a84506f"
-version = "1.6.38+0"
+version = "1.6.38+1"
 
 [[deps.libvorbis_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Ogg_jll", "Pkg"]
