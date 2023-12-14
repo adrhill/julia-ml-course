@@ -24,31 +24,26 @@ We will demonstrate both the Julia VSCode extension and editor-agnostic packages
 
 
 ## Debugging
-To demonstrate the debugger, we are going to borrow an example from 
-Ole Kröger's blog-post [*Debugging in Julia - Two different ways*](https://opensourc.es/blog/basics-debugging/).
+Let's assume we want to compute the sum of 
+[proper divisors](https://mathworld.wolfram.com/ProperDivisor.html) of some integer $n$.
 
-The following code is supposed to compute whether two numbers $a$ and $b$ are *amicable*,
-meaning that the sum of divisors of $a$ is $b$ and vice-versa.
+As an example, the proper divisors of 4 are the numbers 1 and 2, but not 4 itself.
+The sum of the proper divisors of 4 is therefore 1 + 2 = 3.
 
-Knowing that 220 and 284 are amicable numbers, the following script should return `true`:
+Assume you want to debug the following implementation
 
 ```julia
-function is_amicable(a, b)
-    return sum_divisors(a) == b && sum_divisors(b) == a
+function sum_of_divisors(n)
+    proper_divisors = filter(x -> n % x == 0, 1:n)
+    return sum(proper_divisors)
 end
+```
 
-function sum_divisors(a)
-    result = 0
-    for i = 1:a
-        if a % i == 0
-            result += i
-        end
-    end
-    return result
-end
+which currently returns the wrong result for $n = 4$:
 
-# We know that 220 and 284 are amicable numbers
-is_amicable(220, 284)
+```julia-repl
+sum_of_divisors(4) # ⚠️ should return 3, but returns 7
+7
 ```
 
 ### VSCode extension
@@ -70,10 +65,10 @@ as well as their current values (point 4).
 Not shown on the screenshot is additional information like the call stack of the function.
 
 Using the information from the variables viewer, we can see that 
-`sum_divisors(220)` incorrectly returned `504` instead of the expected `284`.
-Since `504 - 284 = 220`, this might help us figure out that 
+`sum_of_divisors(4)` incorrectly computes the list of proper divisors `[1, 2, 4]` instead of the expected `[1, 2]`.
+This might help us figure out that 
 the bug is in the range of our for-loop:
-we should iterate over `1:(a-1)` instead of `1:a`.
+inside `filter`, we should iterate over `1:(n-1)` instead of `1:n`.
 
 
 ~~~
@@ -90,30 +85,64 @@ If you prefer to work with other editors,
 [Debugger.jl](https://github.com/JuliaDebug/Debugger.jl)
 is one of several alternative debuggers in Julia.
 
-Using the `@enter` macro, we can enter a function call and step through it:
+Using the `@enter` macro, we can enter a function call and step through it.
+The prompt changes to `1|debug>`, indicating Debugger-mode, 
+and we can use 
+[Debugger.jl's custom commands](https://github.com/JuliaDebug/Debugger.jl#debugger-commands) to move through our code.
+The list of commands can be also be shown by typing `help` in Debugger-mode.
 
-![Debugger.jl](/assets/debugger.png)
+```julia-repl
+julia> using Debugger 
 
-The prompt changes to `1|debug>` and allows us to step through code using
-[Debugger.jl's commands](https://github.com/JuliaDebug/Debugger.jl#debugger-commands).
-The screenshot above demonstrates two of these: 
-* `s` to step into the next call
-* `sr` to step until the next `return`
+julia> @enter sum_of_divisors(4)
+In sum_of_divisors(n) at REPL[11]:1
+ 1  function sum_of_divisors(n)
+>2      proper_divisors = filter(x -> n % x == 0, 1:n)
+ 3      return sum(proper_divisors)
+ 4  end
 
-Once again, we find out that `sum_divisors(220)` incorrectly returned `504`.
+1|debug> u 3 # step (u)ntil line 3
+In sum_of_divisors(n) at REPL[2]:1
+ 1  function sum_of_divisors(n)
+ 2      divisors = filter(x -> n % x == 0, 1:n)
+>3      return sum(divisors)
+ 4  end
+
+About to run: (sum)([1, 2, 4])
+```
+
+Once again, we find out that `sum_of_divisors(4)` incorrectly returned included the number 4 in the list of proper divisors.
 
 ### Infiltrator.jl
 [Infiltrator.jl](https://github.com/JuliaDebug/Infiltrator.jl) is an alternative to
 Debugger.jl which allows you to set breakpoints in your code using the `@infiltrate` macro.
-
 Calling a function which hits a breakpoint will activate the Infiltrator REPL-mode
-and change the prompt to `infil>`. 
-Typing `?` in this mode will bring up help.
+and change the prompt to `infil>`.
 
-![Infiltrator.jl](/assets/infiltrator.png)
+Similar to Debugger.jl, Infilitrator provides its own set of commands,
+which can be shown by typing `?` in Infiltrator-mode.
+In the following example, we use the `@locals` command to print all local variables:
 
-In this example, we use `@locals` to print local variables,
-and find out that `sum_divisors(220)` incorrectly returned `504`.
+```julia-repl
+julia> using Infiltrator
+
+julia> function sum_of_divisors(n)
+           proper_divisors = filter(x -> n % x == 0, 1:n)
+           @infiltrate
+           return sum(proper_divisors)
+       end
+sum_of_divisors (generic function with 1 method)
+
+julia> sum_of_divisors(4)
+Infiltrating (on thread 1) sum_of_divisors(n::Int64)
+  at REPL[14]:3
+
+infil> @locals
+- n::Int64 = 4
+- proper_divisors::Vector{Int64} = [1, 2, 4]
+```
+
+Again, we find out that `sum_of_divisors(4)` incorrectly included the number 4 in `proper_divisors`.
 
 ## Logging
 We've been using the logging macro `@info` frequently in this lecture.
@@ -123,22 +152,13 @@ We will demonstrate the use of the `@debug` macro on the example from the previo
 ```julia
 # Content of logging.jl
 
-function is_amicable(a, b)
-    return sum_divisors(a) == b && sum_divisors(b) == a
+function sum_of_divisors(n)
+    proper_divisors = filter(x -> n % x == 0, 1:n)
+    @debug "sum_of_divisors" n proper_divisors
+    return sum(proper_divisors)
 end
 
-function sum_divisors(a)
-    result = 0
-    for i = 1:a
-        if a % i == 0
-            result += i
-        end
-    end
-    @debug "Got sum of divisors $result for input $a"  # add debug message logging
-    return result
-end
-
-is_amicable(220, 284) # function call
+sum_of_divisors(4) # function call
 ``` 
 
 ### Enabling `@debug` messages
@@ -158,8 +178,14 @@ or by prefixing our command-line call to `julia`.
 
 ```bash
 $ JULIA_DEBUG=Main julia logging.jl
-┌ Debug: Got sum of divisors 504 for input 220
-└ @ Main ~/logging.jl:14
+┌ Debug: sum_of_divisors
+│   n = 4
+│   proper_divisors =
+│    3-element Vector{Int64}:
+│     1
+│     2
+│     4
+└ @ Main ~/logging.jl:9
 ```
 
 This correctly logged our debug message 
@@ -182,24 +208,15 @@ using Logging
 io = open("log.txt", "w+") # open text file for writing
 logger = SimpleLogger(io)  # simplistic logger that writes into IO-Stream (e.g. our file)
 
-function is_amicable(a, b)
-    return sum_divisors(a) == b && sum_divisors(b) == a
-end
-
-function sum_divisors(a)
-    result = 0
-    for i = 1:a
-        if a % i == 0
-            result += i
-        end
-    end
-    @debug "Got sum of divisors $result for input $a"
-    return result
+function sum_of_divisors(n)
+    proper_divisors = filter(x -> n % x == 0, 1:n)
+    @debug "sum_of_divisors" n proper_divisors
+    return sum(proper_divisors)
 end
 
 # Call function with logger
 with_logger(logger) do
-    is_amicable(220, 284)
+    sum_of_divisors(4)
 end
 
 # Write buffered messages to file
@@ -210,8 +227,14 @@ close(io)
 Calling this with the `JULIA_DEBUG=Main` environment variable successfully creates a `log.txt` file:
 ```bash
 $ cat log.txt
-┌ Debug: Got sum of divisors 504 for input 220
-└ @ Main /Users/funks/.julia/dev/DebugTestPackage/src/logging.jl:17
+┌ Debug: sum_of_divisors
+│   n = 4
+│   proper_divisors =
+│    3-element Vector{Int64}:
+│     1
+│     2
+│     4
+└ @ Main /Users/funks/.julia/dev/DebugTestPackage/src/logging.jl:14
 ```
 
 If we don't just want to log a single function call, we can also create a `global_logger`:
@@ -223,22 +246,13 @@ io = open("log.txt", "w+") # open text file for writing
 logger = SimpleLogger(io)  # simplistic logger that writes into IO-Stream (e.g. our file)
 global_logger(logger)      # use `logger` as global logger
 
-function is_amicable(a, b)
-    return sum_divisors(a) == b && sum_divisors(b) == a
+function sum_of_divisors(n)
+    proper_divisors = filter(x -> n % x == 0, 1:n)
+    @debug "sum_of_divisors" n proper_divisors
+    return sum(proper_divisors)
 end
 
-function sum_divisors(a)
-    result = 0
-    for i = 1:a
-        if a % i == 0
-            result += i
-        end
-    end
-    @debug "Got sum of divisors $result for input $a"
-    return result
-end
-
-is_amicable(220, 284) # all function calls are logged
+sum_of_divisors(4) # all function calls are logged
 
 # Write buffered messages to file
 flush(io)
