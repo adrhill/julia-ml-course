@@ -402,6 +402,7 @@ code {
 /* Define language names shown in code blocks */
 .language-bash::before       {content: "Shell";}
 .language-toml::before       {content: "TOML";}
+.language-ini::before        {content: "TOML";}
 .language-julia::before      {content: "Julia";}
 /* Special Franklin tags for Julia REPL modes */ 
 .language-julia-repl::before {content: "Julia REPL";}

@@ -80,6 +80,7 @@ These two files define environments.
 ### Environments
 Let's first take a look at contents of the `Project.toml`.
 We can either open it in an editor or look at the file contents in our terminal using the command `cat Project.toml`:
+
 ```toml
 [deps]
 OhMyREPL = "5fb14364-9ced-5910-84b2-373655c76a03"
