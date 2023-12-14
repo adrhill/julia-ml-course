@@ -78,61 +78,53 @@ Manifest.toml Project.toml
 These two files define environments.
 
 ### Environments
-Let's first take a look at the `Project.toml`.
+Let's first take a look at contents of the `Project.toml`.
+We can either open it in an editor or look at the file contents in our terminal using the command `cat Project.toml`:
+```toml
+[deps]
+OhMyREPL = "5fb14364-9ced-5910-84b2-373655c76a03"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+```
+
 In the case of our environment, it just  contains a list of installed packages 
 with *"universally unique identifiers"* (UUIDs).
-
-```
-$ cat Project.toml
-───────┬───────────────────────────────────────────────────────────────────────────────
-       │ File: Project.toml
-───────┼───────────────────────────────────────────────────────────────────────────────
-   1   │ [deps]
-   2   │ OhMyREPL = "5fb14364-9ced-5910-84b2-373655c76a03"
-   3   │ Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
-───────┴───────────────────────────────────────────────────────────────────────────────
-```
-
 As we will see in the following sections, 
 the `Project.toml` contains more information when used in packages.
 
 The `Manifest.toml` is a much longer file. It lists all packages in the dependency tree.
 For packages that are not part of Julia Base, Git tree hashes and versions are specified.
-
 **This makes our environment fully reproducible!**
 
-```
-$ cat Manifest.toml
-───────┬───────────────────────────────────────────────────────────────────────────────
-       │ File: Manifest.toml
-───────┼───────────────────────────────────────────────────────────────────────────────
-   1   │ # This file is machine-generated - editing it directly is not advised
-   2   │
-   3   │ julia_version = "1.8.5"
-   4   │ manifest_format = "2.0"
-   5   │ project_hash = "e9cf4d3c4e1f72eba6aa88164f23d06c005b9b9b"
-   6   │
-   7   │ [[deps.ArgTools]]
-   8   │ uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
-   9   │ version = "1.1.1"
-  10   │
-  11   │ [[deps.Artifacts]]
-  12   │ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
-  13   │
-  14   │ [[deps.Base64]]
-  15   │ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-  16   │
-  17   │ [[deps.CodeTracking]]
-  18   │ deps = ["InteractiveUtils", "UUIDs"]
-  19   │ git-tree-sha1 = "d730914ef30a06732bdd9f763f6cc32e92ffbff1"
-  20   │ uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-  21   │ version = "1.3.1"
-  22   │
-  23   │ [[deps.Crayons]]
-  24   │ git-tree-sha1 = "249fe38abf76d48563e2f4556bebd215aa317e15"
-  25   │ uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
-  26   │ version = "4.1.1"
-  ...
+Let's look at ours:
+
+```toml
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.8.5"
+manifest_format = "2.0"
+project_hash = "e9cf4d3c4e1f72eba6aa88164f23d06c005b9b9b"
+
+[[deps.ArgTools]]
+uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
+version = "1.1.1"
+
+[[deps.Artifacts]]
+uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+
+[[deps.Base64]]
+uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+
+[[deps.CodeTracking]]
+deps = ["InteractiveUtils", "UUIDs"]
+git-tree-sha1 = "d730914ef30a06732bdd9f763f6cc32e92ffbff1"
+uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
+version = "1.3.1"
+
+[[deps.Crayons]]
+git-tree-sha1 = "249fe38abf76d48563e2f4556bebd215aa317e15"
+uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
+version = "4.1.1"
+...
 ```
 Each environment we create adds a folder to `~/.julia/environments`
 that contains a `Project.toml` and a `Manifest.toml`.
@@ -191,8 +183,64 @@ This will create an environment with a randomized name in a temporary folder.
 
 ### Environments in Pluto
 Pluto notebooks also contain reproducible environments.
-Let's take a look at a notebook called `empty_pluto.jl`
-that just contains a cell declaring `using LinearAlgebra`.
+Let's take a look at the source code of a notebook called `empty_pluto.jl`
+that just contains a single cell declaring `using LinearAlgebra`.
+
+```julia
+### A Pluto.jl notebook ###
+# v0.19.25
+
+using Markdown
+using InteractiveUtils
+
+# ╔═╡ 9842a4f5-69d1-4566-b605-49d5c6679b4a
+using LinearAlgebra # 💡 the only cell we added! 💡
+
+# ╔═╡ 00000000-0000-0000-0000-000000000001
+PLUTO_PROJECT_TOML_CONTENTS = """
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+"""
+ 
+# ╔═╡ 00000000-0000-0000-0000-000000000002
+PLUTO_MANIFEST_TOML_CONTENTS = """
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.8.5"
+manifest_format = "2.0"
+project_hash = "ac1187e548c6ab173ac57d4e72da1620216bce54"
+
+[[deps.Artifacts]]
+uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+
+[[deps.CompilerSupportLibraries_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
+version = "1.0.1+0"
+
+[[deps.Libdl]]
+uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+
+[[deps.LinearAlgebra]]
+deps = ["Libdl", "libblastrampoline_jll"]
+uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
+[[deps.OpenBLAS_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
+uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
+version = "0.3.20+0"
+
+[[deps.libblastrampoline_jll]]
+deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
+uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
+version = "5.1.1+0"
+"""
+
+# ╔═╡ Cell order:
+# ╠═9842a4f5-69d1-4566-b605-49d5c6679b4a
+# ╟─00000000-0000-0000-0000-000000000001
+# ╟─00000000-0000-0000-0000-000000000002
+```
 
 We can see that
 - A variable called `PLUTO_PROJECT_TOML_CONTENTS` holds the `Project.toml` information.
@@ -201,67 +249,6 @@ We can see that
 - The ordering of cells is given in a comment `# ╔═╡ Cell order:` at the end of the file.
 
 Pluto notebooks are therefore fully reproducible and also regular Julia files!
-
-```
-$ cat empty_pluto.jl
-───────┬───────────────────────────────────────────────────────────────────────────────
-       │ File: empty_pluto.jl
-───────┼───────────────────────────────────────────────────────────────────────────────
-   1   │ ### A Pluto.jl notebook ###
-   2   │ # v0.19.25
-   3   │
-   4   │ using Markdown
-   5   │ using InteractiveUtils
-   6   │
-   7   │ # ╔═╡ 9842a4f5-69d1-4566-b605-49d5c6679b4a
-   8   │ using LinearAlgebra
-   9   │
-  10   │ # ╔═╡ 00000000-0000-0000-0000-000000000001
-  11   │ PLUTO_PROJECT_TOML_CONTENTS = """
-  12   │ [deps]
-  13   │ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-  14   │ """
-  15   │
-  16   │ # ╔═╡ 00000000-0000-0000-0000-000000000002
-  17   │ PLUTO_MANIFEST_TOML_CONTENTS = """
-  18   │ # This file is machine-generated - editing it directly is not advised
-  19   │
-  20   │ julia_version = "1.8.5"
-  21   │ manifest_format = "2.0"
-  22   │ project_hash = "ac1187e548c6ab173ac57d4e72da1620216bce54"
-  23   │
-  24   │ [[deps.Artifacts]]
-  25   │ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
-  26   │
-  27   │ [[deps.CompilerSupportLibraries_jll]]
-  28   │ deps = ["Artifacts", "Libdl"]
-  29   │ uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-  30   │ version = "1.0.1+0"
-  31   │
-  32   │ [[deps.Libdl]]
-  33   │ uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
-  34   │
-  35   │ [[deps.LinearAlgebra]]
-  36   │ deps = ["Libdl", "libblastrampoline_jll"]
-  37   │ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-  38   │
-  39   │ [[deps.OpenBLAS_jll]]
-  40   │ deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
-  41   │ uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-  42   │ version = "0.3.20+0"
-  43   │
-  44   │ [[deps.libblastrampoline_jll]]
-  45   │ deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
-  46   │ uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-  47   │ version = "5.1.1+0"
-  48   │ """
-  49   │
-  50   │ # ╔═╡ Cell order:
-  51   │ # ╠═9842a4f5-69d1-4566-b605-49d5c6679b4a
-  52   │ # ╟─00000000-0000-0000-0000-000000000001
-  53   │ # ╟─00000000-0000-0000-0000-000000000002
-───────┴───────────────────────────────────────────────────────────────────────────────
-```
 
 ## REPL-based workflows
 The most basic workflow uses the Julia REPL in combination with your favorite editor.
@@ -273,27 +260,19 @@ To test this, I have created two almost identical files:
 - a file `bar.jl`, which contains a function `bar` inside a module `Bar`
 
 ```julia
-$ cat foo.jl
-───────┬───────────────────────────────────────────────────────────────────────────────
-       │ File: foo.jl
-───────┼───────────────────────────────────────────────────────────────────────────────
-   1   │ foo(x) = x
-───────┴───────────────────────────────────────────────────────────────────────────────
+# Contents of foo.jl
+foo(x) = x
 ```
 
 ```julia
-$ cat bar.jl
-───────┬───────────────────────────────────────────────────────────────────────────────
-       │ File: bar.jl
-───────┼───────────────────────────────────────────────────────────────────────────────
-   1   │ module Bar # begin module
-   2   │
-   3   │ bar(x) = x
-   4   │
-   5   │ export bar # export function `bar`
-   6   │
-   7   │ end # end module
-───────┴───────────────────────────────────────────────────────────────────────────────
+# Contents of bar.jl
+module Bar
+
+  bar(x) = x
+
+  export bar # export function
+
+end # end module
 ```
 
 Let's compare the two approaches.
@@ -406,11 +385,12 @@ Thanks to templates, setting up the file structure for a Julia package takes sec
 is a highly configurable package for project templates.
 In this example, we are going to stick to the defaults:
 
-```julia
-using PkgTemplates
+```julia-repl
+julia> using PkgTemplates
 
-t = Template()
-t("MyPackage")
+julia> t = Template()
+
+julia> t("MyPackage")
 ```
 
 At the end of the package generation, 
@@ -537,37 +517,37 @@ Let's add a dependency to our package, for example CSV.jl:
   [8dfed614] + Test
 ```
 
-This time, the `Project.toml` of our package looks a bit more complicated:
+When adding a package, the `Project.toml` of our package will automatically be updated.
+It is always located in the root folder of the package
+(in our example at `~/.julia/dev/MyPackage/Project.toml`).
 
+In our case, the `Project.toml` contains:
+
+```toml
+name = "MyPackage"
+uuid = "c97c58cb-c2b5-45a4-93b4-32bd8ab523c1"
+authors = ["Adrian Hill <git@adrianhill.de> and contributors"]
+version = "1.0.0-DEV"
+
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
 ```
-# In folder ~/.julia/dev/MyPackage
-$ cat Project.toml
-───────┬───────────────────────────────────────────────────────────────────────────────
-       │ File: Project.toml
-───────┼───────────────────────────────────────────────────────────────────────────────
-   1   │ name = "MyPackage"
-   2   │ uuid = "c97c58cb-c2b5-45a4-93b4-32bd8ab523c1"
-   3   │ authors = ["Adrian Hill <git@adrianhill.de> and contributors"]
-   4   │ version = "1.0.0-DEV"
-   5   │
-   6 + │ [deps]
-   7 + │ CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-   8 + │
-   9   │ [compat]
-  10   │ julia = "1"
-  11   │
-  12   │ [extras]
-  13   │ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-  14   │
-  15   │ [targets]
-  16   │ test = ["Test"]
-───────┴───────────────────────────────────────────────────────────────────────────────
-```
-- As expected, adding CSV.jl created an entry in the dependency section `[deps]`.
-- Our package has a name, a UUID, a version and information
-  about the package author.
-- We have an "extra" dependency on the package Tests.jl. More on this later.
-- There is a new `[compat]` section to specify package compatibility bounds.
+
+- our package has a name, a UUID, a version and information
+  about the package author
+- adding CSV.jl created an entry in the dependency section `[deps]`
+- there is a new `[compat]` section to specify package compatibility bounds
+   - compat entries for external packages like CSV.jl have to be added manually
+- we have an "extra" dependency on the package Tests.jl (more on this later)
 
 ~~~
 <div class="admonition tip">
@@ -603,7 +583,7 @@ Status `~/.julia/dev/MyPackage/Project.toml`
 ``` 
 
 Let's declare in the `Project.toml` that only versions `0.10.X` of CSV.jl are permitted. 
-This will allow us to get updates that patch bug, but not updates with breaking changes.
+This will allow us to get updates that patch bugs, but not updates with breaking changes.
 ```toml
 [compat]
 CSV = "0.10"
@@ -614,7 +594,7 @@ julia = "1"
 By convention, the *"main"* file of a project has the same name as the project.
 PkgTemplates already created this file `src/MyPackage.jl` for us: 
 ```julia
-# Content of src/MyPackage.jl
+# Contents of src/MyPackage.jl
 module MyPackage
 
 # Write your package code here.
@@ -626,6 +606,7 @@ Inside this module, you will import dependencies, `include` other source files a
 Let's look at a toy example:
 
 ```julia
+# Updated contents of src/MyPackage.jl
 module MyPackage
 
 # 1.) Import functions you need
@@ -723,10 +704,10 @@ The following two sections are directly taken from the [DrWatson documentation](
 
 ### File structure
 To initialize a DrWatson project, run:
-```julia
-using DrWatson
+```julia-repl
+julia> using DrWatson
 
-initialize_project("MyScientificProject"; authors="Adrian Hill", force=true)
+julia> initialize_project("MyScientificProject"; authors="Adrian Hill", force=true)
 ```
 The default setup will initialize a file structure that looks as follows:
 ```plaintext
