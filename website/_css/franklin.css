@@ -365,27 +365,60 @@ code {
 }
 
 .hljs {
+  position: relative;
   font: JuliaMono;
   font-variant-ligatures: none;
+  padding-top: 5em;
   line-height: 1.35em;
   border-radius: 10px;
 }
 
-.hljs-meta {
-  font-weight: bold;
+.hljs-meta { font-weight: bold;}
+
+/* Use colors from theme specified in style.html */
+.hljs-meta.prompt_ {color: #7ee787;}
+.hljs-meta.help_ {color: #f2cc60;}
+.hljs-meta.shell_ {color: #ff7b72;}
+.hljs-meta.infiltrator_ {color: #ffa657;}
+.hljs-meta.debugger_ {color: #ffa657;}
+.hljs-meta.debuggereval_ {color: #ffa657;}
+
+/* Add language name to code blocks */
+.hljs::before {
+  content: "";
+  position: absolute;
+  color: var(--cm-editor--color);
+  background-color: var(--process-item-bg);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  top: 0;
+  left: 0;
+  padding: 0.25rem 0.6rem 0.1rem;
+  border-bottom-right-radius:10px;
 }
 
-.hljs-meta.shell_ {
-  color: #d25252;
-}
-
-.hljs-meta.pkg_ {
-  color: #6c99bb;
-}
-
-.hljs-meta.prompt_ {
-  color: #a5c261;
-}
+/* Define language names shown in code blocks */
+.language-bash::before       {content: "Shell";}
+.language-toml::before       {content: "TOML";}
+.language-julia::before      {content: "Julia";}
+/* Special Franklin tags for Julia REPL modes */ 
+.language-julia-repl::before {content: "Julia REPL";}
+.julia-repl::before          {content: "Julia REPL";}
+.julia-repl-pkg::before      {content: "Julia REPL: Pkg mode";}
+.julia-repl-help::before     {content: "Julia REPL: Help mode";}
+.julia-repl-shell::before    {content: "Julia REPL: Shell mode";}
+/* Julia code after REPL prompts doesn't need a language tag */
+.language-julia-repl .language-julia::before {content: "";}
+.julia-repl          .language-julia::before {content: "";}
+.julia-repl-pkg      .language-julia::before {content: "";}
+.julia-repl-help     .language-julia::before {content: "";}
+.julia-repl-shell    .language-julia::before {content: "";}
+/* Julia code in doc strings printed via REPL Help mode is sometimes incorrectly 
+recognized as Ruby code. Since we don't have any Ruby code in MJW, this is a quick fix. 
+TODO: remove when not required anymore.
+*/
+.language-ruby::before {content: "Julia";}
 
 .code-output {
   background: var(--output-background);
