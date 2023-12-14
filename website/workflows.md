@@ -810,3 +810,8 @@ Handling arguments in `ARGS` can be tedious.
 - help pages generated from docstrings
 
 Take a look at the [documentation](https://comonicon.org/stable/).
+
+## Further reading
+Additional resources on workflows in Julia can be found on
+the [Modern Julia Workflows](https://modernjuliaworkflows.github.io) website 
+and [JuliaNotes](https://m3g.github.io/JuliaNotes.jl/stable/).
