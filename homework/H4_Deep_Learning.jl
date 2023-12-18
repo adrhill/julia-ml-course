@@ -227,7 +227,7 @@ From the definition of differentiability, we know that
 
 $f'(a) = \lim_{h \rightarrow 0} \frac{f(a + h) - f(a)}{h} \quad .$
 
-For an infinitesimally small perturbation $ε$, we define define a dual number type $(a + ε⋅b)$ such that
+For an infinitesimally small perturbation $ε$, we define a dual number type $(a + ε⋅b)$ such that
 
 $f(a + \varepsilon \cdot b ) = \underbrace{f(a)}_{ā} + \varepsilon \cdot \underbrace{b f'(a)}_{b̄}  \quad .$
 
