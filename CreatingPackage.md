@@ -71,8 +71,8 @@ The `docs/src/` directory contains the `index.md` file and is the initial re
 Add the `docs/build` directory to your `.gitignore` file to prevent pushing it to your remote repository. To build your documentation, navigate to the `docs` directory in the terminal, execute `julia --project`, and run `include("make.jl")`. The generated files will be located in `docs/build`, and you can view `index.html` using a web browser.
 # CI / CD
 We utilize GitHubActions, CodeCov, and Documenter.jl to automate testing, code coverage reporting, and documentation deployment.
-## Automatic Documentation with Documenter.jl
-### Setup
+## Automatic Documentation
+### Setup with Documenter.jl
 If your package was set up using `PkgTemplates.jl`, no changes to the workflow file are necessary. Otherwise, follow the provided reference file.
 
 Generate a `Deploy Key` and a `Documenter-Key` by using the `DocumenterTools` Julia package. Execute 
@@ -97,7 +97,7 @@ To integrate CodeCov:
 - Register or log in via GitHub at the [CodeCov website](https://about.codecov.io.
 - Locate your package on the Repos-Overview page and select `Setup repo`.
 - Follow the provided instructions to complete the setup. Note that "Step 2: add Codecov to your [GitHub Actions workflow yaml file](https://github.com/JeanAnNess/Covid_tracker/tree/main/.github/workflows)" is done by the specifying the `Codecov` plugin while creating your Template via `PkgTemplates`.
-## Troubleshooting and Tips
+# Troubleshooting and Tips
 If the documentation for a function is not appearing when using the `?help function` command:
 
 - Ensure that you have executed `using MyPackage`.
