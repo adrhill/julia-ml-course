@@ -1,7 +1,7 @@
-# Prerequisites 
+	# Prerequisites 
 - [julia](https://julialang.org) is installed
 - [git](https://git-scm.com/) is installed
-If you are willing to use third-party platforms to setup your repository and continuous integration pipeline:
+If you are willing to use third-party platforms to setup your repository and continuous integration pipeline, then you will require:
 - [GitHub](https://github.com) Account
 - [CodeCov](https://about.codecov.io) Account (or login via GitHub)
 # Creating the initial Package
@@ -9,24 +9,28 @@ If you are willing to use third-party platforms to setup your repository and con
 ## Using PkgTemplates.jl
 Utilizing PkgTemplates.jl involves the following steps:
 1. Initiate the Julia REPL by opening your terminal and starting `julia`.
-2. Transition to package mode using the `]` key, then execute `add PkgTemplates`.
-3. Make sure your Packages are update. Type `update` while within the package mode.
-4. Use the provided `Template` configuration, replacing `YourGitHubUsername` with your actual GitHub username and customizing the package name as needed:
-```julia
-template = Template(;
-	# Meta information
-    user="YourGitHubUsername",
-    authors="Name <email>",
-    julia=v"1.6",
-	# Selected Plugins
-    plugins=[
-	    License(; name="MIT"),
-        Git(; manifest=false),
-        GitHubActions(; x64=true),
-        Codecov(),
-        Documenter{GitHubActions}(),
-    ],
-)
+2. Transition to package mode using the `]` key, add the package and update all of your existing packages.
+```julia-repl
+# Enter package mode with `]`
+(@v1.10) pkg> add PkgTemplates
+(@v1.10) pkg> update
+```
+3. Use the provided `Template` configuration, replacing `YourGitHubUsername` with your actual GitHub username and customizing the package name as needed:
+```julia-repl
+julia> template = Template(;
+			# Meta information
+			user="YourGitHubUsername",
+			authors="Name <email>",
+			julia=v"1.6",
+			# Selected Plugins
+			plugins=[
+				License(; name="MIT"),
+				Git(; manifest=false),
+				GitHubActions(; x64=true),
+				Codecov(),
+				Documenter{GitHubActions}(),
+			],
+		)
 ```
 In the meta information section, ensure the `user` and `authors` fields reflect your GitHub identity and authorship details.`julia=v"1.6"` sets the minimum Julia version requirement to 1.6 for package compatibility.
 
@@ -34,12 +38,12 @@ Regarding the plugins within the `plugins` array:
 - `License(name="MIT")` applies the MIT License for open-source distribution with minimal restrictions. It's a legal precaution.
 - `Git(manifest=false)` configures the use of Git while opting out of tracking the `Manifest.toml` file.
 - `GitHubActions()` sets up continuous integration (CI) via GitHub Actions with default parameters.
-- `Codecov()` integrates Codecov for assessing code coverage, which quantifies the proportion of source code exercised by tests.
+- `Codecov()` integrates CodeCov for assessing code coverage, which quantifies the proportion of source code exercised by tests.
 - `Documenter{GitHubActions}()` includes Documenter for generating package documentation, with the `GitHubActions` specifier indicating deployment to GitHub Pages via GitHubActions.
 
 After you created the template you execute 
-```julia
-template("PackageName")
+```julia-repl
+julia> template("PackageName")
 ```
  Replace `"PackageName"` with the desired name for your package. This will initiate the creation of your package with the specified configuration, plugins, and license.
 # Writing Your Code
@@ -71,8 +75,8 @@ The `docs/src/` directory contains the `index.md` file and is the initial re
 Add the `docs/build` directory to your `.gitignore` file to prevent pushing it to your remote repository. To build your documentation, navigate to the `docs` directory in the terminal, execute `julia --project`, and run `include("make.jl")`. The generated files will be located in `docs/build`, and you can view `index.html` using a web browser.
 # CI / CD
 We utilize GitHubActions, CodeCov, and Documenter.jl to automate testing, code coverage reporting, and documentation deployment.
-## Automatic Documentation
-### Setup with Documenter.jl
+## Automatic Documentation with Documenter.jl
+### Setup
 If your package was set up using `PkgTemplates.jl`, no changes to the workflow file are necessary. Otherwise, follow the provided reference file.
 
 Generate a `Deploy Key` and a `Documenter-Key` by using the `DocumenterTools` Julia package. Execute 
@@ -94,12 +98,15 @@ Keep in mind that documentation updates may take a few minutes to become visible
 Please refer to the [gh-pages](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages) documentation.
 ## CodeCov
 To integrate CodeCov:
-- Register or log in via GitHub at the [CodeCov website](https://about.codecov.io.
+- Register or log in via GitHub at the [CodeCov website](https://about.codecov.io).
 - Locate your package on the Repos-Overview page and select `Setup repo`.
 - Follow the provided instructions to complete the setup. Note that "Step 2: add Codecov to your [GitHub Actions workflow yaml file](https://github.com/JeanAnNess/Covid_tracker/tree/main/.github/workflows)" is done by the specifying the `Codecov` plugin while creating your Template via `PkgTemplates`.
-# Troubleshooting and Tips
-If the documentation for a function is not appearing when using the `?help function` command:
+## Troubleshooting and Tips
 
+If the documentation for a function is not appearing when using 
+```julia-repl
+?help function
+```
 - Ensure that you have executed `using MyPackage`.
 - Verify that the docstring is placed directly above the function definition with no intervening spaces.
 
@@ -108,8 +115,10 @@ For more detailed guidance, refer to the relevant documentation for Documenter.j
 - [julia](https://julialang.org)
 - [git](https://git-scm.com/)
 - [GitHub](https://github.com)
+- [gh-pages](https://docs.github.com/en/pages/quickstart)
+- [GitHubActions](https://docs.github.com/en/actions)
 - [PkgTemplates.jl](https://juliaci.github.io/PkgTemplates.jl/stable/user/)
 - [Documenter.jl](https://documenter.juliadocs.org/stable/)
+- [DocumenterTools.jl](https://documenter.juliadocs.org/stable/lib/internals/documentertools/)
 - [GitHub Actions](https://docs.github.com/en/actions)
 - [CodeCov](https://about.codecov.io)
-- [gh-pages](https://docs.github.com/en/pages/quickstart)
