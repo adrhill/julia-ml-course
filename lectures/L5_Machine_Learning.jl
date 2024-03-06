@@ -41,7 +41,7 @@ html"""
 			Adrian Hill
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24
+			TU Berlin, Summer Semester 2024
 		</p>
 	</div>
 """
@@ -254,8 +254,8 @@ pca_params.projection
 
 # ╔═╡ 2967f7c0-23ca-483c-b72c-eee01430e793
 md"# Further resources
-This lecture just scratched the surface of MLJ's features. For example, we didn't touch: 
-- [Performance estimation](https://alan-turing-institute.github.io/MLJ.jl/dev/evaluating_model_performance/) using the `evaluate` function 
+This lecture just scratched the surface of MLJ's features. For example, we didn't touch:
+- [Performance estimation](https://alan-turing-institute.github.io/MLJ.jl/dev/evaluating_model_performance/) using the `evaluate` function
 - [Transformers](https://alan-turing-institute.github.io/MLJ.jl/dev/transformers/); not the Deep Learning kind, but common data transformations such as standardization
 - [Model tuning](https://alan-turing-institute.github.io/MLJ.jl/dev/tuning_models/)
 

@@ -67,20 +67,20 @@ html"""
 			Adrian Hill
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24
+			TU Berlin, Summer Semester 2024
 		</p>
 	</div>
 """
 
 # ╔═╡ c7db928d-bdd1-4561-82e0-6081ed6ff08c
 md"# Plots.jl
-In this lecture, we are going to learn how to use [Plots.jl](https://github.com/JuliaPlots/Plots.jl). 
+In this lecture, we are going to learn how to use [Plots.jl](https://github.com/JuliaPlots/Plots.jl).
 Plots.jl provides a common interface for several plotting packages:
-- GR 
+- GR
 - PythonPlot – calls matplotlib
 - PGFPlotsX – you might know this from LaTeX
 - Plotly – JavaScript plotting package
-- UnicodePlots - ASCII plots in your terminal 
+- UnicodePlots - ASCII plots in your terminal
 
 Plots.jl calls these packages [backends](https://docs.juliaplots.org/latest/backends/).
 
@@ -96,7 +96,7 @@ Plots.jl makes great use of multiple dispatch. Let's explore the different ways 
 
 |                 |              |
 |:----------------|:-------------|
-| `plot(y)` 	  | 2D plot using x-values on the unit-range | 
+| `plot(y)` 	  | 2D plot using x-values on the unit-range |
 | `plot(x, y)`    | 2D plot      |
 | `plot(x, y, z)` | 3D plot      |
 """
@@ -109,7 +109,7 @@ plot(1:10, rand(10))
 
 # ╔═╡ 3d12f2ca-cb60-4274-b632-3f4d699a8b6c
 md"#### Columns are series
-Columns in the input `y` are treated as separate series. 
+Columns in the input `y` are treated as separate series.
 "
 
 # ╔═╡ ac2d9612-99bd-42fc-aeb1-4c40f3605597
@@ -151,7 +151,7 @@ plot([sin, cos], 0, 10)
 
 # ╔═╡ 822ee1b4-5713-417d-88c0-ebeac23f2b0d
 md"## Interactive plots with PlutoUI
-Pluto's reactivity gives you interactive plots by using sliders from [PlutoUI](https://github.com/JuliaPluto/PlutoUI.jl): 
+Pluto's reactivity gives you interactive plots by using sliders from [PlutoUI](https://github.com/JuliaPluto/PlutoUI.jl):
 "
 
 # ╔═╡ 4e023fd7-a440-495a-87ec-70a75f8c2aa2
@@ -231,7 +231,7 @@ end
 
 # ╔═╡ ace4b294-3c50-4c08-8126-d6d6715d748b
 md"""## LaTeX strings
-The [LaTeXStrings.jl](https://github.com/stevengj/LaTeXStrings.jl) package can be used to define equations in plots titles and labels. 
+The [LaTeXStrings.jl](https://github.com/stevengj/LaTeXStrings.jl) package can be used to define equations in plots titles and labels.
 """
 
 # ╔═╡ 53b3cf39-722f-4d58-8a44-1a0e98ce46e0
@@ -247,7 +247,7 @@ md"""Depending on the plotting backend, these can also be used inside plots:
 plot(sqrt; label=L"\sqrt{x}", title=L"A random equation: $\frac{1}{\sqrt{2}}$")
 ```
 
-We aren't demonstrating this in here since Plotly isn't one of those backends. 
+We aren't demonstrating this in here since Plotly isn't one of those backends.
 """
 
 # ╔═╡ ffff14d6-4eff-4f96-a535-9fceafc5e3e6
@@ -279,7 +279,7 @@ Plots are saved using the `savefig` function:
 
 ```julia
 savefig("figure.png")  		    # save most recent figure
-savefig(my_plot, "figure.png")  # save figure `my_plot` 
+savefig(my_plot, "figure.png")  # save figure `my_plot`
 ```
 
 Note that [not all backends support all file formats](https://docs.juliaplots.org/latest/output/#Supported-output-file-formats):
@@ -338,9 +338,9 @@ surface(X, Y, Z2)
 
 # ╔═╡ 156f1d7a-30fd-410a-b9a6-033d34b82ad6
 md"""# DataFrames.jl
-DataFrames are a data-structure used to work with large tabular datasets (think Excel spreadsheets). 
+DataFrames are a data-structure used to work with large tabular datasets (think Excel spreadsheets).
 
-Let's try out a real world example to learn how to use [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl). 
+Let's try out a real world example to learn how to use [DataFrames.jl](https://github.com/JuliaData/DataFrames.jl).
 We are interested in climate research and downloaded [open weather data](https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/subdaily/air_temperature/recent/) provided by the [German Meteorological Service (*Deutscher Wetterdienst*, DWD)](https://www.dwd.de/DE/leistungen/opendata/opendata.html):
 """
 
@@ -393,7 +393,7 @@ Markdown.MD(
         "Note",
         "What's an IOBuffer?",
         [
-            md"I've pasted the data in this notebook such that you don't have to deal with downloading a file. 
+            md"I've pasted the data in this notebook such that you don't have to deal with downloading a file.
 
 By wrapping everything in an `IOBuffer`, we pretend `csv_file` is a real file and not just a string.",
         ],
@@ -407,7 +407,7 @@ Instead of manually parsing the file, we use [CSV.jl](https://github.com/JuliaDa
 
 # ╔═╡ 0f73039c-a5c3-4fd2-8ce1-63972543ff99
 raw_weather_data = CSV.read(
-    csv_file,  # path to our file 
+    csv_file,  # path to our file
     DataFrame; # read to DataFrame
     delim=';', # values are separated by ";"
 )
@@ -450,7 +450,7 @@ md"More indexing syntax can be found in the [DataFrames.jl documentation](https:
 # ╔═╡ e24c07d4-cfed-4ccb-be8f-087e6c77e243
 md"## Plotting DataFrames with StatsPlots
 At this point, we can already try to plot our data. The [StatsPlots.jl](https://github.com/JuliaPlots/StatsPlots.jl) package provides several plotting recipes for DataFrames.
-By using the macro `@df`, we can call `plot` by specifying column names as symbols (e.g. `:column_name`). 
+By using the macro `@df`, we can call `plot` by specifying column names as symbols (e.g. `:column_name`).
 
 `MESS_DATUM` corresponds to the date and time of the measurement while `TT_TER` is the measured air temperature:
 "
@@ -464,7 +464,7 @@ Markdown.MD(
         "warning",
         "Oh no!",
         [
-            md"Even though our data was sampled at regular 6-hour-intervals, it looks like the integer format of the measurement times `MESS_DATUM` caused problems. 
+            md"Even though our data was sampled at regular 6-hour-intervals, it looks like the integer format of the measurement times `MESS_DATUM` caused problems.
 
 We will fix this in the following slides!",
         ],
@@ -473,7 +473,7 @@ We will fix this in the following slides!",
 
 # ╔═╡ 79d8d5c5-93eb-421a-b26e-1de7060212b4
 md"""## Feature engineering
-Often, we have to transform data in our DataFrame, e.g. to clean up missing values or combine columns into more meaningful features. 
+Often, we have to transform data in our DataFrame, e.g. to clean up missing values or combine columns into more meaningful features.
 
 As an example, we will parse the dates in the `MESS_DATUM` column into a more suitable data-type. Currently, large integer numbers are used to represent the date:
 """
@@ -503,8 +503,8 @@ parse_date.(raw_weather_data.MESS_DATUM)
 
 # ╔═╡ 75fdf7a6-ee05-4e35-bf86-c4ad206c8f7f
 md"### DataFrame transformations
-DataFrames.jl provides three functions that allow for the transformation of DataFrames: `combine`, `select` and `transform`. 
-A more detailed introduction to these transformations can be found in the [DataFrames.jl documentation](https://dataframes.juliadata.org/stable/man/basics/#Basic-Usage-of-Transformation-Functions). 
+DataFrames.jl provides three functions that allow for the transformation of DataFrames: `combine`, `select` and `transform`.
+A more detailed introduction to these transformations can be found in the [DataFrames.jl documentation](https://dataframes.juliadata.org/stable/man/basics/#Basic-Usage-of-Transformation-Functions).
 
 Since we are only interested in two columns of the DataFrame, we will use `select` to select and transform `MESS_DATUM` and `TT_TER`:
 "
@@ -521,7 +521,7 @@ md"Here we used two patterns defined by DataFrames.jl:
 - `source_column => transformation => target_column_name` to transform a column and save it under a new target name
 - `source_column => target_column_name` to rename a column
 
-By default, the `transformation` function will be applied to the entire column. DataFrames.jl provides a `ByRow` utility to apply `transformation` to each data point individually.  
+By default, the `transformation` function will be applied to the entire column. DataFrames.jl provides a `ByRow` utility to apply `transformation` to each data point individually.
 "
 
 # ╔═╡ 1e24bef4-0f8e-4171-8723-5464190d78fe

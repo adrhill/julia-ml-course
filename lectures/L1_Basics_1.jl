@@ -42,7 +42,7 @@ html"""
 			Adrian Hill
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24
+			TU Berlin, Summer Semester 2024
 		</p>
 	</div>
 """
@@ -335,7 +335,7 @@ typeof(π)
 
 # ╔═╡ b41bee43-f510-483f-9a12-d9d577367272
 md"### Rational numbers
-For integers $p$ and $q$, 
+For integers $p$ and $q$,
 rational numbers $\frac{p}{q}$ can be expressed as fractions using the syntax `p//q`.
 "
 

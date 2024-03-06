@@ -49,7 +49,7 @@ html"""
 			Adrian Hill
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24
+			TU Berlin, Summer Semester 2024
 		</p>
 	</div>
 """
@@ -188,11 +188,11 @@ You can then copy this URL into the *"Open a notebook"* field of the Pluto start
 
 ![Starting page](https://i.imgur.com/o7TjYX5.png)
 
-Doing this will ensure that you are working with the latest version of the lectures and homework. 
+Doing this will ensure that you are working with the latest version of the lectures and homework.
 """
 
 # ╔═╡ f1d4d38b-5593-4493-976a-e4b9d486007a
-tip(md"If you are familiar with Git, you can also clone the repository of this course. 
+tip(md"If you are familiar with Git, you can also clone the repository of this course.
 
 Just make sure to regularly `git pull` to keep your copy of the course up to date.")
 

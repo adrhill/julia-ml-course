@@ -49,7 +49,7 @@ html"""
 			Homework 2: Indexing & Linear Algebra
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24<br>
+			TU Berlin, Summer Semester 2024<br>
 		</p>
 	</div>
 """
@@ -233,7 +233,7 @@ task(
 
 ```
 If the image contains an uneven number of columns, ignore the center column.
-For example, applying `my_crop` to an input matrix 
+For example, applying `my_crop` to an input matrix
 ```julia
 3×5 Matrix{Int64}:
  1  4  7  10  13
@@ -305,14 +305,14 @@ my_crop(img)
 
 # ╔═╡ 3e933ccb-a6f3-4c2c-99ae-7ff03ed3a786
 md"## Exercise 2: Singular value decomposition
-The [Singular value decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition) (SVD) factorizes matrices $M$ into 
+The [Singular value decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition) (SVD) factorizes matrices $M$ into
 
 $M = U \Sigma V' \quad .$
 
-LinearAlgebra.jl implements SVD in the function `svd`. For this implementation of SVD:  
+LinearAlgebra.jl implements SVD in the function `svd`. For this implementation of SVD:
 *  $\Sigma$ is a vector of  sorted, non-negative real numbers, the [singular values](https://en.wikipedia.org/wiki/Singular_value)
 *  $U$ is a unitary matrix
-*  $V$ is a unitary matrix 
+*  $V$ is a unitary matrix
 *  $V'$ is the adjoint / conjugate transpose of $V$
 "
 
@@ -400,7 +400,7 @@ hint(
 @bind n Slider(1:50, default=50, show_value=true)
 
 # ╔═╡ 8401a066-f5c0-4d86-8d0e-e9c287762252
-md"Note that from a numerical perspective, it is a bit unusual to multiply the factorization $U \tilde{\Sigma} V'$ back together into an array $\tilde{A}$. We did this so we can apply the low-rank approximation to our image. 
+md"Note that from a numerical perspective, it is a bit unusual to multiply the factorization $U \tilde{\Sigma} V'$ back together into an array $\tilde{A}$. We did this so we can apply the low-rank approximation to our image.
 
 Let's compute a rank $n=$ $(n) approximation. Adjust the rank using the following slider:"
 
@@ -436,7 +436,7 @@ $k(x_i, x_j) = \exp\left(-\frac{||x_i - x_j|| ^2}{2\sigma^2}\right)$
 )
 
 # ╔═╡ 7f9afd24-fd1c-49cd-b6bf-598cea9758c7
-md"Note that you can type σ using `\sigma<TAB>`. 
+md"Note that you can type σ using `\sigma<TAB>`.
 
 `σ`'s default value `σ_slider` is defined at the bottom of this notebook."
 
@@ -592,7 +592,7 @@ A \ b # Approach B: left division operator
 C \ b # Approach C: left division operator and Cholesky factorization
 
 # ╔═╡ cb3a2a70-7a4c-4adb-9983-95614645971b
-md"In this example, all three approaches compute the correct result. However, matrix inversion is often numerically unstable, which is why it should be avoided. 
+md"In this example, all three approaches compute the correct result. However, matrix inversion is often numerically unstable, which is why it should be avoided.
 
 The approach using the Cholesky factorization is numerically stable, fast and therefore well suited for the next exercise:"
 
@@ -613,14 +613,14 @@ task(
     md"Implement Kernel Ridge Regression in the function `kernel_ridge` below.
 
 ##### Step 1
-Inside the function `kernel_ridge`, construct the training kernel matrix $K_{XX}$ using the function `kernel`. Add a regularization term $\lambda I$, where where $I$ is the identity matrix and $\lambda \in \mathbb{R}$ is a regularization term: 
+Inside the function `kernel_ridge`, construct the training kernel matrix $K_{XX}$ using the function `kernel`. Add a regularization term $\lambda I$, where where $I$ is the identity matrix and $\lambda \in \mathbb{R}$ is a regularization term:
 
 $\tilde{K}_{XX} = K_{XX} + \lambda I$
 
 Don't specify the kernel bandwidth $\sigma$.
 
 ##### Step 2
-Use the Cholesky decomposition on $\tilde{K}_{XX}$ to compute 
+Use the Cholesky decomposition on $\tilde{K}_{XX}$ to compute
 
 $\alpha = (K_{XX} + \lambda I)^{-1}y \quad .$
 
@@ -693,7 +693,7 @@ else
         elseif result isa AbstractArray
             keep_working(
                 md"""
-The `predict` function should return a scalar prediction $\hat{y}$ for scalar inputs $\hat{x}$. 
+The `predict` function should return a scalar prediction $\hat{y}$ for scalar inputs $\hat{x}$.
 Currently, an array of size $(size(result)) is returned.
 
 If the size is (1,) or (1, 1), you can use the function `only` on your output to access the only element in it. Alternatively, use the dot product.
@@ -739,12 +739,12 @@ Assume an input dataset $$X = [x_1, x_2, \ldots x_n] \in \mathbb{R}^{d\times n}$
 *  $n$ is the number of data points in $X$
 
 Substracting the mean over all data points gives us the *mean-centered* data matrix $\hat{X}$.
-	
-**Idea:** PCA with $k$ principal components finds the projection $W_k = [w_1, w_2, \ldots, w_k]$ that maximizes the variance in the projected data $W_k^T\hat{X}$. 
-	
+
+**Idea:** PCA with $k$ principal components finds the projection $W_k = [w_1, w_2, \ldots, w_k]$ that maximizes the variance in the projected data $W_k^T\hat{X}$.
+
 ![PCA Plot](https://i.imgur.com/FEyXwwX.png)
 
-In the example above, this maximization of variance would correspond to a projection $W_1^T\hat{X} = w_1^T\hat{X}$ of all datapoints onto the red arrow, reducing the dimensionality from 2D to 1D. 
+In the example above, this maximization of variance would correspond to a projection $W_1^T\hat{X} = w_1^T\hat{X}$ of all datapoints onto the red arrow, reducing the dimensionality from 2D to 1D.
 "
 
 # ╔═╡ 067c7894-2e3f-43de-998f-4f1a250bc0f7
@@ -778,9 +778,9 @@ Compute the sample covariance matrix $C = \hat{X}\hat{X}^T$.
 
 ##### Step 3
 Compute an eigendecomposition of $C$ into eigenvectors $w_i$ and eigenvalues $\lambda_i$
-using the function `eigen`. 
+using the function `eigen`.
 
-	
+
 Select the eigenvectors $w_i$ corresponding to the $k$ largest eigenvalues $\lambda_i$,
 such that $\lambda_1\ge\lambda_2\ge\ldots\ge\lambda_k$:
 
@@ -815,7 +815,7 @@ md"### Exercise 4.2 – Visualization"
 task(
     md"
 Try to replicate the following plot as on the dataset `X_test` as close as you can.
-	
+
 ![PCA Plot](https://i.imgur.com/FEyXwwX.png)
 
 

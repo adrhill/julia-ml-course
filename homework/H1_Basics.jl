@@ -37,7 +37,7 @@ html"""
 			Homework 1: Julia Programming Basics
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24<br>
+			TU Berlin, Summer Semester 2024<br>
 		</p>
 	</div>
 """
