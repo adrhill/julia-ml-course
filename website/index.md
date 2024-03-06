@@ -2,9 +2,9 @@
 @def tags = ["index"]
 
 # Julia programming for ML
-Welcome to the *Julia programming for Machine Learning* course
+Welcome to the *Julia programming for Machine Learning* course (JuML)
 offered by Prof. Klaus-Robert Müller's 
-[Machine Learning Group](https://www.tu.berlin/ml) at TU Berlin.
+[Machine Learning Group](https://web.ml.tu-berlin.de) at TU Berlin.
 
 ~~~
 <h2>Table of Contents</h2>
@@ -24,7 +24,7 @@ Occasionally, differences and similarities to Python will be pointed out. If you
 
 ## Contents
 ### Lectures
-The course is taught in five weekly sessions of three hours.
+The **first half of the course** is taught in five weekly sessions of three hours.
 In each session, two lectures are taught:
 
 | Week | Lecture | Content                                           | Exam / Homework |
@@ -89,23 +89,29 @@ slightly different test suite to avoid cheating and hard-coded answers.
 Designing homework exercises takes a lot of time, so 
 **please don't upload any answers to the homework to the internet.**
 
-## Information for TU Berlin students 
-Julia Programming for Machine Learning (3 ECTS credits) is an optional course within one of the following modules:
-- [Cognitive Algorithms](https://wiki.ml.tu-berlin.de/wiki/Main/WS22_KA) (summer & winter semester)
-- [Machine Learning 1](https://wiki.ml.tu-berlin.de/wiki/Main/WS22_MaschinellesLernen1) (winter semester)
-- [Machine Learning 2](http://wiki.ml.tu-berlin.de/wiki/Main/SS23_ML2) (summer semester)
+### Project work
+In the **second half of the course**, after passing the homework,
+students work in groups on a small programming project of their choice, 
+learning best practices for package development in Julia, such as:
+* how to structure and develop a package
+* how to write package tests
+* how to write and host package documentation
 
-It's **not** possible to take the class as a standalone, seminar, or free-choice module.
+During code review sessions, students give each other feedback on their projects 
+before presenting their work in end-of-semester presentations.
+
+## Information for TU Berlin students 
+Starting in summer 2024, JuML is an stand-alone 6 ECTS / 6 LP course.
 
 Homework assignments must be submitted every week. 
 You must be enrolled on ISIS to submit homework. 
 If you do not register on time, you cannot pass the course.
 
-- **Course Period:**  November 21st - December 19th 2023 
-  - **Lectures:** Tuesday 14:15 - 16:45 PM
-  - **Office hours:** Monday 10:15 - 11:45 AM
+- **Course Period:**  April 15th - July 20th 2024 
+  - **Lectures:** TBA
+  - **Office hours:** TBA
 
-More information and links to the Zoom meetings can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=35533).
+More information can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=37588).
 
 ## FAQ
 #### Why should I learn Julia?
@@ -153,6 +159,9 @@ The format of this website as well as the contents of this course are influenced
 Many thanks to 
 - [Fons van der Plas](https://github.com/fonsp) for making Pluto and helping me build this website
 - [Niklas Schmitz](https://github.com/niklasschmitz) for feedback on the AD lecture
-- [Janes Sanne](https://github.com/JeanAnNess) for his help as a teaching assistant
+- [Janes Sanne](https://github.com/JeanAnNess),
+  [Dr. Andreas Ziehe](https://web.ml.tu-berlin.de/author/dr.-andreas-ziehe/) and
+  [Philip Naumann](https://web.ml.tu-berlin.de/author/philip-naumann/) 
+  for their help with teaching the course at TU Berlin
 - [Théo Galy-Fajou](https://github.com/theogf) and [Johnny Chen](https://github.com/johnnychen94) for their mentorship
 - everyone who contributed to the packages covered in this lecture

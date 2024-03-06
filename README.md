@@ -27,7 +27,8 @@ Follow the [installation instructions](https://adrhill.github.io/julia-ml-course
 on the course website.
 
 ## Contents
-The course is taught in five weekly sessions of three hours.
+### Lectures
+The **first half of the course** is taught in five weekly sessions of three hours.
 In each session, two lectures are taught:
 
 | Week | Lecture | Content                                           |
@@ -80,9 +81,20 @@ The lectures and the homework cover the following packages:
 | ProfileView.jl       |       9 | Profiler                                               |
 | Cthulhu.jl           |       9 | Type inference debugger                                |
 
+### Project
+In the **second half of the course**, after passing the homework,
+students work in groups on a small programming project of their choice, 
+learning best practices for package development in Julia, such as:
+* how to structure and develop a package
+* how to write package tests
+* how to write and host package documentation
+
+During code review sessions, students give each other feedback on their projects 
+before presenting their work in end-of-semester presentations.
+
 [site-url]: https://adrhill.github.io/julia-ml-course/
-[ml-group-url]: https://www.tu.berlin/ml
-[isis-url]: https://isis.tu-berlin.de/course/view.php?id=35533
+[ml-group-url]: https://web.ml.tu-berlin.de
+[isis-url]: https://isis.tu-berlin.de/course/view.php?id=37588
 
 [goto-badge]: https://img.shields.io/badge/-Go%20to%20course%20website-informational
 [isis-badge]: https://img.shields.io/badge/TU%20Berlin-ISIS%20page-red
