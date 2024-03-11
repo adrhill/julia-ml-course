@@ -1,9 +1,14 @@
+This page serves as guide for creating your Julia package and walks you through the process of the initial setup and explains the structure of the package. We also recommend reading the [Modern Julia Workflows post](https://modernjuliaworkflows.github.io/sharing/).
+Information on setting up continuous integration pipelines and code coverage is also provided.
+
 	# Prerequisites 
 - [julia](https://julialang.org) is installed
 - [git](https://git-scm.com/) is installed
 If you are willing to use third-party platforms to setup your repository and continuous integration pipeline, then you will require:
 - [GitHub](https://github.com) Account
 - [CodeCov](https://about.codecov.io) Account (or login via GitHub)
+Otherwise the GitLab Instance from the TUB can be used:
+-[TUB-GitLab](https://git.tu-berlin.de)
 # Creating the initial Package
 
 ## Using PkgTemplates.jl
@@ -50,27 +55,24 @@ julia> template("PackageName")
 ## Source Directory (`src/`)
 Create any required files within the `src/` directory. Ensure that the main file, named after your package (e.g., `MyPackage.jl`),  has an `include` statement for all necessary files while also `export`ing all functions that you develop. For further guidance, consult the lecture materials.
 ## Testing
-### Test Cases (`test/MyPackage.jl`)
-Create comprehensive test cases in `test/MyPackage.jl` to validate all functionalities of your package. The code coverage will be automatically calculated after every commit using CodeCov.
+### Test Cases (`test/runtests.jl`)
+Create comprehensive test cases in `test/runtests.jl` to validate all functionalities of your package. The code coverage will be automatically calculated after every commit using CodeCov.
 ### Running Tests locally
 To execute tests manually, open the terminal, navigate to your package directory, start Julia, enter package mode (by typing `]`), and execute the `test` command.
 ## Documentation
-Documentation is crucial and we expect you to document your functions sufficiently. 
+Documentation is crucial and we expect you to document your functions sufficiently. This includes both the docstrings accessible via `?myfunction` in the Julia-REPL as well as the doc pages which are formatted like a website that includes the docstrings as API reference. Within the next few subchapters we explain the process of setting this up.
 ### Code Documentation
 Document all exported functions with docstrings, placing them above function definitions. You can view the docstring output within a Julia environment by typing `?functionName`.
 ### Documentation File Structure
 #### `make.jl`
-The `docs/make.jl` file contains the layout for your documentation pages. Add additional pages by modifying the `pages` attribute within the `makedocs()` function.
+The `docs/make.jl` file contains the layout for your documentation pages. 
 
-Include your repository link (excluding the “https://”) in the `deploydocs()` function as shown below:
-```julia
-deploydocs(
-    repo="github.com/Username/MyPackage.jl",
-    devbranch = "main"
-)
-```
+`makedocs` is used to generate the documentation. Add additional pages by modifying the `pages` attribute within.
+
+`deploydocs` is used to deploy the generated documentation to your GitHub repository.
+
 ##### `docs/src/`
-The `docs/src/` directory contains the `index.md` file and is the initial reference in `make.jl`. Add more markdown (.md) files as needed and update the `pages` attribute accordingly in `makedocs()`.
+The `docs/src/` directory contains the `index.md` file and is the initial reference in `make.jl`. Add more markdown (.md) files as needed and update the `pages` attribute accordingly in `makedocs`.
 #### Building Documentation Locally
 Add the `docs/build` directory to your `.gitignore` file to prevent pushing it to your remote repository. To build your documentation, navigate to the `docs` directory in the terminal, execute `julia --project`, and run `include("make.jl")`. The generated files will be located in `docs/build`, and you can view `index.html` using a web browser.
 # CI / CD
@@ -79,7 +81,7 @@ We utilize GitHubActions, CodeCov, and Documenter.jl to automate testing, code c
 ### Setup
 If your package was set up using `PkgTemplates.jl`, no changes to the workflow file are necessary. Otherwise, follow the provided reference file.
 
-Generate a `Deploy Key` and a `Documenter-Key` by using the `DocumenterTools` Julia package. Execute 
+Generate a `Deploy Key` and a `DOCUMENTER_KEY` by using the `DocumenterTools` Julia package. Execute 
 ```julia 
 DocumenterTools.genkeys(user="Username", repo="MyPackage.jl")
 ```
@@ -112,13 +114,10 @@ If the documentation for a function is not appearing when using
 
 For more detailed guidance, refer to the relevant documentation for Documenter.jl, GitHub Actions, and gh-pages.
 # References
-- [julia](https://julialang.org)
-- [git](https://git-scm.com/)
-- [GitHub](https://github.com)
-- [gh-pages](https://docs.github.com/en/pages/quickstart)
-- [GitHubActions](https://docs.github.com/en/actions)
-- [PkgTemplates.jl](https://juliaci.github.io/PkgTemplates.jl/stable/user/)
+- [CodeCov](https://about.codecov.io)
 - [Documenter.jl](https://documenter.juliadocs.org/stable/)
 - [DocumenterTools.jl](https://documenter.juliadocs.org/stable/lib/internals/documentertools/)
 - [GitHub Actions](https://docs.github.com/en/actions)
-- [CodeCov](https://about.codecov.io)
+- [GitHub Pages](https://docs.github.com/en/pages/quickstart)
+- [Modern Julia Workflows](https://modernjuliaworkflows.github.io/sharing/)
+- [PkgTemplates.jl](https://juliaci.github.io/PkgTemplates.jl/stable/user/)
