@@ -1,0 +1,4 @@
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Franklin = "713c75ef-9fc9-4b05-94a9-213340da978e"
+NodeJS = "2bd173c7-0d6d-553b-b6af-13a54713934c"

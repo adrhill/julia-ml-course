@@ -1,0 +1,106 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/julia-ml-course/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/julia-ml-course/css/franklin.css"> <link rel=stylesheet  href="/julia-ml-course/css/poole_hyde.css"> <style> html {font-size: 17px;} .franklin-content {position: relative; padding-left: 8%; padding-right: 5%; line-height: 1.35em;} @media (min-width: 940px) { .franklin-content {width: 100%; margin-left: auto; margin-right: auto;} } @media (max-width: 768px) { .franklin-content {padding-left: 6%; padding-right: 6%;} } </style> <link rel=icon  href="/julia-ml-course/assets/favicon.png"> <title>Writing a Julia Package</title> <div class=sidebar > <div class="container sidebar-sticky"> <div class=sidebar-about > <h1><a href="/julia-ml-course/">JuML</a></h1> <p class=lead > Julia programming for ML<br> SoSe 2024 @ TU Berlin.</p> </div> <div class=sidebar-nav-section >Course overview</div> <a class="sidebar-nav-item " href="/julia-ml-course/">General Information</a> <a class="sidebar-nav-item " href="/julia-ml-course/E1_Installation/">Installation</a> <a class="sidebar-nav-item " href="/julia-ml-course/E2_Help/">Getting Help</a> <div class=sidebar-nav-section >Julia basics</div> <a class="sidebar-nav-item " href="/julia-ml-course/L1_Basics_1/">Types, Functions & MD</a> <a class="sidebar-nav-item " href="/julia-ml-course/L2_Basics_2/">Arrays & Linear Algebra</a> <a class="sidebar-nav-item " href="/julia-ml-course/L4_Basics_3/">Dicts, Sets and Custom Types</a> <div class=sidebar-nav-section >Julia ecosystem</div> <a class="sidebar-nav-item " href="/julia-ml-course/L3_Plotting/">Plotting & DataFrames</a> <a class="sidebar-nav-item " href="/julia-ml-course/L5_Machine_Learning/">Machine Learning</a> <a class="sidebar-nav-item " href="/julia-ml-course/L6_Automatic_Differentiation/">Automatic Differentiation</a> <a class="sidebar-nav-item " href="/julia-ml-course/L7_Deep_Learning/">Deep Learning</a> <div class=sidebar-nav-section >Workflows</div> <a class="sidebar-nav-item " href="/julia-ml-course/workflows/">Scripts, Experiments & Packages</a> <a class="sidebar-nav-item " href="/julia-ml-course/profiling_debugging/">Profiling & Debugging</a> <div class=sidebar-nav-section >Homework</div> <a class="sidebar-nav-item " href="/julia-ml-course/H1_Basics/">Week 1</a> <a class="sidebar-nav-item " href="/julia-ml-course/H2_Linear_Algebra/">Week 2</a> <a class="sidebar-nav-item " href="/julia-ml-course/H3_Custom_Types/">Week 3</a> <a class="sidebar-nav-item " href="/julia-ml-course/H4_Deep_Learning/">Week 4</a> </nav> <br> </div> </div> <div class="content container"> <div class=franklin-content ><h1 id=writing_a_julia_package ><a href="#writing_a_julia_package" class=header-anchor >Writing a Julia Package</a></h1> <p>This page serves as guide for creating your Julia package and walks you through the process of the initial setup and explains the structure of the package. We also recommend reading the <a href="https://modernjuliaworkflows.github.io/sharing/">Modern Julia Workflows post</a>. Information on setting up continuous integration pipelines and code coverage is also provided.</p> <p> <h2>Table of Contents</h2> <div class=franklin-toc ><ol><li><a href="#prerequisites">Prerequisites </a><li><a href="#creating_the_initial_package">Creating the Initial Package</a><ol><li><a href="#using_pkgtemplatesjl">Using PkgTemplates.jl</a></ol><li><a href="#writing_your_code">Writing Your Code</a><ol><li><a href="#source_directory">Source Directory</a><li><a href="#testing">Testing</a><li><a href="#documentation">Documentation</a></ol><li><a href="#ci_cd">CI / CD</a><ol><li><a href="#automatic_documentation_with_documenterjl">Automatic Documentation with Documenter.jl</a><li><a href="#codecov">CodeCov</a><li><a href="#troubleshooting_and_tips">Troubleshooting and Tips</a></ol><li><a href="#references">References</a></ol></div></p> <h2 id=prerequisites ><a href="#prerequisites" class=header-anchor >Prerequisites </a></h2> <ul> <li><p><a href="https://julialang.org">Julia</a> is installed</p> <li><p><a href="https://git-scm.com/">Git</a> is installed</p> </ul> <p>If you are willing to use third-party platforms to setup your repository and continuous integration pipeline, then you will require:</p> <ul> <li><p><a href="https://github.com">GitHub</a> Account</p> <li><p><a href="https://about.codecov.io">CodeCov</a> Account &#40;or login via GitHub&#41;</p> </ul> <p>Otherwise the GitLab Instance from the TUB can be used:</p> <ul> <li><p><a href="https://git.tu-berlin.de">TUB GitLab</a></p> </ul> <h2 id=creating_the_initial_package ><a href="#creating_the_initial_package" class=header-anchor >Creating the Initial Package</a></h2> <h3 id=using_pkgtemplatesjl ><a href="#using_pkgtemplatesjl" class=header-anchor >Using PkgTemplates.jl</a></h3> <p>Utilizing PkgTemplates.jl involves the following steps:</p> <ol> <li><p>Initiate the Julia REPL by opening your terminal and starting <code>julia</code>.</p> <li><p>Transition to package mode using the <code>&#93;</code> key, add the package and update all of your existing packages.</p> </ol> <pre><code class="julia-repl hljs"><span class=hljs-metap>(@v1.10) pkg&gt;</span> add PkgTemplates
+<span class=hljs-metap>(@v1.10) pkg&gt;</span> update</code></pre> <ol start=3 > <li><p>Use the provided <code>Template</code> configuration, replacing <code>YourGitHubUsername</code> with your actual GitHub username and customizing the package name as needed:</p> </ol> <pre><code class="julia hljs">template = Template(;
+    <span class=hljs-comment ># Meta information</span>
+    user=<span class=hljs-string >&quot;YourGitHubUsername&quot;</span>,
+    authors=<span class=hljs-string >&quot;Name &lt;email&gt;&quot;</span>,
+    julia=<span class=hljs-string >v&quot;1.6&quot;</span>,
+    <span class=hljs-comment ># Selected Plugins</span>
+    plugins=[
+        License(; name=<span class=hljs-string >&quot;MIT&quot;</span>),
+        Git(; manifest=<span class=hljs-literal >false</span>),
+        GitHubActions(; x64=<span class=hljs-literal >true</span>),
+        Codecov(),
+        Documenter{GitHubActions}(),
+    ],
+)</code></pre> <p>In the meta information section, ensure the <code>user</code> and <code>authors</code> fields reflect your GitHub identity and authorship details. <code>julia&#61;v&quot;1.6&quot;</code> sets the minimum Julia version requirement to 1.6 for package compatibility.</p> <p>Regarding the plugins within the <code>plugins</code> array:</p> <ul> <li><p><code>License&#40;name&#61;&quot;MIT&quot;&#41;</code> applies the MIT License for open-source distribution with minimal restrictions.</p> <li><p><code>Git&#40;manifest&#61;false&#41;</code> configures the use of Git while opting out of tracking the <code>Manifest.toml</code> file.</p> <li><p><code>GitHubActions&#40;&#41;</code> sets up continuous integration &#40;CI&#41; via GitHub Actions with default parameters.</p> <li><p><code>Codecov&#40;&#41;</code>sets up CodeCov for assessing code coverage, which quantifies the proportion of source code exercised by tests.</p> <li><p><code>Documenter&#123;GitHubActions&#125;&#40;&#41;</code> includes Documenter for generating package documentation, with the <code>GitHubActions</code> specifier indicating deployment to GitHub Pages via GitHubActions.</p> </ul> <p>After you created the template you execute </p> <pre><code class="julia-repl hljs"><span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > template(<span class=hljs-string >&quot;PackageName&quot;</span>)</span></code></pre>
+<p>Replace <code>&quot;PackageName&quot;</code> with the desired name for your package.   This will initiate the creation of your package with the specified configuration, plugins, and license.</p>
+<h2 id=writing_your_code ><a href="#writing_your_code" class=header-anchor >Writing Your Code</a></h2>
+<h3 id=source_directory ><a href="#source_directory" class=header-anchor >Source Directory</a></h3>
+<p>Create any required files within the <code>src/</code> directory.  Ensure that the main file, named after your package &#40;e.g., <code>MyPackage.jl</code>&#41;,   has an <code>include</code> statement for all necessary files while also <code>export</code>ing all functions that you develop.  For further guidance, consult the lecture materials.</p>
+<h3 id=testing ><a href="#testing" class=header-anchor >Testing</a></h3>
+<h4 id=test_cases_testruntestsjl ><a href="#test_cases_testruntestsjl" class=header-anchor >Test Cases &#40;<code>test/runtests.jl</code>&#41;</a></h4>
+<p>Create comprehensive test cases in <code>test/runtests.jl</code> to validate all functionalities of your package.  The code coverage will be automatically calculated after every commit using CodeCov.</p>
+<h4 id=running_tests_locally ><a href="#running_tests_locally" class=header-anchor >Running Tests locally</a></h4>
+<p>To execute tests manually, open the terminal, navigate to your package directory,  start Julia, enter package mode &#40;by typing <code>&#93;</code>&#41;, and execute the <code>test</code> command.</p>
+<h3 id=documentation ><a href="#documentation" class=header-anchor >Documentation</a></h3>
+<p>Documentation is crucial and we expect you to document your functions sufficiently.  This includes both the docstrings accessible via <code>?myfunction</code> in the Julia-REPL  as well as the doc pages which are formatted like a website that includes the docstrings as API reference.  Within the next few subchapters we explain the process of setting this up.</p>
+<h4 id=code_documentation ><a href="#code_documentation" class=header-anchor >Code Documentation</a></h4>
+<p>Document all exported functions with docstrings, placing them above function definitions.  You can view the docstring output within a Julia environment by typing <code>?functionName</code>.</p>
+<h4 id=documentation_file_structure ><a href="#documentation_file_structure" class=header-anchor >Documentation File Structure</a></h4>
+<h5 id=makejl ><a href="#makejl" class=header-anchor ><code>make.jl</code></a></h5>
+<p>The <code>docs/make.jl</code> file contains the layout for your documentation pages. </p>
+<p><code>makedocs</code> is used to generate the documentation. Add additional pages by modifying the <code>pages</code> attribute within.</p>
+<p><code>deploydocs</code> is used to deploy the generated documentation to your GitHub repository.</p>
+<h6 id=docssrc ><a href="#docssrc" class=header-anchor ><code>docs/src/</code></a></h6>
+<p>The <code>docs/src/</code> directory contains the <code>index.md</code> file and is the initial reference in <code>make.jl</code>.  Add more markdown &#40;.md&#41; files as needed and update the <code>pages</code> attribute accordingly in <code>makedocs</code>.</p>
+<h5 id=building_documentation_locally ><a href="#building_documentation_locally" class=header-anchor >Building Documentation Locally</a></h5>
+<p>Add the <code>docs/build</code> directory to your <code>.gitignore</code> file to prevent pushing it to your remote repository.  To build your documentation, navigate to the <code>docs</code> directory in the terminal, execute <code>julia --project</code>, and run <code>include&#40;&quot;make.jl&quot;&#41;</code>.  The generated files will be located in <code>docs/build</code>, and you can view <code>index.html</code> using a web browser.</p>
+<h2 id=ci_cd ><a href="#ci_cd" class=header-anchor >CI / CD</a></h2>
+<p>We utilize GitHubActions, CodeCov, and Documenter.jl to automate testing, code coverage reporting, and documentation deployment.</p>
+<h3 id=automatic_documentation_with_documenterjl ><a href="#automatic_documentation_with_documenterjl" class=header-anchor >Automatic Documentation with Documenter.jl</a></h3>
+<h4 id=setup ><a href="#setup" class=header-anchor >Setup</a></h4>
+<p>If your package was set up using <code>PkgTemplates.jl</code>, no changes to the workflow file are necessary.  Otherwise, follow the provided reference file.</p>
+<p>Generate a <code>Deploy Key</code> and a <code>DOCUMENTER_KEY</code> by using the <code>DocumenterTools</code> Julia package. Execute </p>
+<pre><code class="julia hljs">DocumenterTools.genkeys(user=<span class=hljs-string >&quot;Username&quot;</span>, repo=<span class=hljs-string >&quot;MyPackage.jl&quot;</span>)</code></pre>
+<p>Ensure accurate capitalization for the username and repository.  Follow the provided instructions for adding the keys to GitHub, granting write access to the <code>Deploy Key</code>.</p>
+<p>If this has been set up correctly, the next time a significant change is being pushed to your repository &#40;according to your workflow-triggers&#41;,  GitHub Actions should now additionally build the documentation in a new branch called <code>gh-pages</code>. </p>
+<p>Please refer to the <a href="https://documenter.juliadocs.org/stable/man/hosting/">Documenter.jl</a> documentation for Hosting.</p>
+<h4 id=github_pages_gh-pages ><a href="#github_pages_gh-pages" class=header-anchor >GitHub Pages &#40;<code>gh-pages</code>&#41;</a></h4>
+<p>Set up automatic deployment on GitHub Pages as follows:</p>
+<ul>
+<li><p>Navigate to the “Code and Automation” &gt; “Pages” section within your repository settings. Find the section &quot;Build and deployment&quot;</p>
+
+<li><p>Confirm that the “Source” is set to <code>Deploy from branch</code> and the “Branch” is <code>gh-pages</code> <code>/&#40;root&#41;</code>.</p>
+
+</ul>
+<p>Keep in mind that documentation updates may take a few minutes to become visible as the workflow has to run.</p>
+<p>Please refer to the <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages">gh-pages</a> documentation.</p>
+<h3 id=codecov ><a href="#codecov" class=header-anchor >CodeCov</a></h3>
+<p>To integrate CodeCov:</p>
+<ul>
+<li><p>Register or log in via GitHub at the <a href="https://about.codecov.io">CodeCov website</a>.</p>
+
+<li><p>Locate your package on the Repos-Overview page and select <code>Setup repo</code>.</p>
+
+<li><p>Follow the provided instructions to complete the setup. Note that &quot;Step 2: add Codecov to your GitHub Actions workflow yaml file&quot;  is done by the specifying the <code>Codecov</code> plugin while creating your Template via <code>PkgTemplates</code>.</p>
+
+</ul>
+<h3 id=troubleshooting_and_tips ><a href="#troubleshooting_and_tips" class=header-anchor >Troubleshooting and Tips</a></h3>
+<p>If the documentation for a function is not appearing when using </p>
+<pre><code class="julia-repl hljs">?help function</code></pre>
+<ul>
+<li><p>Ensure that you have executed <code>using MyPackage</code>.</p>
+
+<li><p>Verify that the docstring is placed directly above the function definition with no intervening spaces.</p>
+
+</ul>
+<p>For more detailed guidance, refer to the relevant documentation for Documenter.jl, GitHub Actions, and gh-pages.</p>
+<h2 id=references ><a href="#references" class=header-anchor >References</a></h2>
+<ul>
+<li><p><a href="https://about.codecov.io">CodeCov</a></p>
+
+<li><p><a href="https://documenter.juliadocs.org/stable/">Documenter.jl</a></p>
+
+<li><p><a href="https://documenter.juliadocs.org/stable/lib/internals/documentertools/">DocumenterTools.jl</a></p>
+
+<li><p><a href="https://docs.github.com/en/actions">GitHub Actions</a></p>
+
+<li><p><a href="https://docs.github.com/en/pages/quickstart">GitHub Pages</a></p>
+
+<li><p><a href="https://modernjuliaworkflows.github.io/sharing/">Modern Julia Workflows</a></p>
+
+<li><p><a href="https://juliaci.github.io/PkgTemplates.jl/stable/user/">PkgTemplates.jl</a></p>
+
+</ul>
+<div class=page-foot >
+    
+    Last modified: <a href="https://github.com/adrhill/julia-ml-course/commits/main">March 20, 2024.</a><br>
+    Website, code and notebooks are under <a href="https://github.com/adrhill/julia-ml-course/blob/main/LICENSE">MIT License</a> &copy; <a href="http://adrianhill.de">Adrian Hill</a>.<br>
+    Built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>, <a href="https://github.com/fonsp/Pluto.jl">Pluto.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+    </div>  
+    
+    
+        <script src="/julia-ml-course/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>

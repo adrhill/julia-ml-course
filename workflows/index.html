@@ -1,0 +1,491 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/julia-ml-course/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/julia-ml-course/css/franklin.css"> <link rel=stylesheet  href="/julia-ml-course/css/poole_hyde.css"> <style> html {font-size: 17px;} .franklin-content {position: relative; padding-left: 8%; padding-right: 5%; line-height: 1.35em;} @media (min-width: 940px) { .franklin-content {width: 100%; margin-left: auto; margin-right: auto;} } @media (max-width: 768px) { .franklin-content {padding-left: 6%; padding-right: 6%;} } </style> <link rel=icon  href="/julia-ml-course/assets/favicon.png"> <title>Julia programming for Machine Learning</title> <div class=sidebar > <div class="container sidebar-sticky"> <div class=sidebar-about > <h1><a href="/julia-ml-course/">JuML</a></h1> <p class=lead > Julia programming for ML<br> SoSe 2024 @ TU Berlin.</p> </div> <div class=sidebar-nav-section >Course overview</div> <a class="sidebar-nav-item " href="/julia-ml-course/">General Information</a> <a class="sidebar-nav-item " href="/julia-ml-course/E1_Installation/">Installation</a> <a class="sidebar-nav-item " href="/julia-ml-course/E2_Help/">Getting Help</a> <div class=sidebar-nav-section >Julia basics</div> <a class="sidebar-nav-item " href="/julia-ml-course/L1_Basics_1/">Types, Functions & MD</a> <a class="sidebar-nav-item " href="/julia-ml-course/L2_Basics_2/">Arrays & Linear Algebra</a> <a class="sidebar-nav-item " href="/julia-ml-course/L4_Basics_3/">Dicts, Sets and Custom Types</a> <div class=sidebar-nav-section >Julia ecosystem</div> <a class="sidebar-nav-item " href="/julia-ml-course/L3_Plotting/">Plotting & DataFrames</a> <a class="sidebar-nav-item " href="/julia-ml-course/L5_Machine_Learning/">Machine Learning</a> <a class="sidebar-nav-item " href="/julia-ml-course/L6_Automatic_Differentiation/">Automatic Differentiation</a> <a class="sidebar-nav-item " href="/julia-ml-course/L7_Deep_Learning/">Deep Learning</a> <div class=sidebar-nav-section >Workflows</div> <a class="sidebar-nav-item active" href="/julia-ml-course/workflows/">Scripts, Experiments & Packages</a> <a class="sidebar-nav-item " href="/julia-ml-course/profiling_debugging/">Profiling & Debugging</a> <div class=sidebar-nav-section >Homework</div> <a class="sidebar-nav-item " href="/julia-ml-course/H1_Basics/">Week 1</a> <a class="sidebar-nav-item " href="/julia-ml-course/H2_Linear_Algebra/">Week 2</a> <a class="sidebar-nav-item " href="/julia-ml-course/H3_Custom_Types/">Week 3</a> <a class="sidebar-nav-item " href="/julia-ml-course/H4_Deep_Learning/">Week 4</a> </nav> <br> </div> </div> <div class="content container"> <div class=franklin-content ><h1 id=lesson_8_workflows ><a href="#lesson_8_workflows" class=header-anchor >Lesson 8: Workflows</a></h1> <p>Learning a programming language doesn&#39;t only require learning new syntax, but also getting proficient with new tools, an aspect of programming education that is <a href="https://missing.csail.mit.edu/">often overlooked</a>. After having only worked in Pluto notebooks so far, we will now take a look at alternative workflows. </p> <p>For this purpose, we will first cover the Julia package manager <strong>Pkg</strong>, which allows us to write reproducible code. We will then move on to a REPL-based workflow that works with all editors. Julia developers commonly have an interactive REPL session running while working on their code.</p> <p>We will then introduce the structure of a Julia package by generating an empty package with <a href="https://github.com/JuliaCI/PkgTemplates.jl">PkgTemplates.jl</a> and showcase the VSCode IDE with the <a href="https://www.julia-vscode.org/">Julia extension</a>. Finally, we will demonstrate <a href="https://github.com/JuliaDynamics/DrWatson.jl">DrWatson.jl</a>, a template and &quot;assistant&quot; for scientific experiments, and demonstrate how to run Julia programs from the command-line.</p> <p>These workflows should empower you to write homework, projects and even your thesis in Julia&#33;</p> <p> <h2>Table of Contents</h2> <div class=franklin-toc ><ol><li><a href="#the_julia_package_manager">The Julia package manager</a><ol><li><a href="#environments">Environments</a><li><a href="#creating_a_new_virtal_environment">Creating a new virtal environment</a><li><a href="#temporary_environments">Temporary environments</a><li><a href="#environments_in_pluto">Environments in Pluto</a></ol><li><a href="#repl-based_workflows">REPL-based workflows</a><ol><li><a href="#loading_julia_source_code">Loading Julia source code</a><li><a href="#enhancing_the_repl_experience">Enhancing the REPL experience</a></ol><li><a href="#vscode">VSCode</a><li><a href="#writing_packages">Writing packages</a><ol><li><a href="#pkgtemplatesjl">PkgTemplates.jl</a><li><a href="#file_structure">File structure</a><li><a href="#activating_the_package_environment">Activating the package environment</a><li><a href="#projecttoml_in_packages"><code>Project.toml</code> in packages</a><li><a href="#semantic_versioning">Semantic versioning</a><li><a href="#structure_of_the_source_folder">Structure of the source folder</a><li><a href="#package_tests">Package tests</a><li><a href="#continuous_integration">Continuous integration</a><li><a href="#package_registration">Package registration</a></ol><li><a href="#experiments_with_drwatsonjl">Experiments with DrWatson.jl</a><ol><li><a href="#file_structure__2">File structure</a><li><a href="#workflow">Workflow</a></ol><li><a href="#calling_scripts_from_the_command_line">Calling scripts from the command line</a><ol><li><a href="#command-line_switches">Command-line switches</a><li><a href="#external_packages">External packages</a></ol><li><a href="#further_reading">Further reading</a></ol></div></p> <div class="admonition note"> <p class=admonition-title >Note</p> <p>These notes are designed to accompany a live demonstration in the <i>Julia programming for Machine Learning</i> class at TU Berlin.</p> </div> <h2 id=the_julia_package_manager ><a href="#the_julia_package_manager" class=header-anchor >The Julia package manager</a></h2> <p>We have already encountered Julia&#39;s package manager <strong>Pkg</strong> during the installation of Pluto. In the Julia REPL, Pkg can be opened by typing a closing square bracket <code>&#93;</code>.</p> <p>Depending on your installed version of Julia, the prompt should change from <code>julia&gt;</code> to <code>&#40;@1.8&#41; pkg&gt;</code>:</p> <pre><code class="julia-repl hljs"><span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > <span class=hljs-comment ># Default Julia-mode. Type ] to enter Pkg-mode.</span>
+</span>
+<span class=hljs-metap>(@v1.8) pkg&gt;</span> # Prompt changes to indicate Pkg-mode</code></pre> <p>To exit the package-manage mode, press backspace. The name in parenthesis, here <code>@v1.8</code>, is the name of the currently activated environment. <code>@v1.8</code> is the global environment of our Julia 1.8 installation.</p> <p>By typing <code>status</code> in Pkg-mode, we can print a list of installed packages:</p> <pre><code class="julia-repl hljs"><span class=hljs-metap>(@v1.8) pkg&gt;</span> status
+Status `~/.julia/environments/v1.8/Project.toml`
+  [5fb14364] OhMyREPL v0.5.20
+  [295af30f] Revise v3.5.2</code></pre> <p>In my case, two packages are installed in the <code>@v1.8</code> environment.</p> <p>Let&#39;s take a look at the indicated folder <code>~/.julia/environments/v1.8</code> in a new shell session. It contains two files: a <code>Project.toml</code> and a <code>Manifest.toml</code>.</p> <pre><code class="bash hljs">$ <span class=hljs-built_in >cd</span> ~/.julia/environments/v1.8
+
+$ <span class=hljs-built_in >ls</span>
+Manifest.toml Project.toml</code></pre> <p>These two files define environments.</p> <h3 id=environments ><a href="#environments" class=header-anchor >Environments</a></h3> <p>Let&#39;s first take a look at contents of the <code>Project.toml</code>. We can either open it in an editor or look at the file contents in our terminal using the command <code>cat Project.toml</code>:</p> <pre><code class="toml hljs"><span class=hljs-section >[deps]</span>
+<span class=hljs-attr >OhMyREPL</span> = <span class=hljs-string >&quot;5fb14364-9ced-5910-84b2-373655c76a03&quot;</span>
+<span class=hljs-attr >Revise</span> = <span class=hljs-string >&quot;295af30f-e4ad-537b-8983-00126c2a3abe&quot;</span></code></pre> <p>In the case of our environment, it just contains a list of installed packages with <em>&quot;universally unique identifiers&quot;</em> &#40;UUIDs&#41;. As we will see in the following sections, the <code>Project.toml</code> contains more information when used in packages.</p> <p>The <code>Manifest.toml</code> is a much longer file. It lists all packages in the dependency tree. For packages that are not part of Julia Base, Git tree hashes and versions are specified. <strong>This makes our environment fully reproducible&#33;</strong></p> <p>Let&#39;s look at ours:</p> <pre><code class="toml hljs"><span class=hljs-comment ># This file is machine-generated - editing it directly is not advised</span>
+
+<span class=hljs-attr >julia_version</span> = <span class=hljs-string >&quot;1.8.5&quot;</span>
+<span class=hljs-attr >manifest_format</span> = <span class=hljs-string >&quot;2.0&quot;</span>
+<span class=hljs-attr >project_hash</span> = <span class=hljs-string >&quot;e9cf4d3c4e1f72eba6aa88164f23d06c005b9b9b&quot;</span>
+
+<span class=hljs-section >[[deps.ArgTools]]</span>
+<span class=hljs-attr >uuid</span> = <span class=hljs-string >&quot;0dad84c5-d112-42e6-8d28-ef12dabb789f&quot;</span>
+<span class=hljs-attr >version</span> = <span class=hljs-string >&quot;1.1.1&quot;</span>
+
+<span class=hljs-section >[[deps.Artifacts]]</span>
+<span class=hljs-attr >uuid</span> = <span class=hljs-string >&quot;56f22d72-fd6d-98f1-02f0-08ddc0907c33&quot;</span>
+
+<span class=hljs-section >[[deps.Base64]]</span>
+<span class=hljs-attr >uuid</span> = <span class=hljs-string >&quot;2a0f44e3-6c83-55bd-87e4-b1978d98bd5f&quot;</span>
+
+<span class=hljs-section >[[deps.CodeTracking]]</span>
+<span class=hljs-attr >deps</span> = [<span class=hljs-string >&quot;InteractiveUtils&quot;</span>, <span class=hljs-string >&quot;UUIDs&quot;</span>]
+<span class=hljs-attr >git-tree-sha1</span> = <span class=hljs-string >&quot;d730914ef30a06732bdd9f763f6cc32e92ffbff1&quot;</span>
+<span class=hljs-attr >uuid</span> = <span class=hljs-string >&quot;da1fd8a2-8d9e-5ec2-8556-3022fb5608a2&quot;</span>
+<span class=hljs-attr >version</span> = <span class=hljs-string >&quot;1.3.1&quot;</span>
+
+<span class=hljs-section >[[deps.Crayons]]</span>
+<span class=hljs-attr >git-tree-sha1</span> = <span class=hljs-string >&quot;249fe38abf76d48563e2f4556bebd215aa317e15&quot;</span>
+<span class=hljs-attr >uuid</span> = <span class=hljs-string >&quot;a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f&quot;</span>
+<span class=hljs-attr >version</span> = <span class=hljs-string >&quot;4.1.1&quot;</span>
+...</code></pre> <p>Each environment we create adds a folder to <code>~/.julia/environments</code> that contains a <code>Project.toml</code> and a <code>Manifest.toml</code>.</p> <div class="admonition note"> <p class=admonition-title >Reproducibility</p> <p>The pair of <code>Project.toml</code> and <code>Manifest.toml</code> make our environment fully reproducible, which is important for scientific experiments.</p> </div> <h3 id=creating_a_new_virtal_environment ><a href="#creating_a_new_virtal_environment" class=header-anchor >Creating a new virtal environment</a></h3> <p>To create a new environment, enter Pkg-mode in the Julia REPL and type <code>activate</code> followed by the name of your new environment:</p> <pre><code class="julia-repl hljs"><span class=hljs-metap>(@v1.8) pkg&gt;</span> activate MyTest # create new environment called  &quot;MyTest&quot;
+  Activating new project at `~/.julia/environments/v1.8/MyTest`
+
+<span class=hljs-metap>(@MyTest) pkg&gt;</span> # environment is active</code></pre> <p>This creates a new folder at <code>~/.julia/environments/v1.8/MyTest</code> containing a <code>Project.toml</code> and <code>Manifest.toml</code>. Adding packages to this environment will update both of these files:</p> <pre><code class="julia-repl hljs"><span class=hljs-metap>(@MyTest) pkg&gt;</span> add LinearAlgebra
+   Resolving package versions...
+    Updating `~/.julia/environments/v1.8/MyTest/Project.toml`
+  [37e2e46d] + LinearAlgebra
+    Updating `~/.julia/environments/v1.8/MyTest/Manifest.toml`
+  [56f22d72] + Artifacts
+  [8f399da3] + Libdl
+  [37e2e46d] + LinearAlgebra
+  [e66e0078] + CompilerSupportLibraries_jll v1.0.1+0
+  [4536629a] + OpenBLAS_jll v0.3.20+0
+  [8e850b90] + libblastrampoline_jll v5.1.1+0</code></pre> <h3 id=temporary_environments ><a href="#temporary_environments" class=header-anchor >Temporary environments</a></h3> <p>If you want to try an interesting new package you&#39;ve seen on GitHub, the package manager offers a simple way to start a temporary environment.</p> <p>In your Julia REPL, enter package mode and type <code>activate --temp</code>. This will create an environment with a randomized name in a temporary folder.</p> <pre><code class="julia-repl hljs"><span class=hljs-metap>(@v1.8) pkg&gt;</span> activate --temp
+  Activating new project at `/var/folders/74/wcz8c9qs5dzc8wgkk7839k5c0000gn/T/jl_9AGcg1`
+
+<span class=hljs-metap>(jl_9AGcg1) pkg&gt;</span></code></pre> <h3 id=environments_in_pluto ><a href="#environments_in_pluto" class=header-anchor >Environments in Pluto</a></h3> <p>Pluto notebooks also contain reproducible environments. Let&#39;s take a look at the source code of a notebook called <code>empty_pluto.jl</code> that just contains a single cell declaring <code>using LinearAlgebra</code>.</p> <pre><code class="julia hljs"><span class=hljs-comment >### A Pluto.jl notebook ###</span>
+<span class=hljs-comment ># v0.19.25</span>
+
+<span class=hljs-keyword >using</span> Markdown
+<span class=hljs-keyword >using</span> InteractiveUtils
+
+<span class=hljs-comment ># ╔═╡ 9842a4f5-69d1-4566-b605-49d5c6679b4a</span>
+<span class=hljs-keyword >using</span> LinearAlgebra <span class=hljs-comment ># 💡 the only cell we added! 💡</span>
+
+<span class=hljs-comment ># ╔═╡ 00000000-0000-0000-0000-000000000001</span>
+PLUTO_PROJECT_TOML_CONTENTS = <span class=hljs-string >&quot;&quot;&quot;
+[deps]
+LinearAlgebra = &quot;37e2e46d-f89d-539d-b4ee-838fcccc9c8e&quot;
+&quot;&quot;&quot;</span>
+ 
+<span class=hljs-comment ># ╔═╡ 00000000-0000-0000-0000-000000000002</span>
+PLUTO_MANIFEST_TOML_CONTENTS = <span class=hljs-string >&quot;&quot;&quot;
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = &quot;1.8.5&quot;
+manifest_format = &quot;2.0&quot;
+project_hash = &quot;ac1187e548c6ab173ac57d4e72da1620216bce54&quot;
+
+[[deps.Artifacts]]
+uuid = &quot;56f22d72-fd6d-98f1-02f0-08ddc0907c33&quot;
+
+[[deps.CompilerSupportLibraries_jll]]
+deps = [&quot;Artifacts&quot;, &quot;Libdl&quot;]
+uuid = &quot;e66e0078-7015-5450-92f7-15fbd957f2ae&quot;
+version = &quot;1.0.1+0&quot;
+
+[[deps.Libdl]]
+uuid = &quot;8f399da3-3557-5675-b5ff-fb832c97cbdb&quot;
+
+[[deps.LinearAlgebra]]
+deps = [&quot;Libdl&quot;, &quot;libblastrampoline_jll&quot;]
+uuid = &quot;37e2e46d-f89d-539d-b4ee-838fcccc9c8e&quot;
+
+[[deps.OpenBLAS_jll]]
+deps = [&quot;Artifacts&quot;, &quot;CompilerSupportLibraries_jll&quot;, &quot;Libdl&quot;]
+uuid = &quot;4536629a-c528-5b80-bd46-f80d51c5b363&quot;
+version = &quot;0.3.20+0&quot;
+
+[[deps.libblastrampoline_jll]]
+deps = [&quot;Artifacts&quot;, &quot;Libdl&quot;, &quot;OpenBLAS_jll&quot;]
+uuid = &quot;8e850b90-86db-534c-a0d3-1478176c7d93&quot;
+version = &quot;5.1.1+0&quot;
+&quot;&quot;&quot;</span>
+
+<span class=hljs-comment ># ╔═╡ Cell order:</span>
+<span class=hljs-comment ># ╠═9842a4f5-69d1-4566-b605-49d5c6679b4a</span>
+<span class=hljs-comment ># ╟─00000000-0000-0000-0000-000000000001</span>
+<span class=hljs-comment ># ╟─00000000-0000-0000-0000-000000000002</span></code></pre> <p>We can see that</p> <ul> <li><p>A variable called <code>PLUTO_PROJECT_TOML_CONTENTS</code> holds the <code>Project.toml</code> information.</p> <li><p>A variable called <code>PLUTO_MANIFEST_TOML_CONTENTS</code> holds the <code>Manifest.toml</code> information.</p> <li><p>Cells are annotated by a comment <code># ╔═╡ some-uuid</code>.</p> <li><p>The ordering of cells is given in a comment <code># ╔═╡ Cell order:</code> at the end of the file.</p> </ul> <p>Pluto notebooks are therefore fully reproducible and also regular Julia files&#33;</p> <h2 id=repl-based_workflows ><a href="#repl-based_workflows" class=header-anchor >REPL-based workflows</a></h2> <p>The most basic workflow uses the Julia REPL in combination with your favorite editor.</p> <h3 id=loading_julia_source_code ><a href="#loading_julia_source_code" class=header-anchor >Loading Julia source code</a></h3> <p>To load a source file, use the command <code>include</code>. To test this, I have created two almost identical files: </p> <ul> <li><p>a file <code>foo.jl</code>, which contains a function <code>foo</code></p> <li><p>a file <code>bar.jl</code>, which contains a function <code>bar</code> inside a module <code>Bar</code></p> </ul> <pre><code class="julia hljs"><span class=hljs-comment ># Contents of foo.jl</span>
+foo(x) = x</code></pre> <pre><code class="julia hljs"><span class=hljs-comment ># Contents of bar.jl</span>
+<span class=hljs-keyword >module</span> Bar
+
+  bar(x) = x
+
+  <span class=hljs-keyword >export</span> bar <span class=hljs-comment ># export function</span>
+
+<span class=hljs-keyword >end</span> <span class=hljs-comment ># end module</span></code></pre> <p>Let&#39;s compare the two approaches. The first one loads all contents of the file into the global namespace</p> <pre><code class="julia-repl hljs"><span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > include(<span class=hljs-string >&quot;foo.jl&quot;</span>)
+</span>foo (generic function with 1 method)
+
+<span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > foo(<span class=hljs-number >2</span>)
+</span>2</code></pre> <p>whereas the second approach encapsulates everything inside the module <code>Bar</code>. Via <code>using .Bar</code>, we make all functions that are exported in <code>Bar</code> available:</p> <pre><code class="julia-repl hljs"><span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > include(<span class=hljs-string >&quot;bar.jl&quot;</span>) <span class=hljs-comment ># load module Bar</span>
+</span>Main.Bar
+
+<span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > Bar.bar(<span class=hljs-number >2</span>)  <span class=hljs-comment ># we can access the function in the module...</span>
+</span>2
+
+<span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > bar(<span class=hljs-number >2</span>)      <span class=hljs-comment ># ...but not directly</span>
+</span>ERROR: UndefVarError: bar not defined
+Stacktrace:
+ [1] top-level scope
+   @ REPL[4]:1
+
+<span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > <span class=hljs-keyword >using</span> .Bar  <span class=hljs-comment ># import everything that is exported in module Bar...</span>
+</span>
+<span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > bar(<span class=hljs-number >2</span>)      <span class=hljs-comment ># ...so we can use exports without name-spacing Bar</span>
+</span>2</code></pre> <h3 id=enhancing_the_repl_experience ><a href="#enhancing_the_repl_experience" class=header-anchor >Enhancing the REPL experience</a></h3> <h4 id=loading_packages_on_startup ><a href="#loading_packages_on_startup" class=header-anchor >Loading packages on startup</a></h4> <p>If you have code that you want to be run every time you start Julia, add it to your <a href="https://docs.julialang.org/en/v1/manual/command-line-interface/#Startup-file">startup file</a> that is located at <code>~/.julia/config/startup.jl</code>. Note that you might have to first create this config folder.</p> <p>A common use-case for the <code>startup.jl</code> to load packages that are crucial for your workflow. Don&#39;t add too many packages: they will increase the loading time of your REPL and might pollute the global namespace. There are however two packages I personally consider essential additions: <em>Revise.jl</em> and <em>OhMyRepl.jl</em>.</p> <h4 id=revisejl ><a href="#revisejl" class=header-anchor >Revise.jl</a></h4> <p><a href="https://github.com/timholy/Revise.jl">Revise.jl</a> will keep track of changes in loaded files and reload modified Julia code without having to start a new REPL session.</p> <p>To load Revise automatically, add the following code to your <code>startup.jl</code>:</p> <pre><code class="julia hljs"><span class=hljs-comment ># First lines of ~/.julia/config/startup.jl</span>
+<span class=hljs-keyword >try</span>
+    <span class=hljs-keyword >using</span> Revise
+<span class=hljs-keyword >catch</span> e
+    <span class=hljs-meta >@warn</span> <span class=hljs-string >&quot;Error initializing Revise in startup.jl&quot;</span> exception=(e, catch_backtrace())
+<span class=hljs-keyword >end</span></code></pre> <p>It is enough to add <code>using Revise</code>, but the <code>try-catch</code> statement will return a helpful error message in case something goes wrong.</p> <h4 id=ohmyrepljl ><a href="#ohmyrepljl" class=header-anchor >OhMyRepl.jl</a></h4> <p><a href="https://github.com/KristofferC/OhMyREPL.jl">OhMyRepl</a> adds many features to your REPL, amongst other things:</p> <ul> <li><p>syntax highlighting</p> <li><p>&#40;rainbow&#41; bracket highlighting</p> <li><p>fuzzy history search</p> <li><p>stripping prompts when pasting code</p> </ul> <pre><code class="julia hljs"><span class=hljs-comment ># Add to ~/.julia/config/startup.jl</span>
+atreplinit() <span class=hljs-keyword >do</span> repl
+    <span class=hljs-keyword >try</span>
+        <span class=hljs-meta >@eval</span> <span class=hljs-keyword >using</span> OhMyREPL
+    <span class=hljs-keyword >catch</span> e
+        <span class=hljs-meta >@warn</span> <span class=hljs-string >&quot;Error initializing OhMyRepl in startup.jl&quot;</span> exception=(e, catch_backtrace())
+    <span class=hljs-keyword >end</span>
+<span class=hljs-keyword >end</span></code></pre> <h2 id=vscode ><a href="#vscode" class=header-anchor >VSCode</a></h2> <p>In combination with the <a href="https://www.julia-vscode.org/">Julia extension</a>, VSCode is the most commonly recommended editor for development in Julia. It provides several features and shortcuts that make package development convenient:</p> <ul> <li><p>debugging with breakpoints</p> <li><p>running code &#40;or only sections of the code&#41;</p> <li><p>code completion</p> <li><p>code formatting</p> <li><p>view <em>&quot;workspace&quot;</em> of global variables</p> <li><p>view documentation</p> <li><p>view plots</p> <li><p><a href="https://www.julia-vscode.org/docs/stable/userguide/keybindings/">keyboard shortcuts</a></p> </ul> <p>We will demonstrate the extension during the lecture.</p> <h2 id=writing_packages ><a href="#writing_packages" class=header-anchor >Writing packages</a></h2> <p>In Julia, packages are the natural medium for code that doesn&#39;t fit in a simple script. While this might sound excessive at first, it provides many conveniences.</p> <p>Thanks to templates, setting up the file structure for a Julia package takes seconds. </p> <h3 id=pkgtemplatesjl ><a href="#pkgtemplatesjl" class=header-anchor >PkgTemplates.jl</a></h3> <p><a href="https://github.com/JuliaCI/PkgTemplates.jl">PkgTemplates.jl</a> is a highly configurable package for project templates. In this example, we are going to stick to the defaults:</p> <pre><code class="julia-repl hljs"><span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > <span class=hljs-keyword >using</span> PkgTemplates
+</span>
+<span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > t = Template()
+</span>
+<span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > t(<span class=hljs-string >&quot;MyPackage&quot;</span>)</span></code></pre> <p>At the end of the package generation, Julia will inform us that our project has been created in the <code>~/.julia/dev</code> folder:</p> <pre><code class="julia-repl hljs">[ Info: New package is at ~/.julia/dev/MyPackage</code></pre>
+<p>The output folder can be configured in the template. Take a look at the <a href="https://juliaci.github.io/PkgTemplates.jl/stable/user/">PkgTemplates user guide</a>  to create a template customized to your needs.</p>
+<h3 id=file_structure ><a href="#file_structure" class=header-anchor >File structure</a></h3>
+<p>Let&#39;s take a look at the structure of the files generated by PkgTemplates.jl:</p>
+<pre><code class="bash hljs">$ <span class=hljs-built_in >cd</span> ~/.julia/dev/MyPackage
+
+$ tree -a -I <span class=hljs-string >&#x27;.git/&#x27;</span> <span class=hljs-comment ># show folder structure, ignoring the .git folder </span>
+.
+├── .github
+│   └── workflows
+│       ├── CI.yml
+│       ├── CompatHelper.yml
+│       └── TagBot.yml
+├── .gitignore
+├── LICENSE
+├── Manifest.toml
+├── Project.toml
+├── README.md
+├── src
+│   └── MyPackage.jl
+└── <span class=hljs-built_in >test</span>
+    └── runtests.jl
+
+5 directories, 10 files</code></pre>
+
+<div class="admonition note">
+  <p class=admonition-title >Note</p>
+  <p>
+    In the lecture we will be discussing all files in detail:
+    <ul>
+      <li>
+        <code>Project.toml</code> for packages
+        <ul>
+          <li>compat entries
+          <li>semantic versioning
+        </ul>
+      
+      <li>structure of Julia source code
+      <li>package testing
+      <li>continuous integration (CI)
+    </ul>
+  </p>
+</div>
+
+<h3 id=activating_the_package_environment ><a href="#activating_the_package_environment" class=header-anchor >Activating the package environment</a></h3>
+<h4 id=in_vscode ><a href="#in_vscode" class=header-anchor >In VSCode</a></h4>
+<p>The Julia VSCode extension provides a keyboard shortcut to start a REPL: <code>Alt&#43;j Alt&#43;o</code> &#40;<code>option&#43;j option&#43;o</code> on macOS&#41;.</p>
+<h4 id=in_the_repl ><a href="#in_the_repl" class=header-anchor >In the REPL</a></h4>
+<p>To start a REPL session that directly activates your local project environment, start julia with the flag <code>--project</code>:</p>
+<pre><code class="bash hljs">$ <span class=hljs-built_in >cd</span> ~/.julia/dev/MyProject
+
+$ julia --project</code></pre>
+<pre><code class="julia-repl hljs"># Starts Julia REPL session
+               _
+   _       _ _(_)_     |  Documentation: https://docs.julialang.org
+  (_)     | (_) (_)    |
+   _ _   _| |_  __ _   |  Type &quot;?&quot; for help, &quot;]?&quot; for Pkg help.
+  | | | | | | |/ _` |  |
+  | | |_| | | | (_| |  |  Version 1.8.5 (2023-01-08)
+ _/ |\__&#x27;_|_|_|\__&#x27;_|  |  Official https://julialang.org/ release
+|__/                   |
+
+<span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > <span class=hljs-comment ># press ]</span>
+</span>
+<span class=hljs-metap>(MyPackage) pkg&gt;</span> # project environment is active!</code></pre>
+<p>The environment is directly active, there is no need to type <code>activate MyPackage</code>.</p>
+
+<div class="admonition tip">
+  <p class=admonition-title >Tip</p>
+  <p>I recommend setting a shell alias set for 
+  <code>julia --project --banner=no</code>.</p>
+</div>
+
+<h3 id=projecttoml_in_packages ><a href="#projecttoml_in_packages" class=header-anchor ><code>Project.toml</code> in packages</a></h3>
+<p>Let&#39;s add a dependency to our package, for example CSV.jl:</p>
+<pre><code class="julia-repl hljs"><span class=hljs-metap>(MyPackage) pkg&gt;</span> add CSV
+    Updating registry at `~/.julia/registries/General.toml`
+   Resolving package versions...
+    Updating `~/.julia/dev/MyPackage/Project.toml`
+  [336ed68f] + CSV v0.10.10
+    Updating `~/.julia/dev/MyPackage/Manifest.toml`
+  [336ed68f] + CSV v0.10.10
+  [944b1d66] + CodecZlib v0.7.1
+  [9a962f9c] + DataAPI v1.15.0
+  [e2d170a0] + DataValueInterfaces v1.0.0
+  [48062228] + FilePathsBase v0.9.20
+  [842dd82b] + InlineStrings v1.4.0
+  [82899510] + IteratorInterfaceExtensions v1.0.0
+  [2dfb63ee] + PooledArrays v1.4.2
+  [91c51154] + SentinelArrays v1.3.18
+  [3783bdb8] + TableTraits v1.0.1
+  [bd369af6] + Tables v1.10.1
+  [3bb67fe8] + TranscodingStreams v0.9.13
+  [ea10d353] + WeakRefStrings v1.4.2
+  [76eceee3] + WorkerUtilities v1.6.1
+  [9fa8497b] + Future
+  [8dfed614] + Test</code></pre>
+<p>When adding a package, the <code>Project.toml</code> of our package will automatically be updated. It is always located in the root folder of the package &#40;in our example at <code>~/.julia/dev/MyPackage/Project.toml</code>&#41;.</p>
+<p>In our case, the <code>Project.toml</code> contains:</p>
+<pre><code class="toml hljs"><span class=hljs-attr >name</span> = <span class=hljs-string >&quot;MyPackage&quot;</span>
+<span class=hljs-attr >uuid</span> = <span class=hljs-string >&quot;c97c58cb-c2b5-45a4-93b4-32bd8ab523c1&quot;</span>
+<span class=hljs-attr >authors</span> = [<span class=hljs-string >&quot;Adrian Hill &lt;git@adrianhill.de&gt; and contributors&quot;</span>]
+<span class=hljs-attr >version</span> = <span class=hljs-string >&quot;1.0.0-DEV&quot;</span>
+
+<span class=hljs-section >[deps]</span>
+<span class=hljs-attr >CSV</span> = <span class=hljs-string >&quot;336ed68f-0bac-5ca0-87d4-7b16caf5d00b&quot;</span>
+
+<span class=hljs-section >[compat]</span>
+<span class=hljs-attr >julia</span> = <span class=hljs-string >&quot;1&quot;</span>
+
+<span class=hljs-section >[extras]</span>
+<span class=hljs-attr >Test</span> = <span class=hljs-string >&quot;8dfed614-e22c-5e08-85e1-65c5234f0b40&quot;</span>
+
+<span class=hljs-section >[targets]</span>
+<span class=hljs-attr >test</span> = [<span class=hljs-string >&quot;Test&quot;</span>]</code></pre>
+<ul>
+<li><p>our package has a name, a UUID, a version and information about the package author</p>
+
+<li><p>adding CSV.jl created an entry in the dependency section <code>&#91;deps&#93;</code></p>
+
+<li><p>there is a new <code>&#91;compat&#93;</code> section to specify package compatibility bounds</p>
+<ul>
+<li><p>compat entries for external packages like CSV.jl have to be added manually</p>
+
+</ul>
+
+<li><p>we have an &quot;extra&quot; dependency on the package Tests.jl &#40;more on this later&#41;</p>
+
+</ul>
+
+<div class="admonition tip">
+  <p class=admonition-title >Tip</p>
+  <p>When looking at a new package, 
+  checking out its dependencies in the <code>Project.toml</code> is a good starting point.</p>
+</div>
+
+<h3 id=semantic_versioning ><a href="#semantic_versioning" class=header-anchor >Semantic versioning</a></h3>
+<p>It is good practice &#40;and required for package registration&#41;  to enter <code>&#91;compat&#93;</code> entries for all dependencies. This allows us to update dependencies without having to worry about our code breaking.</p>
+<p>By convention, Julia packages are expected to follow <a href="https://semver.org/lang/de/">Semantic Versioning</a> to specify version numbers:</p>
+<blockquote>
+<p>Given a version number MAJOR.MINOR.PATCH, increment the:</p>
+<ol>
+<li><p>MAJOR version when you make incompatible API changes</p>
+
+<li><p>MINOR version when you add functionality in a backward compatible manner</p>
+
+<li><p>PATCH version when you make backward compatible bug fixes</p>
+
+<li><p>Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.</p>
+
+</ol>
+</blockquote>
+<blockquote>
+<p>Major version zero &#40;0.y.z&#41; is for initial development. Anything MAY change at any time. The public API SHOULD NOT be considered stable.</p>
+</blockquote>
+<p>Let&#39;s add a compat entry for CSV.jl. Using <code>status</code> in Pkg-mode, we can inspect the current version:</p>
+<pre><code class="julia-repl hljs"><span class=hljs-metap>(MyPackage) pkg&gt;</span> status
+Project MyPackage v1.0.0-DEV
+Status `~/.julia/dev/MyPackage/Project.toml`
+  [336ed68f] CSV v0.10.10</code></pre>
+<p>Let&#39;s declare in the <code>Project.toml</code> that only versions <code>0.10.X</code> of CSV.jl are permitted.  This will allow us to get updates that patch bugs, but not updates with breaking changes.</p>
+<pre><code class="toml hljs"><span class=hljs-section >[compat]</span>
+<span class=hljs-attr >CSV</span> = <span class=hljs-string >&quot;0.10&quot;</span>
+<span class=hljs-attr >julia</span> = <span class=hljs-string >&quot;1&quot;</span></code></pre>
+<h3 id=structure_of_the_source_folder ><a href="#structure_of_the_source_folder" class=header-anchor >Structure of the source folder</a></h3>
+<p>By convention, the <em>&quot;main&quot;</em> file of a project has the same name as the project. PkgTemplates already created this file <code>src/MyPackage.jl</code> for us: </p>
+<pre><code class="julia hljs"><span class=hljs-comment ># Contents of src/MyPackage.jl</span>
+<span class=hljs-keyword >module</span> MyPackage
+
+<span class=hljs-comment ># Write your package code here.</span>
+
+<span class=hljs-keyword >end</span></code></pre>
+<p>The file defines a module with the same name as our package. Inside this module, you will import dependencies, <code>include</code> other source files and export your functions.  Let&#39;s look at a toy example:</p>
+<pre><code class="julia hljs"><span class=hljs-comment ># Updated contents of src/MyPackage.jl</span>
+<span class=hljs-keyword >module</span> MyPackage
+
+<span class=hljs-comment ># 1.) Import functions you need</span>
+<span class=hljs-keyword >using</span> LinearAlgebra: cholesky 
+
+<span class=hljs-comment ># 2.) Include source files</span>
+include(<span class=hljs-string >&quot;my_source_code_1.jl&quot;</span>)
+include(<span class=hljs-string >&quot;my_source_code_2.jl&quot;</span>)
+include(<span class=hljs-string >&quot;my_source_code_3.jl&quot;</span>)
+
+<span class=hljs-comment ># 3.) Export functions you defined</span>
+<span class=hljs-keyword >export</span> my_function_1, my_function_2
+
+<span class=hljs-keyword >end</span> <span class=hljs-comment ># end module</span></code></pre>
+
+<div class="admonition tip">
+  <p class=admonition-title >Tip</p>
+  <p>When looking at the source code of a package, 
+  this should be the first file you read.</p>
+</div>
+
+<h3 id=package_tests ><a href="#package_tests" class=header-anchor >Package tests</a></h3>
+<p>By convention, package tests are in a folder called <code>test/</code>. The main file that includes all other tests is called <code>runtest.jl</code>. To run this file, enter Pkg-mode and write <code>test</code>: </p>
+<pre><code class="julia-repl hljs"><span class=hljs-metap>(MyPackage) pkg&gt;</span> test
+     Testing MyPackage
+      Status `/private/var/folders/74/wcz8c9qs5dzc8wgkk7839k5c0000gn/T/jl_TcJkwR/Project.toml`
+
+     ... # Julia resolves a temporary environment from scratch
+    
+     Testing Running tests...
+Test Summary: |Time
+MyPackage.jl  | None  0.0s
+     Testing MyPackage tests passed</code></pre>
+<p>Our tests passed since we didn&#39;t have any&#33;</p>
+<p>Using the <a href="https://docs.julialang.org/en/v1/stdlib/Test/">Test.jl</a>  standard library package and its macros <code>@test</code> and <code>@testset</code>,  we can add tests to our package, which will be demonstrated in the lecture.</p>
+
+<div class="admonition note">
+  <p class=admonition-title >Note</p>
+  <p>
+    Package tests will be covered in the lecture. Take a look at the 
+    <a href="https://docs.julialang.org/en/v1/stdlib/Test/">unit test documentation</a>.
+  </p>
+</div>
+
+<h3 id=continuous_integration ><a href="#continuous_integration" class=header-anchor >Continuous integration</a></h3>
+<p>The <code>.github/workflows/</code> folder contains three files, which specify  <a href="https://github.com/features/actions"><em>GitHub actions</em></a>:</p>
+<ul>
+<li><p><code>CI.yml</code>: run tests, optionally build docs and determine code coverage.</p>
+
+<li><p><code>CompatHelper.yml</code>: Check whether <code>&#91;compat&#93;</code> entries are up to date.</p>
+
+<li><p><code>TagBot.yml</code>: tag new releases of your package.</p>
+
+</ul>
+<p>These files contain instructions that will be run on GitHub&#39;s computers. The most basic use-case is running package tests.  GitHub Actions either run on a timed schedule or at specific events,  for example when pushing commits and opening pull requests.</p>
+
+<div class="admonition note">
+  <p class=admonition-title >Note</p>
+  <p>GitHub Actions and CI will be showcased in the lecture.</p>
+</div>
+
+<h3 id=package_registration ><a href="#package_registration" class=header-anchor >Package registration</a></h3>
+<p>If you wrote a high quality, well tested package  and want to make it available to all Julia users through the package manager,  follow the <a href="https://github.com/JuliaRegistries/Registrator.jl">Registrator.jl instructions</a>. </p>
+<p>People will then be able to install your package by writing</p>
+<pre><code class="julia-repl hljs"><span class=hljs-metap>(@v1.8) pkg&gt;</span> add MyPackage</code></pre>
+<h2 id=experiments_with_drwatsonjl ><a href="#experiments_with_drwatsonjl" class=header-anchor >Experiments with DrWatson.jl</a></h2>
+<p><a href="https://github.com/JuliaDynamics/DrWatson.jl">DrWatson.jl</a>  describes itself as <em>&quot;scientific project assistant software&quot;</em>. It serves two purposes:</p>
+<ol>
+<li><p>It sets up a project structure that is specialized for scientific experiments, similar to PkgTemplates.</p>
+
+<li><p>It introduces several useful helper functions. Among these are boiler-plate functions for file loading and saving.</p>
+
+</ol>
+<p>The following two sections are directly taken from the <a href="https://juliadynamics.github.io/DrWatson.jl/stable/workflow/">DrWatson documentation</a>, which I recommend reading</p>
+<h3 id=file_structure__2 ><a href="#file_structure__2" class=header-anchor >File structure</a></h3>
+<p>To initialize a DrWatson project, run:</p>
+<pre><code class="julia-repl hljs"><span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > <span class=hljs-keyword >using</span> DrWatson
+</span>
+<span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > initialize_project(<span class=hljs-string >&quot;MyScientificProject&quot;</span>; authors=<span class=hljs-string >&quot;Adrian Hill&quot;</span>, force=<span class=hljs-literal >true</span>)</span></code></pre>
+<p>The default setup will initialize a file structure that looks as follows:</p>
+<pre><code class="plaintext hljs">│projectdir          &lt;- Project&#x27;s main folder. It is initialized as a Git
+│                       repository with a reasonable .gitignore file.
+│
+├── _research        &lt;- WIP scripts, code, notes, comments,
+│   |                   to-dos and anything in an alpha state.
+│   └── tmp          &lt;- Temporary data folder.
+│
+├── data             &lt;- **Immutable and add-only!**
+│   ├── sims         &lt;- Data resulting directly from simulations.
+│   ├── exp_pro      &lt;- Data from processing experiments.
+│   └── exp_raw      &lt;- Raw experimental data.
+│
+├── plots            &lt;- Self-explanatory.
+├── notebooks        &lt;- Jupyter, Weave or any other mixed media notebooks.
+│
+├── papers           &lt;- Scientific papers resulting from the project.
+│
+├── scripts          &lt;- Various scripts, e.g. simulations, plotting, analysis,
+│   │                   The scripts use the `src` folder for their base code.
+│   └── intro.jl     &lt;- Simple file that uses DrWatson and uses its greeting.
+│
+├── src              &lt;- Source code for use in this project. Contains functions,
+│                       structures and modules that are used throughout
+│                       the project and in multiple scripts.
+│
+├── test             &lt;- Folder containing tests for `src`.
+│   └── runtests.jl  &lt;- Main test file, also run via continuous integration.
+│
+├── README.md        &lt;- Optional top-level README for anyone using this project.
+├── .gitignore       &lt;- by default ignores _research, data, plots, videos,
+│                       notebooks and latex-compilation related files.
+│
+├── Manifest.toml    &lt;- Contains full list of exact package versions used currently.
+└── Project.toml     &lt;- Main project file, allows activation and installation.
+                        Includes DrWatson by default.</code></pre>
+<h3 id=workflow ><a href="#workflow" class=header-anchor >Workflow</a></h3>
+<p>The DrWatson workflow is best summarized in the following picture from the  <a href="https://juliadynamics.github.io/DrWatson.jl/stable/workflow/">documentation</a>:</p>
+<p><img src="/julia-ml-course/assets/drwatson_workflow.png" alt="DrWatson workflow" /></p>
+<h2 id=calling_scripts_from_the_command_line ><a href="#calling_scripts_from_the_command_line" class=header-anchor >Calling scripts from the command line</a></h2>
+<p>Working on compute-clusters often required scheduling &quot;jobs&quot; from the command-line. To run a Julia script in the file <code>my_script.jl</code>, run the following command:</p>
+<pre><code class="bash hljs">$ julia my_script.jl arg1 arg2...</code></pre>
+<p>Inside your script, the additional command-line arguments <code>arg1</code> and <code>arg2</code> can be used through the global constant <code>ARGS</code>.  If <code>my_script.jl</code> contains the code</p>
+<pre><code class="julia hljs"><span class=hljs-comment ># Content of my_script.jl</span>
+<span class=hljs-keyword >for</span> a <span class=hljs-keyword >in</span> <span class=hljs-literal >ARGS</span>
+  println(a)
+<span class=hljs-keyword >end</span></code></pre>
+<p>Calling it with arguments <code>foo</code>, <code>bar</code> from the command-line will print:</p>
+<pre><code class="bash hljs">$ julia my_script.jl foo bar
+foo
+bar</code></pre>
+<h3 id=command-line_switches ><a href="#command-line_switches" class=header-anchor >Command-line switches</a></h3>
+<p>Julia provides several <a href="https://docs.julialang.org/en/v1/manual/command-line-interface/#command-line-interface">command-line switches</a>. For example, for parallel computing, <code>--threads</code> can be used to specify the number of CPU threads  and <code>--procs</code> for the number of worker processes. </p>
+<p>The following command will run <code>my_script.jl</code> with 8 threads:</p>
+<pre><code class="bash hljs">$ julia --threads 8 -- my_script.jl arg1 arg2</code></pre>
+
+<div class="admonition tip">
+  <p class=admonition-title >Parallel computing</p>
+  <p>In this lecture, we only covered GPU parallelization (Lecture 7 on <i>Deep Learning</i>).<p>
+  Refer to the 
+  <a href="https://docs.julialang.org/en/v1/manual/parallel-computing/">Julia documentation on parallel computing</a>
+  for more information on multi-threading and distributed computing.</p>
+</div>
+
+<h3 id=external_packages ><a href="#external_packages" class=header-anchor >External packages</a></h3>
+<p>Handling arguments in <code>ARGS</code> can be tedious. <a href="https://github.com/comonicon/Comonicon.jl">Comonicon.jl</a> is a package to build simple command-line interfaces for Julia programs by using a macro <code>@main</code>. Among other features, it supports</p>
+<ul>
+<li><p>positional arguments</p>
+
+<li><p>optional arguments with defaults</p>
+
+<li><p>boolean flags</p>
+
+<li><p>help pages generated from docstrings</p>
+
+</ul>
+<p>Take a look at the <a href="https://comonicon.org/stable/">documentation</a>.</p>
+<h2 id=further_reading ><a href="#further_reading" class=header-anchor >Further reading</a></h2>
+<p>Additional resources on workflows in Julia can be found on the <a href="https://modernjuliaworkflows.github.io">Modern Julia Workflows</a> website  and <a href="https://m3g.github.io/JuliaNotes.jl/stable/">JuliaNotes</a>.</p>
+<div class=page-foot >
+    
+    Last modified: <a href="https://github.com/adrhill/julia-ml-course/commits/main">March 20, 2024.</a><br>
+    Website, code and notebooks are under <a href="https://github.com/adrhill/julia-ml-course/blob/main/LICENSE">MIT License</a> &copy; <a href="http://adrianhill.de">Adrian Hill</a>.<br>
+    Built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>, <a href="https://github.com/fonsp/Pluto.jl">Pluto.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+    </div>  
+    
+    
+        <script src="/julia-ml-course/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
