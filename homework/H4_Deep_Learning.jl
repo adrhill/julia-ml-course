@@ -7,7 +7,14 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     quote
-        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local iv = try
+            Base.loaded_modules[Base.PkgId(
+                Base.UUID("6e696c72-6542-2067-7265-42206c756150"),
+                "AbstractPlutoDingetjes",
+            )].Bonds.initial_value
+        catch
+            b -> missing
+        end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
@@ -19,13 +26,13 @@ begin
     using PlutoUI
     using PlutoTeachingTools
 
-	using Statistics
-	
+    using Statistics
+
     using Flux
     using Flux: glorot_uniform
 
-	using ImageMagick, ImageShow
-	using Plots
+    using ImageMagick, ImageShow
+    using Plots
 end
 
 # ╔═╡ 8fadcaf7-841f-4670-b7cf-ab6658feaa15
@@ -201,20 +208,26 @@ md"Run training: $(@bind run_training CheckBox(default=false))"
 
 # ╔═╡ fe22ab4f-6119-4397-ac25-ce840a176777
 if run_training # Do NOT modify this!
-	
-	# Write your code here
-end 
+
+    # Write your code here
+end
 
 # ╔═╡ ae26551a-d4dd-4b37-a02d-a089de359f70
 md"### Exercise 1.4 – Evaluation"
 
 # ╔═╡ 207136c1-528f-4f78-84e2-a20f1985092e
-Markdown.MD(Markdown.Admonition("Task", "Optional tasks (1 extra point)", [
-	md"
-* Log the training losses and plot them
-* Calculate the accuracy of the trained model using the test data `x_test` and `y_test`
-* Find the classes with the highest and lowest accuracy on the test data"
-]))
+Markdown.MD(
+    Markdown.Admonition(
+        "Task",
+        "Optional tasks (1 extra point)",
+        [
+            md"
+           * Log the training losses and plot them
+           * Calculate the accuracy of the trained model using the test data `x_test` and `y_test`
+           * Find the classes with the highest and lowest accuracy on the test data",
+        ],
+    ),
+)
 
 # ╔═╡ 67739adb-289c-42cc-a714-bc5f3c25b63b
 md"""## Exercise 2 – Automatic differentiation
