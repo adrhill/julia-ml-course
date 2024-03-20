@@ -1,7 +1,13 @@
+# Writing a Julia Package
 This page serves as guide for creating your Julia package and walks you through the process of the initial setup and explains the structure of the package. We also recommend reading the [Modern Julia Workflows post](https://modernjuliaworkflows.github.io/sharing/).
 Information on setting up continuous integration pipelines and code coverage is also provided.
 
-	# Prerequisites 
+~~~
+<h2>Table of Contents</h2>
+~~~
+\tableofcontents
+
+## Prerequisites 
 - [julia](https://julialang.org) is installed
 - [git](https://git-scm.com/) is installed
 If you are willing to use third-party platforms to setup your repository and continuous integration pipeline, then you will require:
@@ -9,9 +15,9 @@ If you are willing to use third-party platforms to setup your repository and con
 - [CodeCov](https://about.codecov.io) Account (or login via GitHub)
 Otherwise the GitLab Instance from the TUB can be used:
 -[TUB-GitLab](https://git.tu-berlin.de)
-# Creating the initial Package
+## Creating the initial Package
 
-## Using PkgTemplates.jl
+### Using PkgTemplates.jl
 Utilizing PkgTemplates.jl involves the following steps:
 1. Initiate the Julia REPL by opening your terminal and starting `julia`.
 2. Transition to package mode using the `]` key, add the package and update all of your existing packages.
@@ -51,34 +57,34 @@ After you created the template you execute
 julia> template("PackageName")
 ```
  Replace `"PackageName"` with the desired name for your package. This will initiate the creation of your package with the specified configuration, plugins, and license.
-# Writing Your Code
-## Source Directory (`src/`)
+## Writing Your Code
+### Source Directory (`src/`)
 Create any required files within the `src/` directory. Ensure that the main file, named after your package (e.g., `MyPackage.jl`),  has an `include` statement for all necessary files while also `export`ing all functions that you develop. For further guidance, consult the lecture materials.
-## Testing
-### Test Cases (`test/runtests.jl`)
+### Testing
+#### Test Cases (`test/runtests.jl`)
 Create comprehensive test cases in `test/runtests.jl` to validate all functionalities of your package. The code coverage will be automatically calculated after every commit using CodeCov.
-### Running Tests locally
+#### Running Tests locally
 To execute tests manually, open the terminal, navigate to your package directory, start Julia, enter package mode (by typing `]`), and execute the `test` command.
-## Documentation
+### Documentation
 Documentation is crucial and we expect you to document your functions sufficiently. This includes both the docstrings accessible via `?myfunction` in the Julia-REPL as well as the doc pages which are formatted like a website that includes the docstrings as API reference. Within the next few subchapters we explain the process of setting this up.
-### Code Documentation
+#### Code Documentation
 Document all exported functions with docstrings, placing them above function definitions. You can view the docstring output within a Julia environment by typing `?functionName`.
-### Documentation File Structure
-#### `make.jl`
+#### Documentation File Structure
+##### `make.jl`
 The `docs/make.jl` file contains the layout for your documentation pages. 
 
 `makedocs` is used to generate the documentation. Add additional pages by modifying the `pages` attribute within.
 
 `deploydocs` is used to deploy the generated documentation to your GitHub repository.
 
-##### `docs/src/`
+###### `docs/src/`
 The `docs/src/` directory contains the `index.md` file and is the initial reference in `make.jl`. Add more markdown (.md) files as needed and update the `pages` attribute accordingly in `makedocs`.
-#### Building Documentation Locally
+##### Building Documentation Locally
 Add the `docs/build` directory to your `.gitignore` file to prevent pushing it to your remote repository. To build your documentation, navigate to the `docs` directory in the terminal, execute `julia --project`, and run `include("make.jl")`. The generated files will be located in `docs/build`, and you can view `index.html` using a web browser.
-# CI / CD
+## CI / CD
 We utilize GitHubActions, CodeCov, and Documenter.jl to automate testing, code coverage reporting, and documentation deployment.
-## Automatic Documentation with Documenter.jl
-### Setup
+### Automatic Documentation with Documenter.jl
+#### Setup
 If your package was set up using `PkgTemplates.jl`, no changes to the workflow file are necessary. Otherwise, follow the provided reference file.
 
 Generate a `Deploy Key` and a `DOCUMENTER_KEY` by using the `DocumenterTools` Julia package. Execute 
@@ -90,7 +96,7 @@ DocumenterTools.genkeys(user="Username", repo="MyPackage.jl")
 If this has been set up correctly, the next time a significant change is being pushed to your repository (according to your workflow-triggers), GitHub Actions should now additionally build the documentation in a new branch called `gh-pages`. 
 
 Please refer to the [Documenter.jl](https://documenter.juliadocs.org/stable/man/hosting/) documentation for Hosting.
-### GitHub Pages (`gh-pages`)
+#### GitHub Pages (`gh-pages`)
 Set up automatic deployment on GitHub Pages as follows:
 - Navigate to the “Code and Automation” > “Pages” section within your repository settings. Find the section "Build and deployment"
 - Confirm that the “Source” is set to `Deploy from branch` and the “Branch” is `gh-pages` `/(root)`.
@@ -98,12 +104,12 @@ Set up automatic deployment on GitHub Pages as follows:
 Keep in mind that documentation updates may take a few minutes to become visible as the workflow has to run.
 
 Please refer to the [gh-pages](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages) documentation.
-## CodeCov
+### CodeCov
 To integrate CodeCov:
 - Register or log in via GitHub at the [CodeCov website](https://about.codecov.io).
 - Locate your package on the Repos-Overview page and select `Setup repo`.
 - Follow the provided instructions to complete the setup. Note that "Step 2: add Codecov to your [GitHub Actions workflow yaml file](https://github.com/JeanAnNess/Covid_tracker/tree/main/.github/workflows)" is done by the specifying the `Codecov` plugin while creating your Template via `PkgTemplates`.
-## Troubleshooting and Tips
+### Troubleshooting and Tips
 
 If the documentation for a function is not appearing when using 
 ```julia-repl
@@ -113,7 +119,7 @@ If the documentation for a function is not appearing when using
 - Verify that the docstring is placed directly above the function definition with no intervening spaces.
 
 For more detailed guidance, refer to the relevant documentation for Documenter.jl, GitHub Actions, and gh-pages.
-# References
+## References
 - [CodeCov](https://about.codecov.io)
 - [Documenter.jl](https://documenter.juliadocs.org/stable/)
 - [DocumenterTools.jl](https://documenter.juliadocs.org/stable/lib/internals/documentertools/)
