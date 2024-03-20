@@ -27,18 +27,18 @@ Occasionally, differences and similarities to Python will be pointed out. If you
 The **first half of the course** is taught in five weekly sessions of three hours.
 In each session, two lectures are taught:
 
-| Week | Lecture | Content                                           | Exam / Homework |
-|:----:|:-------:|:--------------------------------------------------|:----------------|
-| 1    |  0      | General Information, Installation & Getting Help  |                 |
-|      |  1      | Basics 1: Types, Control-flow & Multiple Dispatch | ✅               |
-| 2    |  2      | Basics 2: Arrays, Linear Algebra                  | ✅               |
-|      |  3      | Plotting & DataFrames                             | ✅               |
-| 3    |  4      | Basics 3: Data structures and custom types        | ✅               |
-|      |  5      | Classical Machine Learning                        | ✅               |
-| 4    |  6      | Automatic Differentiation                         | ✅               |
-|      |  7      | Deep Learning                                     | ✅               |
-| 5    |  8      | Workflows: Scripts, Experiments & Packages        |                 |
-|      |  9      | Profiling & Debugging                             |                 |
+| Week | Lecture | Content                                           |
+|:----:|:-------:|:--------------------------------------------------|
+| 1    | 0       | General Information, Installation & Getting Help  |
+|      | 1       | Basics 1: Types, Control-flow & Multiple Dispatch |
+| 2    | 2       | Basics 2: Arrays, Linear Algebra                  |
+|      | 3       | Plotting & DataFrames                             |
+| 3    | 4       | Basics 3: Data structures and custom types        |
+|      | 5       | Classical Machine Learning                        |
+| 4    | 6       | Automatic Differentiation                         |
+|      | 7       | Deep Learning                                     |
+| 5+   | Project | Workflows: Scripts, Experiments & Packages        |
+|      | Project | Profiling & Debugging                             |
 
 The first three weeks focus on teaching the fundamentals of the Julia programming language. 
 These weeks consist of longer lectures, followed up by shorter, "guided tours" of the Julia ecosystem,
@@ -70,12 +70,12 @@ The lectures and the homework cover the following packages:
 | FiniteDifferences.jl |       6 | Finite differences                                     |                   |
 | Flux.jl              |       7 | Deep Learning abstractions                             | PyTorch, Keras    |
 | MLDatasets.jl        |       7 | Dataset loader                                         |                   |
-| PkgTemplates.jl      |       8 | Package template                                       |                   |
-| DrWatson.jl          |       8 | Workflow for scientific projects                       |                   |
-| Debugger.jl          |       9 | Debugger                                               |                   |
-| Infiltrator.jl       |       9 | Debugger                                               |                   |
-| ProfileView.jl       |       9 | Profiler                                               |                   |
-| Cthulhu.jl           |       9 | Type inference debugger                                |                   |
+| PkgTemplates.jl      | Project | Package template                                       |                   |
+| DrWatson.jl          | Project | Workflow for scientific projects                       |                   |
+| Debugger.jl          | Project | Debugger                                               |                   |
+| Infiltrator.jl       | Project | Debugger                                               |                   |
+| ProfileView.jl       | Project | Profiler                                               |                   |
+| Cthulhu.jl           | Project | Type inference debugger                                |                   |
 
 ### Homework
 When learning a programming language, it helps to write code.
@@ -107,9 +107,20 @@ Homework assignments must be submitted every week.
 You must be enrolled on ISIS to submit homework. 
 If you do not register on time, you cannot pass the course.
 
-- **Course Period:**  April 15th - July 20th 2024 
-  - **Lectures:** TBA
-  - **Office hours:** TBA
+![JuML course timeline](/assets/timeline.png)
+
+* **Course Period:**  April 15th - July 20th 2024 
+  * **Project meetings:** Tuesdays, 14:15-15:45, MAR 4.044
+  * **Office hours:** TBA
+
+Attendance is mandatory on the following five dates:
+* Tuesday, 16.04.24
+* Tuesday, 21.05.24
+* Tuesday, 11.06.24
+* Tuesday, 02.07.24
+* Tuesday, 16.07.24
+
+The date of the final examination will be determined on a group-by-group basis.
 
 More information can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=37588).
 
