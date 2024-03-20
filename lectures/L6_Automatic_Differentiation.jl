@@ -76,7 +76,7 @@ html"""
 			Adrian Hill
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24
+			TU Berlin, Summer Semester 2024
 		</p>
 	</div>
 """
@@ -851,7 +851,7 @@ a light-weight dependency that allows you to define forward- and/or reverse-rule
 
 # ╔═╡ 2abcf211-5ffd-464e-8948-83860fe186db
 md"""## Code introspection ⁽⁺⁾
-Many AD packages perform *source to source* transformations to generate pullback functions $(\mathcal{D}f_\tilde{x})^T$ from functions $f$ and $\tilde{x}$.  
+Many AD packages perform *source to source* transformations to generate pullback functions $(\mathcal{D}f_\tilde{x})^T$ from functions $f$ and $\tilde{x}$.
 
 For this purpose, Julia code needs to look at its own compositional structure. This is called *reflection* or *introspection* and gives Julia its metaprogramming powers.
 Introspection can be applied at several levels: AST, IR, LLVM or native code. Let's demonstrate this on a simple test function:
@@ -1065,7 +1065,7 @@ begin
 end
 
 # ╔═╡ 451a3386-064d-430a-8a0e-97b135d76f4b
-tip(md"Since Enzyme differentiates at the LLVM level, 
+tip(md"Since Enzyme differentiates at the LLVM level,
 it can differentiate any LLVM-based language, e.g. C, C++, Swift, Julia and Rust.
 More information can be found on the [Enzyme website](https://enzyme.mit.edu).
 ")

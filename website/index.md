@@ -2,9 +2,9 @@
 @def tags = ["index"]
 
 # Julia programming for ML
-Welcome to the *Julia programming for Machine Learning* course
+Welcome to the *Julia programming for Machine Learning* course (JuML)
 offered by Prof. Klaus-Robert Müller's 
-[Machine Learning Group](https://www.tu.berlin/ml) at TU Berlin.
+[Machine Learning Group](https://web.ml.tu-berlin.de) at TU Berlin.
 
 ~~~
 <h2>Table of Contents</h2>
@@ -24,21 +24,21 @@ Occasionally, differences and similarities to Python will be pointed out. If you
 
 ## Contents
 ### Lectures
-The course is taught in five weekly sessions of three hours.
+The **first half of the course** is taught in five weekly sessions of three hours.
 In each session, two lectures are taught:
 
-| Week | Lecture | Content                                           | Exam / Homework |
-|:----:|:-------:|:--------------------------------------------------|:----------------|
-| 1    |  0      | General Information, Installation & Getting Help  |                 |
-|      |  1      | Basics 1: Types, Control-flow & Multiple Dispatch | ✅               |
-| 2    |  2      | Basics 2: Arrays, Linear Algebra                  | ✅               |
-|      |  3      | Plotting & DataFrames                             | ✅               |
-| 3    |  4      | Basics 3: Data structures and custom types        | ✅               |
-|      |  5      | Classical Machine Learning                        | ✅               |
-| 4    |  6      | Automatic Differentiation                         | ✅               |
-|      |  7      | Deep Learning                                     | ✅               |
-| 5    |  8      | Workflows: Scripts, Experiments & Packages        |                 |
-|      |  9      | Profiling & Debugging                             |                 |
+| Week | Lecture | Content                                           |
+|:----:|:-------:|:--------------------------------------------------|
+| 1    | 0       | General Information, Installation & Getting Help  |
+|      | 1       | Basics 1: Types, Control-flow & Multiple Dispatch |
+| 2    | 2       | Basics 2: Arrays, Linear Algebra                  |
+|      | 3       | Plotting & DataFrames                             |
+| 3    | 4       | Basics 3: Data structures and custom types        |
+|      | 5       | Classical Machine Learning                        |
+| 4    | 6       | Automatic Differentiation                         |
+|      | 7       | Deep Learning                                     |
+| 5+   | Project | Workflows: Scripts, Experiments & Packages        |
+|      | Project | Profiling & Debugging                             |
 
 The first three weeks focus on teaching the fundamentals of the Julia programming language. 
 These weeks consist of longer lectures, followed up by shorter, "guided tours" of the Julia ecosystem,
@@ -70,12 +70,12 @@ The lectures and the homework cover the following packages:
 | FiniteDifferences.jl |       6 | Finite differences                                     |                   |
 | Flux.jl              |       7 | Deep Learning abstractions                             | PyTorch, Keras    |
 | MLDatasets.jl        |       7 | Dataset loader                                         |                   |
-| PkgTemplates.jl      |       8 | Package template                                       |                   |
-| DrWatson.jl          |       8 | Workflow for scientific projects                       |                   |
-| Debugger.jl          |       9 | Debugger                                               |                   |
-| Infiltrator.jl       |       9 | Debugger                                               |                   |
-| ProfileView.jl       |       9 | Profiler                                               |                   |
-| Cthulhu.jl           |       9 | Type inference debugger                                |                   |
+| PkgTemplates.jl      | Project | Package template                                       |                   |
+| DrWatson.jl          | Project | Workflow for scientific projects                       |                   |
+| Debugger.jl          | Project | Debugger                                               |                   |
+| Infiltrator.jl       | Project | Debugger                                               |                   |
+| ProfileView.jl       | Project | Profiler                                               |                   |
+| Cthulhu.jl           | Project | Type inference debugger                                |                   |
 
 ### Homework
 When learning a programming language, it helps to write code.
@@ -89,23 +89,40 @@ slightly different test suite to avoid cheating and hard-coded answers.
 Designing homework exercises takes a lot of time, so 
 **please don't upload any answers to the homework to the internet.**
 
-## Information for TU Berlin students 
-Julia Programming for Machine Learning (3 ECTS credits) is an optional course within one of the following modules:
-- [Cognitive Algorithms](https://wiki.ml.tu-berlin.de/wiki/Main/WS22_KA) (summer & winter semester)
-- [Machine Learning 1](https://wiki.ml.tu-berlin.de/wiki/Main/WS22_MaschinellesLernen1) (winter semester)
-- [Machine Learning 2](http://wiki.ml.tu-berlin.de/wiki/Main/SS23_ML2) (summer semester)
+### Project work
+In the **second half of the course**, after passing the homework,
+students work in groups on a small programming project of their choice, 
+learning best practices for package development in Julia, such as:
+* how to structure and develop a package
+* how to write package tests
+* how to write and host package documentation
 
-It's **not** possible to take the class as a standalone, seminar, or free-choice module.
+During code review sessions, students give each other feedback on their projects 
+before presenting their work in end-of-semester presentations.
+
+## Information for TU Berlin students 
+Starting in summer 2024, JuML is an stand-alone 6 ECTS / 6 LP course.
 
 Homework assignments must be submitted every week. 
 You must be enrolled on ISIS to submit homework. 
 If you do not register on time, you cannot pass the course.
 
-- **Course Period:**  November 21st - December 19th 2023 
-  - **Lectures:** Tuesday 14:15 - 16:45 PM
-  - **Office hours:** Monday 10:15 - 11:45 AM
+![JuML course timeline](/assets/timeline.png)
 
-More information and links to the Zoom meetings can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=35533).
+* **Course Period:**  April 15th - July 20th 2024 
+  * **Project meetings:** Tuesdays, 14:15-15:45, MAR 4.044
+  * **Office hours:** TBA
+
+Attendance is mandatory on the following five dates:
+* Tuesday, 16.04.24
+* Tuesday, 21.05.24
+* Tuesday, 11.06.24
+* Tuesday, 02.07.24
+* Tuesday, 16.07.24
+
+The date of the final examination will be determined on a group-by-group basis.
+
+More information can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=37588).
 
 ## FAQ
 #### Why should I learn Julia?
@@ -153,6 +170,9 @@ The format of this website as well as the contents of this course are influenced
 Many thanks to 
 - [Fons van der Plas](https://github.com/fonsp) for making Pluto and helping me build this website
 - [Niklas Schmitz](https://github.com/niklasschmitz) for feedback on the AD lecture
-- [Janes Sanne](https://github.com/JeanAnNess) for his help as a teaching assistant
+- [Janes Sanne](https://github.com/JeanAnNess),
+  [Dr. Andreas Ziehe](https://web.ml.tu-berlin.de/author/dr.-andreas-ziehe/) and
+  [Philip Naumann](https://web.ml.tu-berlin.de/author/philip-naumann/) 
+  for their help with teaching the course at TU Berlin
 - [Théo Galy-Fajou](https://github.com/theogf) and [Johnny Chen](https://github.com/johnnychen94) for their mentorship
 - everyone who contributed to the packages covered in this lecture

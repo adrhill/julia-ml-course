@@ -37,13 +37,13 @@ html"""
 			Homework 1: Julia Programming Basics
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24<br>
+			TU Berlin, Summer Semester 2024<br>
 		</p>
 	</div>
 """
 
 # ╔═╡ bdcb27c5-0603-49ac-b831-d78c558b31f0
-md"Due date: **Monday, November 27th 2023 at 23:59**"
+md"Due date: **Monday, April 29th 2024 at 23:59**"
 
 # ╔═╡ 6be73c03-925c-4afa-bd66-aca90e6b49fe
 md"This notebook gives you live feedback!

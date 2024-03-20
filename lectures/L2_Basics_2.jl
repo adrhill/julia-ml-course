@@ -56,7 +56,7 @@ html"""
 			Adrian Hill
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24
+			TU Berlin, Summer Semester 2024
 		</p>
 	</div>
 """
@@ -156,7 +156,7 @@ v7 = [sqrt(x) for x in 1:10 if x % 2 == 0]
 
 # ╔═╡ c66a192f-8bd7-462d-a062-cb670b07b723
 md"""## Indexing
-We can index into vectors using square bracket notation. 
+We can index into vectors using square bracket notation.
 
 Let's create a small test vector with values from 1 to 10 for this purpose:
 """
@@ -244,8 +244,8 @@ end
 # ╔═╡ 43c078fb-7964-48e0-92fd-55d306f36b1d
 #! format: off
 tip(
-md"If a method requires a lot of calls to `@view`, 
-you can also use the `@views` macro (with an extra `s`) on a function, loop, or `begin ... end` block 
+md"If a method requires a lot of calls to `@view`,
+you can also use the `@views` macro (with an extra `s`) on a function, loop, or `begin ... end` block
 to turn every indexing operation inside of it into a view!
 
 **Example:**
@@ -254,7 +254,7 @@ The previous code block could have been written as
 ```julia
 @views begin # every indexing operation in this code block will create a view
 	x2 = collect(1:10)
-	y2 = x2[2:4] # creates view onto x2 due to @views 
+	y2 = x2[2:4] # creates view onto x2 due to @views
 	y2[1] = 42
 end
 ```
@@ -312,8 +312,8 @@ typeof(t1)
 # ╔═╡ 79c55150-0457-49b7-90a5-2cad980b2cb9
 tip(
     md"""
-For performance reasons, it is best to avoid Vectors of type `Vector{Any}`: Julia's compiler can't infer element types and therefore also can't specialize code, resulting in bad performance.  
-	
+For performance reasons, it is best to avoid Vectors of type `Vector{Any}`: Julia's compiler can't infer element types and therefore also can't specialize code, resulting in bad performance.
+
 You can find out more about type promotion in the [Julia documentation on Conversion and Promotion](https://docs.julialang.org/en/v1/manual/conversion-and-promotion/#conversion-and-promotion).
 """,
 )
@@ -856,7 +856,7 @@ end
 
 # ╔═╡ b857984b-ec1b-4409-bdf0-438228950f39
 md"""# Broadcasting on arrays
-We've already seen broadcasting on vectors in the previous lecture. 
+We've already seen broadcasting on vectors in the previous lecture.
 For higher-dimensional arrays, the behaviour is [a bit more complicated]((https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting)):
 
 >  Broadcast **expands singleton dimensions in array arguments to match the corresponding dimension in the other array** without using extra memory, and applies the given function elementwise
@@ -868,9 +868,9 @@ P &\in \mathbb{R}^{2×3×1×1×1} \\
 Q &\in \mathbb{R}^{1×1×4×5} \quad .
 \end{align}$
 
-Julia will expand $P$ and $Q$ to 
+Julia will expand $P$ and $Q$ to
 
-$\tilde{P},\,\tilde{Q} \in \mathbb{R}^{2×3×4×5×1}$ 
+$\tilde{P},\,\tilde{Q} \in \mathbb{R}^{2×3×4×5×1}$
 
 
 without allocating extra memory, then add them:
@@ -900,7 +900,7 @@ size(R)
 
 # ╔═╡ b2cdd7d0-e009-4fca-a16b-ddd19cabc6a0
 md"""# Further resources
-In this lecture, we didn't get to cover Cartesian Indices, which are a great tool for implementing algorithms on high-dimensional arrays. 
+In this lecture, we didn't get to cover Cartesian Indices, which are a great tool for implementing algorithms on high-dimensional arrays.
 The following blogpost gives a great introduction:
 
 - [Multidimensional algorithms and iteration](https://julialang.org/blog/2016/02/iteration/)  by Tim Holy

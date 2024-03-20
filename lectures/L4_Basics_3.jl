@@ -39,7 +39,7 @@ html"""
 			Adrian Hill
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24
+			TU Berlin, Summer Semester 2024
 		</p>
 	</div>
 """
@@ -51,9 +51,9 @@ In Julia, dictionaries are defined using `key => value` pairs:
 
 # ╔═╡ 1fb9d847-8edd-447a-a437-77361a2978f4
 capitals = Dict(
-    "France"  => "Paris", 
-	"Germany" => "Berlin", 
-	"Lebanon" => "Beirut", 
+    "France"  => "Paris",
+	"Germany" => "Berlin",
+	"Lebanon" => "Beirut",
 	"Vietnam" => "Hanoi",
 )
 
@@ -107,7 +107,7 @@ tip(
 
 # ╔═╡ df9f43fa-79dd-4d34-9fa8-3ec62e524395
 md"# Sets
-Similar to sets in mathematics, the `Set` type describes a collection of elements. 
+Similar to sets in mathematics, the `Set` type describes a collection of elements.
 
 All elements in a `Set` are unique and their ordering doesn't matter:"
 
@@ -300,7 +300,7 @@ is_mammal.([david, carlos, paula, patty])
 
 # ╔═╡ 6a3ac4fb-ad86-468c-8583-6fe0623b4bfd
 md"## Mutable types
-Structs can be made mutable, meaning that their fields can be modified after their creation. 
+Structs can be made mutable, meaning that their fields can be modified after their creation.
 
 The downside of this flexibility is a loss in performance since these objects will generally be allocated on the heap.
 "
@@ -401,8 +401,8 @@ md"## Performance"
 # ╔═╡ 4aab2185-68ce-40a7-b1df-db1675483f53
 warning_box(
     md"""
-If you want to get the best performance out of your Julia code, 
-**only use parametric and concrete types** for type annotations and 
+If you want to get the best performance out of your Julia code,
+**only use parametric and concrete types** for type annotations and
 **never abstract types** (e.g. `Number`, `Real`).
 
 Using no type annotations should also be avoided, since this defaults to the abstract type `Any`.
@@ -450,7 +450,7 @@ md"Addition on all of these structs computes the same correct result:"
 md"But the performance varies a lot:"
 
 # ╔═╡ dc0fb8ff-860a-468d-96a5-2f0a3a8780b4
-md"These differences in performance depend on whether Julia can infer the types of the struct fields (here `x` and `y`). 
+md"These differences in performance depend on whether Julia can infer the types of the struct fields (here `x` and `y`).
 If types can be infered, Julia can generate more specialized and therefore more performant code:
 
 * fields of `PointNoType` can be of `Any` type: Julia can't specialize code ❌

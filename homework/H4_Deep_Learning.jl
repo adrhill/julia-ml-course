@@ -48,13 +48,13 @@ html"""
 			Homework 4: Deep Learning
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24<br>
+			TU Berlin, Summer Semester 2024<br>
 		</p>
 	</div>
 """
 
 # ╔═╡ ce8fd3c2-4fe8-4408-8479-efc81f1a4147
-md"Due date: **Monday, December 18th 2023 at 23:59**"
+md"Due date: **Monday, May 20th 2024 at 23:59**"
 
 # ╔═╡ 42a8576f-d0ab-4915-864f-c1c2fd65e4e4
 md"### Student information"
@@ -178,7 +178,7 @@ convert2image(MNIST, x), y
 
 # ╔═╡ efb62b97-c6fc-495f-a0ae-bf0c2e5485d3
 md"#### Preprocessing
-We preprocess the data for use with Flux.jl by one-hot encoding the targets `y` 
+We preprocess the data for use with Flux.jl by one-hot encoding the targets `y`
 and reshaping the features `x` to WHCN (width, height, color channels, batch size) format:"
 
 # ╔═╡ a173003f-9b32-4042-a263-b5af35106587
@@ -209,7 +209,7 @@ md"Run training: $(@bind run_training CheckBox(default=false))"
 # ╔═╡ fe22ab4f-6119-4397-ac25-ce840a176777
 if run_training # Do NOT modify this!
 
-    # Write your code here
+	# Write your code here
 end
 
 # ╔═╡ ae26551a-d4dd-4b37-a02d-a089de359f70
@@ -333,8 +333,8 @@ task(
 # ╔═╡ 0b11ef46-0c80-4255-bb22-23281704916f
 task(
     md"""
-Adapt the training loop from *Lecture 7* 
-to train the LeNet-5 model from exercise 1.2 (with `MyDense` layers) 
+Adapt the training loop from *Lecture 7*
+to train the LeNet-5 model from exercise 1.2 (with `MyDense` layers)
 on the Fashion-MNIST dataset.
 1. Use the `Flux.logitcrossentropy` loss function
 2. Use a suitable gradient-based optimizer, e.g. `Descent` or `Adam`

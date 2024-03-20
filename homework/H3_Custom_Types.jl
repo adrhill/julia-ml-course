@@ -48,13 +48,13 @@ html"""
 			Homework 3: Custom types
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Winter Semester 23/24<br>
+			TU Berlin, Summer Semester 2024<br>
 		</p>
 	</div>
 """
 
 # ╔═╡ bdcb27c5-0603-49ac-b831-d78c558b31f0
-md"Due date: **Monday, December 11th 2023 at 23:59**"
+md"Due date: **Monday, May 13th 2024 at 23:59**"
 
 # ╔═╡ ddd6e83e-5a0d-4ff0-afe4-dedfc860994c
 md"### Student information"
@@ -685,8 +685,8 @@ Markdown.MD(
         "Task",
         "Optional task (3 extra points)",
         [
-            md"Implement the *Adam* optimizer, which was introduced 
-            in [this paper](https://arxiv.org/abs/1412.6980) by Kingma and Ba. 
+            md"Implement the *Adam* optimizer, which was introduced
+            in [this paper](https://arxiv.org/abs/1412.6980) by Kingma and Ba.
             Add it to the visualization above and compare it to Optimizer.jl's Adam implementation.",
         ],
     ),
