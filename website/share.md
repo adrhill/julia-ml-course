@@ -20,7 +20,7 @@ It walks you through the process of the initial setup and the structure of a Jul
 ~~~
 \tableofcontents
 
-
+TODO: rewrite
 
 ### Semantic versioning
 It is good practice (and required for package registration) 
@@ -74,16 +74,7 @@ for example when pushing commits and opening pull requests.
 </div>
 ~~~
 
-### Package registration
-If you wrote a high quality, well tested package 
-and want to make it available to all Julia users through the package manager, 
-follow the [Registrator.jl instructions](https://github.com/JuliaRegistries/Registrator.jl). 
 
-People will then be able to install your package by writing
-
-```julia-repl
-(@v1.8) pkg> add MyPackage
-```
 
 ### Documentation
 Documentation is crucial and we expect you to document your functions sufficiently. 
@@ -159,6 +150,17 @@ To integrate CodeCov with your repository
 3. Follow the provided instructions to complete the setup. 
     * Note that *"Step 2: add Codecov to your GitHub Actions workflow yaml file"* 
       can be skipped: PkgTemplates already created this workflow for us
+
+### Package registration
+If you wrote a high quality, well tested package 
+and want to make it available to all Julia users through the package manager, 
+follow the [Registrator.jl instructions](https://github.com/JuliaRegistries/Registrator.jl). 
+
+People will then be able to install your package by writing
+
+```julia-repl
+(@v1.8) pkg> add MyPackage
+```
 
 ## References
 - The [Modern Julia Workflows](https://modernjuliaworkflows.github.io/sharing/)

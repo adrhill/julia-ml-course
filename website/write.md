@@ -21,6 +21,8 @@ It walks you through the process of the initial setup and the structure of a Jul
 \tableofcontents
 
 
+TODO: replace blue boxes
+
 ## Setting up a Package
 
 ### PkgTemplates.jl
@@ -235,39 +237,6 @@ test = ["Test"]
   checking out its dependencies in the <code>Project.toml</code> is a good starting point.</p>
 </div>
 ~~~
-
-### Semantic versioning
-It is good practice (and required for package registration) 
-to enter `[compat]` entries for all dependencies.
-This allows us to update dependencies without having to worry about our code breaking.
-
-By convention, Julia packages are expected to follow
-[Semantic Versioning](https://semver.org/lang/de/) to specify version numbers:
-
-> Given a version number MAJOR.MINOR.PATCH, increment the:
-> 1. MAJOR version when you make incompatible API changes
-> 1. MINOR version when you add functionality in a backward compatible manner
-> 1. PATCH version when you make backward compatible bug fixes
-> 1. Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
-
-> Major version zero (0.y.z) is for initial development.
-> Anything MAY change at any time. The public API SHOULD NOT be considered stable.
-
-Let's add a compat entry for CSV.jl. Using `status` in Pkg-mode, we can inspect the current version:
-```julia-repl
-(MyPackage) pkg> status
-Project MyPackage v1.0.0-DEV
-Status `~/.julia/dev/MyPackage/Project.toml`
-  [336ed68f] CSV v0.10.10
-``` 
-
-Let's declare in the `Project.toml` that only versions `0.10.X` of CSV.jl are permitted. 
-This will allow us to get updates that patch bugs, but not updates with breaking changes.
-```toml
-[compat]
-CSV = "0.10"
-julia = "1"
-```
 
 ### Structure of the source folder
 By convention, the *"main"* file of a project has the same name as the project.
