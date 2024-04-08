@@ -10,7 +10,7 @@
   <p>
     <h1>
       <b>
-        Julia programming for Machine Learning
+        Julia Programming for Machine Learning
       </b>
     </h1>
     
@@ -20,7 +20,7 @@
   </p>
 </div>
 
-Course material and website for the [Julia programming for Machine Learning][site-url] course (JuML) at the [TU Berlin Machine Learning group][ml-group-url].
+Course material and website for the [Julia Programming for Machine Learning][site-url] course (JuML) at the [TU Berlin Machine Learning group][ml-group-url].
 
 ## Installation
 Follow the [installation instructions](https://adrhill.github.io/julia-ml-course/E1_Installation/)

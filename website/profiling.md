@@ -1,4 +1,4 @@
-@def title = "Julia programming for Machine Learning"
+@def title = "Julia Programming for Machine Learning"
 @def tags = ["index", "profiling"]
 
 # Profiling 
@@ -18,7 +18,7 @@ We will demonstrate both the Julia VSCode extension and editor-agnostic packages
 <div class="admonition note">
   <p class="admonition-title">Note</p>
   <p>These notes are designed to accompany a live demonstration in the 
-  <i>Julia programming for Machine Learning</i> class at TU Berlin.</p>
+  <i>Julia Programming for Machine Learning</i> class at TU Berlin.</p>
 </div>
 ~~~
 
