@@ -14,14 +14,6 @@ We will demonstrate both the Julia VSCode extension and editor-agnostic packages
 ~~~
 \tableofcontents
 
-~~~
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  <p>These notes are designed to accompany a live demonstration in the 
-  <i>Julia Programming for Machine Learning</i> class at TU Berlin.</p>
-</div>
-~~~
-
 Let's assume we want to compute the sum of 
 [proper divisors](https://mathworld.wolfram.com/ProperDivisor.html) of some integer $n$.
 
@@ -266,5 +258,5 @@ close(io)
 ~~~
 
 ## Acknowledgements
-The code snippet used for debugging was taken from Ole Kröger's blog-post 
-[*Debugging in Julia - Two different ways*](https://opensourc.es/blog/basics-debugging/).
+The code snippet was adapted from Ole Kröger's blog post 
+[*"Debugging in Julia - Two different ways"*](https://opensourc.es/blog/basics-debugging/).

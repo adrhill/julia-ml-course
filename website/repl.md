@@ -2,38 +2,12 @@
 @def tags = ["index", "workflows"]
 
 # The Julia REPL
-Learning a programming language doesn't only require learning new syntax, 
-but also getting proficient with new tools, 
-an aspect of programming education that is [often overlooked](https://missing.csail.mit.edu/).
-After having only worked in Pluto notebooks so far, 
-we will now take a look at alternative workflows. 
-
-For this purpose, we will first cover the Julia package manager **Pkg**, 
-which allows us to write reproducible code.
-We will then move on to a REPL-based workflow that works with all editors.
-Julia developers commonly have an interactive REPL session running while working on their code.
-
-We will then introduce the structure of a Julia package by generating an empty package
-with [PkgTemplates.jl](https://github.com/JuliaCI/PkgTemplates.jl)
-and showcase the VSCode IDE with the [Julia extension](https://www.julia-vscode.org/).
-Finally, we will demonstrate [DrWatson.jl](https://github.com/JuliaDynamics/DrWatson.jl),
-a template and "assistant" for scientific experiments, 
-and demonstrate how to run Julia programs from the command-line.
-
-These workflows should empower you to write homework,  projects and even your thesis in Julia!
 
 ~~~
 <h2>Table of Contents</h2>
 ~~~
 \tableofcontents
 
-~~~
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  <p>These notes are designed to accompany a live demonstration in the 
-  <i>Julia Programming for Machine Learning</i> class at TU Berlin.</p>
-</div>
-~~~
 
 ## REPL-based workflows
 The most basic workflow uses the Julia REPL in combination with your favorite editor.
@@ -144,17 +118,4 @@ atreplinit() do repl
 end
 ```
 
-## VSCode
-In combination with the [Julia extension](https://www.julia-vscode.org/), 
-VSCode is the most commonly recommended editor for development in Julia. 
-It provides several features and shortcuts that make package development convenient:
-- debugging with breakpoints
-- running code (or only sections of the code)
-- code completion
-- code formatting
-- view *"workspace"* of global variables
-- view documentation
-- view plots
-- [keyboard shortcuts](https://www.julia-vscode.org/docs/stable/userguide/keybindings/)
 
-We will demonstrate the extension during the lecture.

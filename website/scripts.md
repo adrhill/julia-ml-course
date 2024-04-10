@@ -7,14 +7,6 @@
 ~~~
 \tableofcontents
 
-~~~
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  <p>These notes are designed to accompany a live demonstration in the 
-  <i>Julia Programming for Machine Learning</i> class at TU Berlin.</p>
-</div>
-~~~
-
 ## Calling scripts from the command line
 Working on compute-clusters often required scheduling "jobs" from the command-line.
 To run a Julia script in the file `my_script.jl`, run the following command:
@@ -88,7 +80,7 @@ julia> initialize_project("MyScientificProject"; authors="Adrian Hill", force=tr
 ```
 The default setup will initialize a file structure that looks as follows:
 
-```bash
+```plaintext
 │projectdir          <- Project's main folder. It is initialized as a Git
 │                       repository with a reasonable .gitignore file.
 │
@@ -131,7 +123,3 @@ The DrWatson workflow is best summarized in the following picture from the
 
 ![DrWatson workflow](/assets/drwatson_workflow.png)
 
-## Further reading
-Additional resources on workflows in Julia can be found on
-the [Modern Julia Workflows](https://modernjuliaworkflows.github.io) website 
-and [JuliaNotes](https://m3g.github.io/JuliaNotes.jl/stable/).

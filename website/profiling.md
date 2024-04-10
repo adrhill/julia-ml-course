@@ -14,14 +14,6 @@ We will demonstrate both the Julia VSCode extension and editor-agnostic packages
 ~~~
 \tableofcontents
 
-~~~
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  <p>These notes are designed to accompany a live demonstration in the 
-  <i>Julia Programming for Machine Learning</i> class at TU Berlin.</p>
-</div>
-~~~
-
 To demonstrate profiling, we are going to use an example from the 
 [ProfileView.jl](https://github.com/timholy/ProfileView.jl) documentation:
 
