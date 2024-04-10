@@ -15,22 +15,22 @@ To create a new environment, enter Pkg-mode in the Julia REPL and type `activate
 followed by the name of your new environment:
 
 ```julia-repl
-(@v1.8) pkg> activate MyTest # create new environment called  "MyTest"
-  Activating new project at `~/.julia/environments/v1.8/MyTest`
+(@v1.10) pkg> activate MyTest # create new environment called  "MyTest"
+  Activating new project at `~/.julia/environments/v1.10/MyTest`
 
 (@MyTest) pkg> # environment is active
 ```
 
-This creates a new folder at `~/.julia/environments/v1.8/MyTest` 
+This creates a new folder at `~/.julia/environments/v1.10/MyTest` 
 containing a `Project.toml` and `Manifest.toml`.
 Adding packages to this environment will update both of these files:
 
 ```julia-repl
 (@MyTest) pkg> add LinearAlgebra
    Resolving package versions...
-    Updating `~/.julia/environments/v1.8/MyTest/Project.toml`
+    Updating `~/.julia/environments/v1.10/MyTest/Project.toml`
   [37e2e46d] + LinearAlgebra
-    Updating `~/.julia/environments/v1.8/MyTest/Manifest.toml`
+    Updating `~/.julia/environments/v1.10/MyTest/Manifest.toml`
   [56f22d72] + Artifacts
   [8f399da3] + Libdl
   [37e2e46d] + LinearAlgebra
@@ -113,7 +113,7 @@ In your Julia REPL, enter package mode and type `activate --temp`.
 This will create an environment with a randomized name in a temporary folder.
 
 ```julia-repl
-(@v1.8) pkg> activate --temp
+(@v1.10) pkg> activate --temp
   Activating new project at `/var/folders/74/wcz8c9qs5dzc8wgkk7839k5c0000gn/T/jl_9AGcg1`
 
 (jl_9AGcg1) pkg>

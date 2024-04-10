@@ -353,7 +353,7 @@ follow the [Registrator.jl instructions](https://github.com/JuliaRegistries/Regi
 People will then be able to install your package by writing
 
 ```julia-repl
-(@v1.8) pkg> add MyPackage
+(@v1.10) pkg> add MyPackage
 ```
 
 ## Writing Your Code
