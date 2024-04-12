@@ -1,47 +1,49 @@
 @def title = "Julia Programming for Machine Learning"
 @def tags = ["index", "workflows"]
 
-# Workflows
-Learning a programming language doesn't only require learning new syntax, 
-but also getting proficient with new tools, 
-an aspect of programming education that is [often overlooked](https://missing.csail.mit.edu/).
-After having only worked in Pluto notebooks so far, 
-we will now take a look at alternative workflows. 
+# Workflow Overview
 
-For this purpose, we will first cover the Julia package manager **Pkg**, 
-which allows us to write reproducible code.
-We will then move on to a REPL-based workflow that works with all editors.
-Julia developers commonly have an interactive REPL session running while working on their code.
+Learning a programming language isn't just about learning new syntax, 
+it's also getting proficient with new tools and workflows, 
+an aspect of programming education that is often overlooked.
+Having only worked in Pluto notebooks so far, 
+we will now take a look at alternative workflows.
 
-We will then introduce the structure of a Julia package by generating an empty package
-with [PkgTemplates.jl](https://github.com/JuliaCI/PkgTemplates.jl)
-and showcase the VSCode IDE with the [Julia extension](https://www.julia-vscode.org/).
-Finally, we will demonstrate [DrWatson.jl](https://github.com/JuliaDynamics/DrWatson.jl),
-a template and "assistant" for scientific experiments, 
-and demonstrate how to run Julia programs from the command-line.
+We will start by looking at the Julia package manager **Pkg**,
+which allows us to write reproducible code by defining [**environments**](/environments).
+We will then [**enhance our REPL**](/repl):
+Julia developers usually have an interactive REPL session running while working on their code.
+We will take a quick look at a REPL-based workflow that works with all editors, before moving on to [VSCode with the Julia extension](https://www.julia-vscode.org/) that we recommend using for the project.
 
-These workflows should empower you to write homework,  projects and even your thesis in Julia!
+We will then show [**how to write a Julia package**](/write),
+convering the initial setup, the structure of a package, documentation and testing.
+This is followed up by a lecture on [**how to share packages**](/write) on platforms like GitHub, GitLab and the like. This includes hosting documentation and running CI tests. 
 
-TODO: write better introduction
+While writing your package, you will most likely see some of your package tests fail.
+For non-trivial bugs, knowing how to use a [**debugger**](/debugging) is crucial.
+And once your code is running correctly, you probably want to make it run fast.
+Using a [**profiler**](/profiling) will tell you which parts of your code deserve your time and attention.
 
-~~~
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  <p>These notes are designed to accompany project work in the 
-  <i>JuML</i> class at TU Berlin.</p>
-</div>
-~~~
+Finally, we look at [**scripts and experiments**](/scripts).
+This is useful for ML research, where you will most likely be launching jobs on remote compute clusters from the command-line.
+We also demonstrate a template and "assistant" for scientific experiments.
 
+These workflows should empower you to write and share your own Julia packages!
+
+## Further reading
 ~~~
 <div class="admonition tip">
   <p class="admonition-title">Tip</p>
   <p>As an alternative to this page, we highly recommend reading 
-  <a href="https://modernjuliaworkflows.github.io/sharing/">Modern Julia Workflows</a>. 
-  The <i>"Sharing"</i> section can be considered a version of this page for advanced users.</p>
+  <a href="https://modernjuliaworkflows.github.io/sharing/">Modern Julia Workflows</a>.</p>
+  <p>The <i>"Sharing"</i> section can be considered a version of this page for advanced users.</p>
 </div>
 ~~~
 
-## Further reading
-Additional resources on workflows in Julia can be found in:
-* [Modern Julia Workflows](https://modernjuliaworkflows.github.io)
-* [JuliaNotes](https://m3g.github.io/JuliaNotes.jl/stable/)
+* [The Missing Semester of Your CS Education](https://missing.csail.mit.edu/): 
+  MIT course covering general programming tools and worflows. Recommended reading:
+  * [Using the shell](https://missing.csail.mit.edu/2020/course-shell/)
+  * [Version control using Git](https://missing.csail.mit.edu/2020/version-control/)
+* [JuliaNotes](https://m3g.github.io/JuliaNotes.jl/stable/):
+  Collection of notes on everything from performance tips to package writing 
+  

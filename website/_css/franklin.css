@@ -119,14 +119,14 @@ h6 {
   font-size: 2.2rem;
   border-bottom: 3px solid var(--rule-color);
   margin-top: 1.8rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 2rem;
 }
 
 .franklin-content h2 {
   font-size: 1.8rem;
   border-bottom: 2px dotted var(--rule-color);
   margin-top: 1.8rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .franklin-content h3 {
@@ -457,7 +457,7 @@ https://github.com/fonsp/Pluto.jl/blob/f3d8946dd2743e605418d73cead26e6fcd79d11f/
 .admonition {
   border-radius: 8px;
   margin-block-start: 2em;
-  margin-block-end: 3em;
+  margin-block-end: 1.5em;
 }
 
 .admonition .admonition-title {
