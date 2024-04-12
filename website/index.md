@@ -14,7 +14,6 @@ offered by Prof. Klaus-Robert Müller's
 ## Goals
 The goal of this course is to give you an introduction to the 
 [Julia programming language](https://julialang.org) and its Machine Learning ecosystem.
-
 After taking this class, you should be able to write reproducible, unit-tested Julia code 
 and do Machine Learning research in Julia. 
 

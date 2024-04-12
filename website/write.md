@@ -2,18 +2,8 @@
 
 In Julia, packages are the natural medium for code that doesn't fit in a simple script.
 While this might sound excessive at first, it provides many conveniences.
-
 This page serves as a guide for creating your first Julia package. 
 It walks you through the process of the initial setup and the structure of a Julia package. 
-
-~~~
-<div class="admonition tip">
-  <p class="admonition-title">Tip</p>
-  <p>As an alternative to this page, we highly recommend reading 
-  <a href="https://modernjuliaworkflows.github.io/sharing/">Modern Julia Workflows</a>. 
-  The <i>"Sharing"</i> section can be considered a version of this page for advanced users.</p>
-</div>
-~~~
 
 ~~~
 <h2>Table of Contents</h2>
@@ -37,7 +27,7 @@ using PkgTemplates
 
 template = Template(;
     user="YourGitHubUsername",
-    authors="Firstname Lastname <YourEmail@campus.tu-berlin.de>",
+    authors="FirstName LastName <YourEmail@campus.tu-berlin.de>",
     julia=v"1.6",
     plugins=[
         License(; name="MIT"),
@@ -49,7 +39,15 @@ template = Template(;
 )
 ```
 
-Make sure the `user` and `authors` fields reflect your GitHub account name and authorship details.
+~~~
+<div class="admonition warning">
+  <p class="admonition-title">⚠️ Don't just copy & paste ⚠️</p>
+  <p>Make sure to customize the <code>user</code> and <code>authors</code> fields with your GitHub account,  name, and email address!</p>
+</p>
+</div>
+~~~
+
+ reflect your GitHub account name and authorship details.
 
 `julia=v"1.6"` sets the minimum Julia version requirement to 1.6 for package compatibility.
 We chose 1.6 because it is the last Long-term support (LTS) release.
@@ -60,7 +58,9 @@ Regarding the plugins within the `plugins` array:
 - `GitHubActions()` sets up continuous integration (CI) via GitHub Actions with default parameters.
 - `Codecov()`sets up CodeCov for assessing code coverage, which quantifies the proportion of source code exercised by tests.
 - `Documenter{GitHubActions}()` includes Documenter for generating package documentation, 
-   with the `GitHubActions` specifier indicating deployment to GitHub Pages via GitHubActions.
+  with the `GitHubActions` specifier indicating deployment to GitHub Pages via GitHubActions.
+- `Formatter(; style="blue")` will tell JuliaFormatter.jl and the Julia VSCode extension 
+  to use the [Blue code style](https://github.com/JuliaDiff/BlueStyle) for automatic code formatting 
 
 After you created the template, run 
 ```julia-repl
