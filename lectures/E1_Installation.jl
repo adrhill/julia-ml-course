@@ -72,15 +72,15 @@ Install Julia [from the Windows store](https://www.microsoft.com/store/apps/9NJN
 winget install julia -s msstore
 ```
 #### Setting the default version
-For this class, we are going to use Julia 1.8. To set it as the default version on your machine, run
+For this class, we are going to use Julia 1.10. To set it as the default version on your machine, run
 ```bash
-juliaup default 1.8
+juliaup default 1.10
 ```
 """
 
 # ╔═╡ 3133b51c-c1c0-43d3-8938-1179e9466e44
 tip(
-    md"If these options don't work out for you, you can also [manually download Julia 1.8](https://julialang.org/downloads/).",
+    md"If these options don't work out for you, you can also [manually download Julia 1.10](https://julialang.org/downloads/).",
 )
 
 # ╔═╡ a619a607-aeb6-4ca1-b380-4cd41c8e6768
@@ -96,14 +96,14 @@ If your installation was successful, you should be greeted by the Julia Logo and
 """
 
 # ╔═╡ 1af86ae9-22a6-43f0-80b5-b8d6026abb39
-warning_box(md"Make sure you are using Julia 1.8!")
+warning_box(md"Make sure you are using Julia 1.10!")
 
 # ╔═╡ 7c9f3896-f9d8-477d-8a20-53114f6cc8ff
 md"""## Using the package manager
 Julia's package manager is called **Pkg**. In the Julia REPL, open the package manager by typing a closing square bracket **`]`**.
 
 
- The REPL prompt should change from `julia>` to `(@1.8) pkg>`:
+ The REPL prompt should change from `julia>` to `(@1.10) pkg>`:
 
 ![Pkg](https://i.imgur.com/rzH4rbv.png)
 
@@ -117,8 +117,8 @@ Markdown.MD(
         "Environments:",
         [
             md"""
-            The name in parenthesis (here `@v1.8`) is the name of the currently activated environment.
-            `(@v1.8)` is the global environment of our Julia 1.8 installation.
+            The name in parenthesis (here `@v1.10`) is the name of the currently activated environment.
+            `(@v1.10)` is the global environment of our Julia 1.10 installation.
 
             We will learn more about Pkg and environments in a later lecture!
             """,
@@ -130,9 +130,9 @@ Markdown.MD(
 md"""## Installing packages
 Packages can be added by typing `add PackageName` in the package manager.
 
-For the purpose of this class, we are going to install Pluto in our global `(@v1.8)` environment:
+For the purpose of this class, we are going to install Pluto in our global `(@v1.10)` environment:
 ```
-(@v1.8) pkg> add Pluto
+(@v1.10) pkg> add Pluto
 ```
 
 You should see Pkg install Pluto. Note that the package versions in your installation **don't** have to exactly match up with this screenshot:

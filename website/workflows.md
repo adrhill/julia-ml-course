@@ -40,36 +40,36 @@ We have already encountered Julia's package manager **Pkg** during the installat
 In the Julia REPL, Pkg can be opened by typing a closing square bracket `]`.
 
 Depending on your installed version of Julia, the prompt should change from `julia>`
-to `(@1.8) pkg>`:
+to `(@1.10) pkg>`:
 
 ```julia-repl
 julia> # Default Julia-mode. Type ] to enter Pkg-mode.
 
-(@v1.8) pkg> # Prompt changes to indicate Pkg-mode
+(@v1.10) pkg> # Prompt changes to indicate Pkg-mode
 
 ```
 
 To exit the package-manage mode, press backspace.
-The name in parenthesis, here `@v1.8`, is the name of the currently activated environment.
-`@v1.8` is the global environment of our Julia 1.8 installation.
+The name in parenthesis, here `@v1.10`, is the name of the currently activated environment.
+`@v1.10` is the global environment of our Julia 1.10 installation.
 
 By typing `status` in Pkg-mode, we can print a list of installed packages:
 
 ```julia-repl
-(@v1.8) pkg> status
-Status `~/.julia/environments/v1.8/Project.toml`
+(@v1.10) pkg> status
+Status `~/.julia/environments/v1.10/Project.toml`
   [5fb14364] OhMyREPL v0.5.20
   [295af30f] Revise v3.5.2
 ```
 
-In my case, two packages are installed in the `@v1.8` environment.
+In my case, two packages are installed in the `@v1.10` environment.
 
-Let's take a look at the indicated folder `~/.julia/environments/v1.8`
+Let's take a look at the indicated folder `~/.julia/environments/v1.10`
 in a new shell session.
 It contains two files: a `Project.toml` and a `Manifest.toml`.
 
 ```bash
-$ cd ~/.julia/environments/v1.8
+$ cd ~/.julia/environments/v1.10
 
 $ ls
 Manifest.toml Project.toml
@@ -143,22 +143,22 @@ To create a new environment, enter Pkg-mode in the Julia REPL and type `activate
 followed by the name of your new environment:
 
 ```julia-repl
-(@v1.8) pkg> activate MyTest # create new environment called  "MyTest"
-  Activating new project at `~/.julia/environments/v1.8/MyTest`
+(@v1.10) pkg> activate MyTest # create new environment called  "MyTest"
+  Activating new project at `~/.julia/environments/v1.10/MyTest`
 
 (@MyTest) pkg> # environment is active
 ```
 
-This creates a new folder at `~/.julia/environments/v1.8/MyTest` 
+This creates a new folder at `~/.julia/environments/v1.10/MyTest` 
 containing a `Project.toml` and `Manifest.toml`.
 Adding packages to this environment will update both of these files:
 
 ```julia-repl
 (@MyTest) pkg> add LinearAlgebra
    Resolving package versions...
-    Updating `~/.julia/environments/v1.8/MyTest/Project.toml`
+    Updating `~/.julia/environments/v1.10/MyTest/Project.toml`
   [37e2e46d] + LinearAlgebra
-    Updating `~/.julia/environments/v1.8/MyTest/Manifest.toml`
+    Updating `~/.julia/environments/v1.10/MyTest/Manifest.toml`
   [56f22d72] + Artifacts
   [8f399da3] + Libdl
   [37e2e46d] + LinearAlgebra
@@ -176,7 +176,7 @@ In your Julia REPL, enter package mode and type `activate --temp`.
 This will create an environment with a randomized name in a temporary folder.
 
 ```julia-repl
-(@v1.8) pkg> activate --temp
+(@v1.10) pkg> activate --temp
   Activating new project at `/var/folders/74/wcz8c9qs5dzc8wgkk7839k5c0000gn/T/jl_9AGcg1`
 
 (jl_9AGcg1) pkg>
@@ -692,7 +692,7 @@ follow the [Registrator.jl instructions](https://github.com/JuliaRegistries/Regi
 People will then be able to install your package by writing
 
 ```julia-repl
-(@v1.8) pkg> add MyPackage
+(@v1.10) pkg> add MyPackage
 ```
 
 ## Experiments with DrWatson.jl
