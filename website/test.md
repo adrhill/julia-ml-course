@@ -1,7 +1,7 @@
 
 # Package tests
 
-In this section, we add tests to the package we started in [Writing Packages](/write).
+In this section, we add tests to the package we started in [Writing a Package](/write).
 
 ~~~
 <h2>Table of Contents</h2>
@@ -12,7 +12,7 @@ In this section, we add tests to the package we started in [Writing Packages](/w
 
 ## Running tests
 By convention, package tests are located in a folder called `test`.
-The main file that includes all other tests is called `runtest.jl`.
+The "main" file that includes all other tests is called `runtest.jl`.
 
 ```julia
 # Contents of test/runtests.jl
@@ -41,7 +41,7 @@ MyPackage.jl  | None  0.0s
      Testing MyPackage tests passed
 ```
 
-All of our tests passed since we didn't have any!
+All of our tests pass since **we don't have any** that could fail!
 
 ## Adding tests
 
@@ -63,7 +63,7 @@ using Test
 end
 ```
 
-Let's run our new test:
+Let's run our new test suite:
 
 ```julia-repl
 (MyPackage) pkg> test
@@ -73,7 +73,8 @@ MyPackage.jl  |    1      1  0.0s
      Testing MyPackage tests passed 
 ```
 
-For comparisons on floating point numbers which contain numerical errors, use `isapprox` (`≈`) instead of `==`.
+To compare floating point numbers, which may contain numerical rounding errors, use `isapprox` or `≈` (`\approx<TAB>`) instead of `==`.
+The `isapprox` function allows you to specify absolute and relative numerical tolerances.
 
 ## Adding test dependencies
 
@@ -141,7 +142,7 @@ end
 Every time you run your tests through Pkg's `test` command, Julia resolves a fresh virtual environment for testing. It also runs the **entire** test suite. 
 This is great for the purpose of reproducibility but it can waste a lot of time when you want to quickly iterate on a project with many dependencies.
 
-The package [TestEnv.jl](https://github.com/JuliaTesting/TestEnv.jl) allows you to quickly activate a copy of your test environment using the function `TestEnv.activate()`.
+The package [TestEnv.jl](https://github.com/JuliaTesting/TestEnv.jl) allows you to activate a copy of your test environment using the function `TestEnv.activate()`.
 By [adding `using TestEnv` to your `startup.jl`](/repl), it is always available to you.
 
 Once you activated your test environment, you can manually include individual test files.
@@ -153,11 +154,11 @@ julia> TestEnv.activate()
 
 (jl_jsA8yy) pkg>  # new copy of your test environment
 
-julia> include("test/test_timestwo.jl");
+julia> include("test/test_timestwo.jl"); # run only one test file
 Test Summary: | Pass  Total  Time
 timestwo      |    1      1  0.1s
 ```
-Using [OhMyREPL](/repl), you can move through your REPL history using the up-arrow. This allows you to quickly re-run your tests by calling `include("test/test_timestwo.jl");` again.
+Using [OhMyREPL](/repl), you can move through your REPL history using the up and down arrow keys. This allows you to quickly re-run your tests by calling `include("test/test_timestwo.jl");` again.
 
 ## Further reading
 - [Test.jl documentation](https://docs.julialang.org/en/v1/stdlib/Test/)

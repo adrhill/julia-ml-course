@@ -14,6 +14,8 @@ We will demonstrate both the Julia VSCode extension and editor-agnostic packages
 ~~~
 \tableofcontents
 
+## Problem setting
+
 Let's assume we want to compute the sum of 
 [proper divisors](https://mathworld.wolfram.com/ProperDivisor.html) of some integer $n$.
 
@@ -35,6 +37,8 @@ which currently returns the wrong result for $n = 4$:
 sum_of_divisors(4) # ⚠️ should return 3, but returns 7
 7
 ```
+
+## Debugging
 
 ### VSCode extension
 Using the Julia VSCode extension, we can click on the left on the left-most column 

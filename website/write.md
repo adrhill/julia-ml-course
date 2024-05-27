@@ -5,7 +5,7 @@ While this might sound excessive at first, it provides many conveniences.
 This page serves as a guide for creating your first Julia package. 
 
 !!! warning
-    This page assumes you followed the [Package Set-Up](/setup) page.
+    This page assumes you followed the [Setting up a Julia package](/setup) page.
 
 ~~~
 <h2>Table of Contents</h2>
@@ -43,7 +43,7 @@ To be able to interact with the code that you are writing, you first have to act
 
 You could manually open a terminal, start a Julia REPL, activate Pkg mode and type `activate .`, but the Julia VSCode extension provides a keyboard shortcut for this!
 
-Typing `Alt+j Alt+o` (`option+j option+o` on macOS) opens a Julia REPL in a terminal and directly activates your local environment:
+Typing `Alt+j Alt+o` (`option+j option+o` on macOS) opens a Julia REPL and directly activates your local environment:
 
 ```julia-repl
 julia> # type ] to see which environment is active...
@@ -51,12 +51,12 @@ julia> # type ] to see which environment is active...
 (MyPackage) pkg> # ... it's your project environment!
 ```
 
-If this doesn't work on the first try, you might have to select your *"Julia env"* in the bottom bar of VSCode once.
+If this doesn't work on the first try, you might have to manually select your *"Julia env"* in the bottom bar of VSCode once.
 
 ### Starting a REPL without VSCode
 
 To start a REPL and activate your local environment,
-launch julia with the flag `--project`. The Julia banner can be hidden via `--banner=no`.
+launch Julia with the flag `--project`. The Julia banner can be hidden via `--banner=no`.
 
 ```bash
 $ cd ~/.julia/dev/MyProject  # make sure you're in the right folder
@@ -69,11 +69,10 @@ $ julia --project --banner=no
 
 ## Package environments
 
-### Adding package dependencies
-
 !!! tip
     Make sure to read the [page on environments](/environments) first!
 
+### Adding package dependencies
 
 Now that our package environment is activated, let's add a dependency to it, e.g. CSV.jl:
 
@@ -114,22 +113,17 @@ CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 julia = "1.10"
 ```
 
-* our package has a name, a unique identified called a UUID, a version number and information
+* our package has a name, a unique identifier called a UUID, a version number and information
   about the package author
 * adding CSV.jl created an entry in the dependency section `[deps]`
 * there is a new `[compat]` section to specify package compatibility bounds
-   * our package is compatible with Julia versions $\ge$ `1.10` and smaller than `2.0` 
+   * our package is compatible with Julia versions $\ge$ `1.10` (and smaller than `2.0`) 
    * compat entries for external packages like CSV.jl have to be added manually
 
-~~~
-<div class="admonition tip">
-  <p class="admonition-title">Tip</p>
-  <p>When looking at a new package, 
-  checking out its dependencies in the <code>Project.toml</code> is a good starting point.</p>
-</div>
-~~~
+!!! tip
+    When looking at a new package, checking out its dependencies in the `Project.toml` is a good starting point.
 
-### Semantic versioning
+### Semantic Versioning
 It is good practice (and required for package registration) 
 to enter `[compat]` entries for all dependencies.
 This allows us to update dependencies without having to worry about our code breaking.
@@ -165,9 +159,8 @@ julia = "1.10"
 ```
 
 ## The source folder
-By convention, the "main" file of your project has the same name as the project.
-PkgTemplates already created this file `src/MyPackage.jl` for us, 
-which defines an empty module with the same name as our package: 
+By convention, the "main" file of your source code has the same name as the project, in our case `src/MyPackage.jl`.
+PkgTemplates already created this file for us, which defines an empty module of the same name: 
 
 ```julia
 module MyPackage
@@ -177,13 +170,8 @@ module MyPackage
 end # end module
 ```
 
-~~~
-<div class="admonition tip">
-  <p class="admonition-title">Tip</p>
-  <p>When looking at the source code of a package, 
-  this file should be the first one you read.</p>
-</div>
-~~~
+!!! tip
+    When looking at the source code of a package, this file should be the first one you read.
 
 Let's add a simple function `timestwo` to our package:
 
@@ -198,7 +186,7 @@ export timestwo  # only exported functions from a module are available without n
 end # end module
 ```
 
-in an open REPL, you can directly use all exported functions:
+In an open REPL, you can directly use all **exported** functions:
 
 
 ```julia-repl
@@ -214,7 +202,8 @@ When we modify our source code, our REPL will automatically reload it, allowing 
 
 ### Organizing dependencies, source files and exports
 
-Once your project grows, you will want to add dependencies and organize your code in smaller source files.
+Once your project grows, you will want to use functions from dependencies 
+and organize your code by splitting it into smaller source files.
 
 It is recommended to explicitly import the functions you need from your dependencies.
 If you only need the `cholesky` function from LinearAlgebra.jl, don't just write `using LinearAlgebra` as it will import all functions exported by LinearAlgebra. Instead, specify `using LinearAlgebra: cholesky`.

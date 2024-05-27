@@ -70,8 +70,8 @@ The color of the blocks also contains information:
   a function is going to encounter before actually running the code.
   We will see how to fix these using Cthulhu.jl at the end of this lecture.
 
-### Importance of type inference
-Let's take a look at a [second example from ProfileView.jl](https://github.com/timholy/ProfileView.jl) 
+## Importance of type inference
+Let's take a look at a second example ([taken from ProfileView.jl](https://github.com/timholy/ProfileView.jl))
 to highlight the importance of type inference:
 
 ```julia
@@ -161,7 +161,8 @@ end
 ```
 
 This function "flips a coin" to determine whether `T` is the type `Int64` or `Float64`.
-It then samples 100 numbers of type `T` and sums them up. 
+It then samples 100 numbers of type `T` and sums them up.
+This is obviously type unstable, since Julia can't infer types before running the function.
 
 ### `@code_warntype`
 The output of `@code_warntype` is similar to to that of `@code_lowered`, which printed 
@@ -197,7 +198,7 @@ Type instabilities in inner functions calls are not always visible.
 
 [Cthulhu.jl](https://github.com/JuliaDebug/Cthulhu.jl) is the advanced user's version
 of `@code_warntype`. It allows us to recursively "descend deeper" into our code
-until we find a point at which inference failed.
+until we find a point at which type inference failed.
 
 Calling `@descend` on a function will start a command-line interface
 to interactively explore our code with type-annotations.
