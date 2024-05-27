@@ -19,10 +19,10 @@ An environment is an isolated workspace containing dependencies (external packag
 * For an image processing project, 
   you might want to define an environment containing *Images.jl* and *LinearAlgebra.jl*.
 
-Environments are managed by Julia's package manager **Pkg** and defined in two files called `Project.toml` and `Manifest.toml`.
+Environments are managed by Julia's package manager **Pkg** and defined in two files called the `Project.toml` and the `Manifest.toml`.
 
 
-## Creating a new virtal environment
+## Creating a new virtual environment
 To create a new environment, enter Pkg-mode in the Julia REPL by typing `]`, then type `activate`
 followed by the name of the environment you want to create.
 
@@ -36,9 +36,10 @@ Let's create an new environment called `MyDeepLearningEnv` that includes *MLData
 ```
 
 The printout informs us that this created a new project folder at `~/MyDeepLearningEnv`.
-The exact path depends on the folder in which you launched Julia, in this case my home directory, which is called `~` on Linux and macOS.
+The exact path depends on the folder in which you launched the Julia REPL. 
+In this case, I opened Julia in my home directory, which is called `~` on Linux and macOS.
 
-The project folder `MyDeepLearningEnv` contains a `Project.toml` and `Manifest.toml`.
+The project folder `MyDeepLearningEnv` contains a `Project.toml` and a Manifest.
 Adding packages to this environment will update both of these files:
 
 ```julia-repl
@@ -92,9 +93,7 @@ the `Project.toml` contains more information when used in packages.
 
 ### `Manifest.toml`
 
-
-
-Let's look at ours using `cat Manifest.toml`:
+Let's look at our Manifest using `cat Manifest.toml`:
 
 ```toml
 # This file is machine-generated - editing it directly is not advised
@@ -131,15 +130,14 @@ version = "2.3.0"
 ...
 ```
 
-The `Manifest.toml` is a much longer file than the `Project.toml`. 
-Mine contains 1267 lines of code, even though we just added two dependencies: Flux and MLDatasets!
+The Manifest is a much longer file than the `Project.toml`. 
+Mine contains 1267 lines of code, even though we just added two dependencies: Flux and MLDatasets
 How is this possible?
 
 This is due to the fact that the Manifest lists all packages in the dependency tree.
 Not only Flux and MLDatasets, but also their dependencies, the dependencies of their dependencies, and so on.
 For packages that are not part of Julia Base, Git tree hashes and versions are specified.
-The Manifest even includes external binaries (e.g. compiled C, C++ and Fortran programms) that might be required. 
-These binary packages usually end with a `_jll` suffix.
+The Manifest even includes external binaries (e.g. compiled C, C++ and Fortran programs) that might be required. 
 
 **This makes our environment fully reproducible!**
 
@@ -150,32 +148,40 @@ The environment of a project can be shared with others by providing a `Project.t
 This ensures that people will use the exact same dependencies as you did. 
 Changes in future releases of a package won't affect your results.  
 
-### Reason 2: Avoiding dependency conflicts
-As we will see in our lecture on [writing packages](/write), packages can set lower and upper version bounds,
-since developers don't know whether future releases of their dependencies will be compatible with their code.
+### Reason 2: Avoid dependency conflicts
+As we will see in our lecture on [writing packages](/write), packages can set lower and upper bounds on versions of their dependencies.
+This is useful since developers don't know whether future releases of their dependencies will be compatible with their code.
 
 Let's image a scenario where Flux and MLDataset both have a common dependency on a third package Foo.jl.
-When creating an environment, Pkg will look at the acceptable versions of Foo for both Flux and MLDataset and compute the intersection of acceptable versions.
+When creating an environment, Pkg will look at the acceptable versions of Foo for both Flux and MLDataset and compute the intersection of acceptable versions. This is called *resolving dependencies*.
 
-```julia-repl
-(MyDeepLearningEnv) pkg> status --outdated -m
-Status `~/MyDeepLearningEnv/Manifest.toml`
-⌅ [ab4f0b2a] BFloat16s v0.4.2 (<v0.5.0): Pickle
-⌅ [198e06fe] BangBang v0.3.40 (<v0.4.1): FLoops, MicroCollections, Transducers
-⌅ [128add7d] MicroCollections v0.1.4 (<v0.2.0): Transducers
-⌅ [5e0ebb24] Strided v1.2.3 (<v2.0.4): Pickle
-⌃ [28d57a85] Transducers v0.4.80 (<v0.4.81)
-⌅ [fe0851c0] OpenMPI_jll v4.1.6+0 (<v5.0.2+0): HDF5_jll
-```
+### Reason 3: Avoid polluting your global environment
 
+The more packages are installed in one environment, the harder it gets to resolve dependencies,
+and the more likely you are to use outdated versions of packages.
 
+For this reason, you should use separate environments for each project instead of installing everything into your global `(@v1.10)` environment.
+To show which of your dependencies are outdated, run `status --outdated` in Pkg-mode.
 
-### Reason 3: Avoid pollution of your global environment
+### Reason 4: Simplify troubleshooting
 
+This point is basically the same as *Reason 1*:
+When your code contains a bug, troubleshooting is simplified by making the bug reproducible.
+When opening an issue on GitHub, it is good practice to provide the following:
 
-### Reason 4: Simplify trouble-shooting
+* a description of your problem
+* a minimal example reproducing the bug
+* the output of Pkg's `status` 
+* the output of the `versioninfo()` function, which summarizes information about your system and Julia version
 
 ### Reason 5: Environments include binaries
+
+Most Julia code is written in pure Julia, but sometimes it is necessary to call external programs which have been compiled to binaries.
+Binaries are regular packages whose name ends on `_jll` by convention;
+for example `OpenBLAS_jll`, which contains [OpenBLAS](https://www.openblas.net) binaries.
+
+When installing a Julia package, Pkg automatically downloads and installs all required binaries. 
+Just like any other dependency, they are added to the Manifest and therefore fully reproducible.
 
 ## Temporary environments
 If you want to try an interesting new package you've seen on GitHub,
