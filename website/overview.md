@@ -31,12 +31,11 @@ These workflows should empower you to write and share your own Julia packages!
   <p class="admonition-title">Tip</p>
   <p>As an alternative to this page, we highly recommend reading 
   <a href="https://modernjuliaworkflows.github.io/sharing/">Modern Julia Workflows</a>.</p>
-  <p>The <i>"Sharing"</i> section can be considered a version of this page for advanced users.</p>
 </div>
 ~~~
 
 * [The Missing Semester of Your CS Education](https://missing.csail.mit.edu/): 
-  MIT course covering general programming tools and worflows. Recommended reading:
+  MIT course covering general programming tools and workflows. Recommended reading:
   * [Using the shell](https://missing.csail.mit.edu/2020/course-shell/)
   * [Version control using Git](https://missing.csail.mit.edu/2020/version-control/)
 * [JuliaNotes](https://m3g.github.io/JuliaNotes.jl/stable/):
