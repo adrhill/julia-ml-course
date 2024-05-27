@@ -74,7 +74,7 @@ winget install julia -s msstore
 #### Setting the default version
 For this class, we are going to use Julia 1.10. To set it as the default version on your machine, run
 ```bash
-juliaup default 1.8
+juliaup default 1.10
 ```
 """
 
@@ -103,7 +103,7 @@ md"""## Using the package manager
 Julia's package manager is called **Pkg**. In the Julia REPL, open the package manager by typing a closing square bracket **`]`**.
 
 
- The REPL prompt should change from `julia>` to `(@1.8) pkg>`:
+ The REPL prompt should change from `julia>` to `(@1.10) pkg>`:
 
 ![Pkg](https://i.imgur.com/rzH4rbv.png)
 
