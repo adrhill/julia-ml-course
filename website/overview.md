@@ -9,15 +9,10 @@ an aspect of programming education that is often overlooked.
 Having only worked in Pluto notebooks so far, 
 we will now take a look at alternative workflows.
 
-We will start by looking at the Julia package manager **Pkg**,
+We start out by looking at the Julia package manager **Pkg**,
 which allows us to write reproducible code by defining [**environments**](/environments).
-We will then [**enhance our REPL**](/repl):
-Julia developers usually have an interactive REPL session running while working on their code.
-We will take a quick look at a REPL-based workflow that works with all editors, before moving on to VSCode with the [Julia extension](https://www.julia-vscode.org/) that we recommend using for the project.
-
-We will then show [**how to write a Julia package**](/write),
-convering the initial setup, the structure of a package, documentation and testing.
-This is followed up by a lecture on [**how to share packages**](/write) on platforms like GitHub, GitLab and the like. This includes hosting documentation and running CI tests. 
+We then [**enhance our REPL**](/repl), since we will usually have an interactive REPL session running while working on our code.
+We will then show how to [**set up**](/setup), [**write**](/write) and [**test a Julia package**](/test).
 
 While writing your package, you will most likely see some of your package tests fail.
 For non-trivial bugs, knowing how to use a [**debugger**](/debugging) is crucial.

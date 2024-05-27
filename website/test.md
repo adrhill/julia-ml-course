@@ -158,3 +158,7 @@ Test Summary: | Pass  Total  Time
 timestwo      |    1      1  0.1s
 ```
 Using [OhMyREPL](/repl), you can move through your REPL history using the up-arrow. This allows you to quickly re-run your tests by calling `include("test/test_timestwo.jl");` again.
+
+## Further reading
+- [Test.jl documentation](https://docs.julialang.org/en/v1/stdlib/Test/)
+- [*Modern Julia Workflows* on testing](https://modernjuliaworkflows.github.io/sharing/#testing)

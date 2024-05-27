@@ -140,3 +140,4 @@ Let's go through this step by step:
 
 ## Further reading
 * [PkgTemplates.jl documentation](https://juliaci.github.io/PkgTemplates.jl/stable/user/)
+* [*Modern Julia Workflows* on setting up a package](https://modernjuliaworkflows.github.io/sharing/#setup)

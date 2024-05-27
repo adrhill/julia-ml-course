@@ -3,7 +3,9 @@
 In Julia, packages are the natural medium for code that doesn't fit in a simple script or notebook.
 While this might sound excessive at first, it provides many conveniences.
 This page serves as a guide for creating your first Julia package. 
-It walks you through the process of the initial setup and the structure of a Julia package. 
+
+!!! warning
+    This page assumes you followed the [Package Set-Up](/setup) page.
 
 ~~~
 <h2>Table of Contents</h2>
@@ -32,8 +34,7 @@ Julia plugins for [Vim](https://github.com/JuliaEditorSupport/julia-vim) and [Em
 !!! tip
     [VSCodium](https://vscodium.com) is a free/libre fork of VSCode.
 
-
-## Package environments
+## Interactive development
 
 ### Starting a REPL session with VSCode
 
@@ -42,19 +43,19 @@ To be able to interact with the code that you are writing, you first have to act
 
 You could manually open a terminal, start a Julia REPL, activate Pkg mode and type `activate .`, but the Julia VSCode extension provides a keyboard shortcut for this!
 
-Typing `Alt+j Alt+o` (`option+j option+o` on macOS) opens a Julia REPL in a terminal and directly activates your local package environment:
+Typing `Alt+j Alt+o` (`option+j option+o` on macOS) opens a Julia REPL in a terminal and directly activates your local environment:
 
 ```julia-repl
 julia> # type ] to see which environment is active...
 
-(MyPackage) pkg> # ...it's your project environment!
+(MyPackage) pkg> # ... it's your project environment!
 ```
 
 If this doesn't work on the first try, you might have to select your *"Julia env"* in the bottom bar of VSCode once.
 
 ### Starting a REPL without VSCode
 
-To start a REPL that directly activates the environment in your current folder,
+To start a REPL and activate your local environment,
 launch julia with the flag `--project`. The Julia banner can be hidden via `--banner=no`.
 
 ```bash
@@ -63,9 +64,12 @@ $ cd ~/.julia/dev/MyProject  # make sure you're in the right folder
 $ julia --project --banner=no
 ```
 
-If you are using an editor other than VSCode, I recommend setting a shell alias for this command.
+!!! tip
+    If you are using an editor other than VSCode, set a shell alias for `julia --project --banner=no`.
 
-### `Project.toml` in packages
+## Package environments
+
+### Adding package dependencies
 
 !!! tip
     Make sure to read the [page on environments](/environments) first!
@@ -232,6 +236,6 @@ export timestwo, timesthree
 
 end # end module
 ```
+
 ## Further reading
-- [Modern Julia Workflows](https://modernjuliaworkflows.github.io/sharing/)
-  is a must read for every Julia user
+- [*Modern Julia Workflows* on writing code](https://modernjuliaworkflows.github.io/writing/)
