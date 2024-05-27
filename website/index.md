@@ -1,8 +1,8 @@
-@def title = "Julia programming for Machine Learning"
+@def title = "Julia Programming for Machine Learning"
 @def tags = ["index"]
 
-# Julia programming for ML
-Welcome to the *Julia programming for Machine Learning* course (JuML)
+# Julia Programming for ML
+Welcome to the *Julia Programming for Machine Learning* course (JuML)
 offered by Prof. Klaus-Robert Müller's 
 [Machine Learning Group](https://web.ml.tu-berlin.de) at TU Berlin.
 
@@ -14,7 +14,6 @@ offered by Prof. Klaus-Robert Müller's
 ## Goals
 The goal of this course is to give you an introduction to the 
 [Julia programming language](https://julialang.org) and its Machine Learning ecosystem.
-
 After taking this class, you should be able to write reproducible, unit-tested Julia code 
 and do Machine Learning research in Julia. 
 
