@@ -48,8 +48,10 @@ All of our tests pass since **we don't have any** that could fail!
 Using the [Test.jl](https://docs.julialang.org/en/v1/stdlib/Test/) package from the Julia standard library,
 we can add tests to our package:
 
-* `@testset` macros are used to organize to organize your tests and can be arbitrarily nested.
-* `@test` macros evaluate whether the expression next to them is `true`. If not, the testset failed.
+* `@test` macros evaluate whether the expression next to them is `true`. If it isn't, the test failed.
+* `@testset` macros are used to organize and name your tests.
+  Test-sets can be arbitrarily nested and can contain multiple tests and test-sets. 
+  You can even put them into for-loops and other control-flow structures.
 
 ```julia
 # New contents of test/runtests.jl
@@ -110,10 +112,10 @@ end
 ## Organizing your tests
 
 Just like your source code, your test suite can be organized into several smaller files using the `include` function.
-It is good practice to include **all** required dependencies in these files, as we will see in the next section.
+It is good practice to include **all** required dependencies **in each** of these files, as we will see in the next section.
 
 ```julia
-# contents of `test/test_timestwo.jl`
+# New test file `test/test_timestwo.jl`
 using MyPackage
 using Test
 using Flux
@@ -137,16 +139,16 @@ end
 ## Advanced testing workflows
 
 !!! tip
-    The following workflow is completely optional and only useful on large projects.
+    The following workflow is completely optional but useful on large projects.
 
 Every time you run your tests through Pkg's `test` command, Julia resolves a fresh virtual environment for testing. It also runs the **entire** test suite. 
 This is great for the purpose of reproducibility but it can waste a lot of time when you want to quickly iterate on a project with many dependencies.
 
-The package [TestEnv.jl](https://github.com/JuliaTesting/TestEnv.jl) allows you to activate a copy of your test environment using the function `TestEnv.activate()`.
-By [adding `using TestEnv` to your `startup.jl`](/repl), it is always available to you.
+The [TestEnv.jl](https://github.com/JuliaTesting/TestEnv.jl) package allows you to activate a copy of your test environment using the function `TestEnv.activate()`.
+By adding `using TestEnv` to your [startup file](/repl), it is always available to you.
 
 Once you activated your test environment, you can manually include individual test files.
-This is the reason why it is good practice to include all required dependencies in each file.
+This is the reason why it is good practice to include all required dependencies in each test file.
 
 ```julia-repl
 julia> TestEnv.activate()
@@ -158,7 +160,7 @@ julia> include("test/test_timestwo.jl"); # run only one test file
 Test Summary: | Pass  Total  Time
 timestwo      |    1      1  0.1s
 ```
-Using [OhMyREPL](/repl), you can move through your REPL history using the up and down arrow keys. This allows you to quickly re-run your tests by calling `include("test/test_timestwo.jl");` again.
+Using [OhMyREPL](/repl), you can move through your REPL history using the up and down arrow keys. This allows you to quickly re-run your tests by calling your previous command `include("test/test_timestwo.jl");` again.
 
 ## Further reading
 - [Test.jl documentation](https://docs.julialang.org/en/v1/stdlib/Test/)
