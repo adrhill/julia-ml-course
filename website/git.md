@@ -13,7 +13,6 @@ Besides visibility, GitHub has several other advantages:
 ~~~
 \tableofcontents
 
-
 ## Learning Git
 
 Git and GitHub are two different things:
@@ -82,7 +81,6 @@ However, this flexibility can be overwhelming for newcomers.
 In this section, we therefore suggest a workflow based on *squash-merged pull-requests*,
 where we work on a branch and turn the entire branch into **a single commit** at the end.
 
-
 ### 1. Create a new branch for every change
 
 Using this workflow, we never push directly to our main branch. 
@@ -145,7 +143,6 @@ Make sure the commit message of your PR is informative, as it replaces the commi
 
 Once your PR is merged, delete the branch of your PR and check out the `main` branch again. 
 Running `git fetch` will make sure your local repository is up to date with the remote repository on GitHub.
-
 
 ### Pros & Cons
 
