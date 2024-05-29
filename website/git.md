@@ -20,10 +20,13 @@ Git and GitHub are two different things:
 * Git is a free and open-source version control system. It allows you to keep track of any changes to your project (*repository*) in a graph-like data structure. 
 * GitHub is a commercial website that hosts Git repositories and enables collaboration between developers.
 
-If you are unfamiliar with Git, I recommend to 
+!!! warning "Learn Git"
+    If you are unfamiliar with Git, I recommend you to 
+    
+    1. Read the [The Missing Semester of Your CS Education](https://missing.csail.mit.edu/2020/version-control/) page on version control
+    2. Play the video game [Oh My Git!](https://ohmygit.org/)
 
-1. Read the [The Missing Semester of Your CS Education](https://missing.csail.mit.edu/2020/version-control/) page on version control
-2. Play the video game [Oh My Git!](https://ohmygit.org/)
+    These will introduce you to terms like *commit*, *push*, *merge* and *remote* that we use throughout this page.
 
 ## Setting up an account on GitHub 
 
@@ -129,8 +132,13 @@ Feel free to push follow-up fixes to your branch in case something went wrong.
 ### 5. Ask for a code review
 
 If you are unsure about your changes, ask your group mates to review your code.
-Be kind and considerate and try to avoid getting stuck in "code review hell": perfection is the enemy of good.
+Here are some guide lines for code reviews:
+* be kind and considerate 
+* avoid ["bike shedding"](https://en.wikipedia.org/wiki/Law_of_triviality): arguing about trivial issues like  the name of a variable
+* avoid getting stuck in "code review hell": perfection is the enemy of good
+
 Remember that any changes are not permanent and can still be modified in a later PR.
+Keeping a PR small is good.
 
 ### 6. Squash merge the PR
 
