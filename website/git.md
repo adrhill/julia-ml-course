@@ -92,7 +92,7 @@ Instead, we always create a new branch from `main`.
 It is considered good practice to name your branch after the feature it implements and to prefix it with your initials (`ah` for **A**drian **H**ill in my case):
 
 ```bash
-git checkout origin/main # make sure your current branch is the main branch from the GitHub remote
+git checkout main # make sure your current branch is the main branch from the GitHub remote
 
 git checkout -b ah/timestwo # creates a new branch (-b) called timestwo and checks it out
 ```
@@ -151,7 +151,7 @@ By default, the title of the squash-merge will include a link to the PR, e.g. `(
 Make sure the commit message of your PR is informative, as it will replace the commit messages of individual commits on your branch.
 
 Once your PR is merged, delete the branch of your PR and check out the `main` branch again. 
-Running `git fetch` will ensure that your local repository is up to date with the remote repository on GitHub.
+Running `git pull` will ensure that your local repository is up to date with the remote repository on GitHub.
 
 ### Pros & Cons
 
