@@ -161,7 +161,7 @@ Both of these issues can be avoided by crafting informative commit messages for 
 Linking to the GitHub PR also has the advantage of making comments from a code review quickly accessible.
 
 Another disadvantage is that commits can get quite large, potentially making them hard to read.
-Avoiding this requires some discipline: only work on only one feature at a time and keep your PRs small.
+Avoiding this requires some discipline: work on only one feature at a time and keep your PRs small.
 
 The real advantage of squash-merging is that **you don't have to carefully craft individual commits**.
 You don't have to worry about atomic commits to your branch, "ugly" merge conflicts, or numerous commits after CI failures, since they will all be squashed away.
