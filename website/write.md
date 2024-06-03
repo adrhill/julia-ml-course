@@ -5,7 +5,7 @@ While this might sound excessive at first, it provides many conveniences.
 This page serves as a guide for creating your first Julia package. 
 
 !!! warning
-    This page assumes you followed the [Setting up a Julia package](/setup) page.
+    This page assumes you followed the [*"Setting up a Julia package"*](/setup) page.
 
 ~~~
 <h2>Table of Contents</h2>

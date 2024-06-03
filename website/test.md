@@ -1,7 +1,7 @@
 
 # Package tests
 
-In this section, we add tests to the package we started in [Writing a Package](/write).
+In this section, we add tests to the package we started in [*"Writing a Julia package"*](/write).
 
 ~~~
 <h2>Table of Contents</h2>

@@ -1,6 +1,6 @@
 # Hosting a Julia Package on GitHub
 
-Now that we have written a Julia package, we want to share it with other people.
+Now that we have [written a Julia package](/write), we want to share it with other people.
 We can do this by hosting it on GitHub, GitLab, sourcehut or any other hosting platform.
 
 In this example, we are going to work with GitHub, where the majority of the Julia community hosts their code.
