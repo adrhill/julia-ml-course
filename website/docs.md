@@ -48,7 +48,6 @@ search: timestwo
        @ ~/.julia/dev/MyPackage/src/MyPackage.jl:3
 ```
 
-
 Let's add one by editing `src/MyPackage.jl`:
 
 ```julia
@@ -158,6 +157,7 @@ pages=[
     "Home" => "index.md",
 ],
 ```
+
 This line adds the file `docs/src/index.md` as your *"Home"* page.
 You can create new pages by adding them to the `docs/src/` folder and including them here.
 For example, you could add a Markdown file `docs/src/example.md` and include it as
