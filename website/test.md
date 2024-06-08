@@ -12,7 +12,7 @@ In this section, we add tests to the package we started in [*"Writing a Julia pa
 
 ## Running tests
 By convention, package tests are located in a folder called `test`.
-The "main" file that includes all other tests is called `runtest.jl`.
+The "main" file that includes all other tests is called `runtests.jl`.
 
 ```julia
 # Contents of test/runtests.jl
@@ -132,7 +132,7 @@ using MyPackage
 using Test
 
 @testset "MyPackage.jl" begin
-    include("test_timestwo.jl") # <--- include tests in runtest.jl
+    include("test_timestwo.jl") # <--- include tests in runtests.jl
 end
 ```
 
