@@ -202,7 +202,7 @@ There are [more types of blocks](https://documenter.juliadocs.org/stable/man/syn
 
 ### Setting up GitHub Pages
 
-If you followed the [*Set-up guide*](http://localhost:8000/git/#setting_up_documenterjl) and added keys using DocumenterTools, your documentation is almost ready.
+If you followed the [*Set-up guide*](/git/#setting_up_documenterjl) and added keys using DocumenterTools, your documentation is almost ready to go.
 In your GitHub repository, go to `Settings > Pages > Build and deployment`. 
 For the *"Source"*, select *"Deploy from a branch"* and select `gh-pages` and `/(root)` in the drop-down menus below.
 
