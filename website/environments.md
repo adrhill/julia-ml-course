@@ -4,7 +4,7 @@
 # Environments
 
 Environments play an important role in managing dependencies within programming projects.
-I this lecture, we will talk about why they are needed, how they are created and how they are defined.
+In this lecture, we will talk about why they are needed, how they are created and how they are defined.
 
 ~~~
 <h2>Table of Contents</h2>
@@ -14,9 +14,9 @@ I this lecture, we will talk about why they are needed, how they are created and
 ## What are environments?
 An environment is an isolated workspace containing dependencies (external packages you are using):
 
-* For a small ML project, 
+* For a small ML project,
   you might want to define an environment that includes *MLDatasets.jl* and *Flux.jl*.
-* For an image processing project, 
+* For an image processing project,
   you might want to define an environment containing *Images.jl* and *LinearAlgebra.jl*.
 
 Environments are managed by Julia's package manager **Pkg** and defined in two files called the `Project.toml` and the `Manifest.toml`.
@@ -26,7 +26,7 @@ Environments are managed by Julia's package manager **Pkg** and defined in two f
 To create a new environment, enter Pkg-mode in the Julia REPL by typing `]`, then type `activate`
 followed by the name of the environment you want to create.
 
-Let's create an new environment called `MyDeepLearningEnv` that includes *MLDatasets.jl* and *Flux.jl*:
+Let's create a new environment called `MyDeepLearningEnv` that includes *MLDatasets.jl* and *Flux.jl*:
 
 ```julia-repl
 (@v1.10) pkg> activate MyDeepLearningEnv            # create environment
@@ -36,10 +36,10 @@ Let's create an new environment called `MyDeepLearningEnv` that includes *MLData
 ```
 
 The printout informs us that this created a new project folder at `~/MyDeepLearningEnv`.
-The exact path depends on the folder in which you launched the Julia REPL. 
+The exact path depends on the folder in which you launched the Julia REPL.
 In this case, I opened Julia in my home directory, which is called `~` on Linux and macOS.
 
-The project folder `MyDeepLearningEnv` contains a `Project.toml` and a Manifest.
+The project folder `MyDeepLearningEnv` contains a `Project.toml` and a `Manifest.toml`.
 Adding packages to this environment will update both of these files:
 
 ```julia-repl
@@ -74,7 +74,7 @@ Status `~/MyDeepLearningEnv/Project.toml`
 ## Structure of a Julia environment
 ### `Project.toml`
 
-Let's first take a look at contents of the `Project.toml`. 
+Let's first take a look at contents of the `Project.toml`.
 In a second terminal, move to your project folder using `cd` (**c**hange **d**irectory),
 then look at the file contents in your terminal using the command `cat Project.toml` (con**cat**enate),
 or open the file in your favorite editor:
@@ -85,10 +85,10 @@ Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 MLDatasets = "eb30cadb-4394-5ae3-aed4-317e484a6458"
 ```
 
-In the case of our environment, the `Project.toml` just contains a list of the installed packages we would expect: Flux and MLDatasets. 
+In the case of our environment, the `Project.toml` just contains a list of the installed packages we would expect: Flux and MLDatasets.
 They are followed by a string called a *"universally unique identifiers"* (UUIDs), which we can ignore for now.
 
-As we will see in the lesson on [writing a package](/write), 
+As we will see in the lesson on [writing a package](/write),
 the `Project.toml` contains more information when used in packages.
 
 ### `Manifest.toml`
@@ -130,29 +130,29 @@ version = "2.3.0"
 ...
 ```
 
-The Manifest is a much longer file than the `Project.toml`. 
+The Manifest is a much longer file than the `Project.toml`.
 Mine contains 1267 lines of code, even though we just added two dependencies: Flux and MLDatasets
 How is this possible?
 
 This is due to the fact that the Manifest lists all packages in the dependency tree.
 Not only Flux and MLDatasets, but also their dependencies, the dependencies of their dependencies, and so on.
 For packages that are not part of Julia Base, Git tree hashes and versions are specified.
-The Manifest even includes external binaries (e.g. compiled C, C++ and Fortran programs) that might be required. 
+The Manifest even includes external binaries (e.g. compiled C, C++ and Fortran programs) that might be required.
 
 **This makes our environment fully reproducible!**
 
 ## Why should I use environments?
 ### Reason 1: Reproducibility
 In the sciences, reproducibility is of utmost importance to validate research findings and improve reliability.
-The environment of a project can be shared with others by providing a `Project.toml` and `Manifest.toml` . 
-This ensures that people will use the exact same dependencies as you did. 
-Changes in future releases of a package won't affect your results.  
+The environment of a project can be shared with others by providing a `Project.toml` and `Manifest.toml` .
+This ensures that people will use the exact same dependencies as you did.
+Changes in future releases of a package won't affect your results.
 
 ### Reason 2: Avoid dependency conflicts
 As we will see in our lecture on [writing packages](/write), packages can set lower and upper bounds on versions of their dependencies.
 This is useful since developers don't know whether future releases of their dependencies will be compatible with their code.
 
-Let's image a scenario where Flux and MLDataset both have a common dependency on a third package Foo.jl.
+Let's imagine a scenario where Flux and MLDatasets both have a common dependency on a third package Foo.jl.
 When creating an environment, Pkg will look at the acceptable versions of Foo for both Flux and MLDataset and compute the intersection of acceptable versions. This is called *resolving dependencies*.
 
 ### Reason 3: Avoid polluting your global environment
@@ -171,7 +171,7 @@ When opening an issue on GitHub, it is good practice to provide the following:
 
 * a description of your problem
 * a minimal example reproducing the bug
-* the output of Pkg's `status` 
+* the output of Pkg's `status`
 * the output of the `versioninfo()` function, which summarizes information about your system and Julia version
 
 ### Reason 5: Environments include binaries
@@ -180,12 +180,12 @@ Most Julia code is written in pure Julia, but sometimes it is necessary to call 
 Binaries are regular packages whose name ends on `_jll` by convention;
 for example `OpenBLAS_jll`, which contains [OpenBLAS](https://www.openblas.net) binaries.
 
-When installing a Julia package, Pkg automatically downloads and installs all required binaries. 
+When installing a Julia package, Pkg automatically downloads and installs all required binaries.
 Just like any other dependency, they are added to the Manifest and therefore fully reproducible.
 
 ## Temporary environments
-If you want to try an interesting new package you've seen on GitHub,
-the package manager offers a simple way to start a temporary environment.
+Temporary environments provide a convenient way to experiment with new packages without affecting your existing project environments.
+When you want to quickly test a package you've discovered on GitHub or elsewhere, the package manager allows you to create an isolated, disposable environment.
 
 In your Julia REPL, enter package mode and type `activate --temp`.
 This will create an environment with a randomized name in a temporary folder.
@@ -195,7 +195,7 @@ This will create an environment with a randomized name in a temporary folder.
   Activating new project at `/var/folders/74/wcz8c9qs5dzc8wgkk7839k5c0000gn/T/jl_9AGcg1`
 
 (jl_9AGcg1) pkg>
-``` 
+```
 
 ## Environments in Pluto
 Pluto notebooks also contain reproducible environments.
