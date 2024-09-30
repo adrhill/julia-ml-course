@@ -9,13 +9,14 @@
 \tableofcontents
 
 ## Loading code on startup
-If you have code that you want to be run every time you start Julia, 
+If you have code that you want to run every time you start Julia,
 add it to your [startup file](https://docs.julialang.org/en/v1/manual/command-line-interface/#Startup-file)
 that is located at `~/.julia/config/startup.jl`.
 Note that you might have to first create the config folder.
 
-A common use-case for the `startup.jl` to load packages that are crucial for your workflow.
-Don't add too many packages, as they will increase the loading time of your REPL and might pollute the global namespace.
+A common use-case for the `startup.jl` file is to load packages that are crucial for your workflow.
+However, be cautious about adding too many packages, as this can significantly increase the loading time of your REPL and potentially pollute the global namespace.
+It's best to include only essential packages that you use frequently.
 There are however two packages I personally consider essential additions: *Revise.jl* and *OhMyRepl.jl*.
 
 !!! warning "Warning: First install packages"
@@ -31,7 +32,7 @@ Before the environment of a package or project is activated, Julia first loads y
 
 ## Enhancing the REPL experience
 ### Revise.jl
-[Revise.jl](https://github.com/timholy/Revise.jl) will keep track of changes in loaded files 
+[Revise.jl](https://github.com/timholy/Revise.jl) will keep track of changes in loaded files
 and reload modified Julia code without having to start a new REPL session.
 
 To load Revise automatically, add the following code to your `startup.jl`:
@@ -45,7 +46,7 @@ catch e
 end
 ```
 
-It is enough to add `using Revise`, 
+It is enough to add `using Revise`,
 but the `try-catch` statement will return a helpful error message in case something goes wrong.
 
 
@@ -55,9 +56,9 @@ but the `try-catch` statement will return a helpful error message in case someth
 
 ### OhMyRepl.jl
 [OhMyRepl](https://github.com/KristofferC/OhMyREPL.jl) adds many features to your REPL,
-amongst other things:
+among other things:
 - syntax highlighting
-- (rainbow) bracket highlighting
+- rainbow bracket highlighting
 - fuzzy history search
 - stripping prompts when pasting code
 
@@ -77,7 +78,7 @@ end
 You can also add the following to your `startup.jl`:
 
 * [TestEnv.jl](https://github.com/JuliaTesting/TestEnv.jl): Quickly activate your test environment using `TestEnv.activate()`
-* [BenchmarkTools.jl](https://github.com/JuliaCI/BenchmarkTools.jl): Measure the performance of your code using the `@benchmark` macro. 
+* [BenchmarkTools.jl](https://github.com/JuliaCI/BenchmarkTools.jl): Measure the performance of your code using the `@benchmark` macro.
 * [BasicAutoloads.jl](https://github.com/LilithHafner/BasicAutoloads.jl): "whenever I type this in the REPL, run that for me".
 * environment variables via the [`ENV` dictionary](https://docs.julialang.org/en/v1/base/base/#Base.ENV)
 * custom functions that you commonly use
