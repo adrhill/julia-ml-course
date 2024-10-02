@@ -54,7 +54,7 @@ html"""
 """
 
 # ╔═╡ bdcb27c5-0603-49ac-b831-d78c558b31f0
-md"Due date: **Monday, May 13th 2024 at 23:59**"
+md"Due date: **Monday, November 11th 2024 at 23:59**"
 
 # ╔═╡ ddd6e83e-5a0d-4ff0-afe4-dedfc860994c
 md"### Student information"
@@ -191,7 +191,7 @@ These two fields will hold the mean and the standard deviation of the standardiz
 
 You are allowed to use the `mean` and `std` functions from the standard library package [Statistics.jl](https://docs.julialang.org/en/v1/stdlib/Statistics/).
 ",
-    3,
+    4,
 )
 
 # ╔═╡ aaea0bbf-868d-4fe0-b348-307449d06517
@@ -464,6 +464,7 @@ task(
 *  have a default learning rate of `0.1`, implemented in an outer constructor `GradientDescent()`
 
 ",
+    2,
 )
 
 # ╔═╡ 58a671a1-3059-4fa9-b758-f3a76a573aa5
@@ -686,75 +687,13 @@ md"### Optional Task – Adam optimizer"
 Markdown.MD(
     Markdown.Admonition(
         "Task",
-        "Optional task (2 extra points)",
+        "Optional task",
         [
             md"Implement the *Adam* optimizer, which was introduced
             in [this paper](https://arxiv.org/abs/1412.6980) by Kingma and Ba.
             Add it to the visualization above and compare it to Optimizer.jl's Adam implementation.",
         ],
     ),
-)
-
-# ╔═╡ cfcd4e18-efe6-49c5-82b0-e1a1db394935
-md"Please note that optional tasks offer *extra* points. These *extra* points can help compensate for any missed points across all homework submissions, contributing towards the maximum achievable score of 20 points for all combined homework assignments. However, the total score from homework submissions cannot exceed 20 points."
-
-# ╔═╡ fde75269-bfe7-4430-b312-7274c53c7369
-md"### Exercise 3 – Abstract types and Subtypes"
-
-# ╔═╡ 403864a6-faf1-4e5b-b352-76a94cad8248
-md"""
-In this task, you will define an abstract type for a generic shape and create specific subtypes for different shapes such as `Circle`, `Rectangle`, and `Square`. You will also implement a method to calculate the area of each shape."""
-
-# ╔═╡ 4f1a47f9-cd36-4166-9489-7f30f517b513
-task(
-    md"""
-### Step 1: Define the abstract type
-Create an abstract type called `Shape`. 
-### Step 2: Define the subtypes
-Create the following subtypes:
-* `Circle` with a field for the radius
-* `Rectangle` with fields for width and height
-* `Square` with a field for the length of its sides
-### Step 3: Implement the `area` method
-Write a method `area(shape::Shape)` that calculates the area of the shape based on its type. The method should work for all defined subtypes.
-
-The area formulas are as follows:
- - For `Circle`: $\text{Area} = \pi \times r^2$
- - For `Rectangle`: $\text{Area} = \text{width} \times \text{height}$
- - For `Square`: $\text{Area} = \text{side}^2$
-""", 2
-)
-
-# ╔═╡ d708f8f2-4af4-4337-a2e4-f67c0f335de9
-Markdown.MD(
-    Markdown.Admonition(
-        "warning",
-        "Note",
-        [
-            md"This exercise does not provide automated feedback in order to get you to practice programming in Julia on your own!",
-        ],
-    ),
-)
-
-# ╔═╡ 60619a5a-e8f5-40d3-b1ef-6ded4ee9605f
-function area(shape::Shape) # Don't change this line
-	# Write your code here
-
-	return missing
-end
-
-# ╔═╡ c05ef2bc-8bc6-43d8-84aa-d780283af939
-md"The following code segments should help you test your implementation. It is recommended to extend this for the other shapes."
-
-# ╔═╡ 4a3f2458-28f4-4b7c-b68d-eeee67cb2b78
-c = Circle(5)
-
-# ╔═╡ fbb40861-3905-4b83-b762-4a0ba4ccb20c
-area_c = area(c)
-
-# ╔═╡ 01efb844-d95f-4b9f-bc61-153060f561c0
-hint(
-    md"Use `isa` to differentiate the different Subtypes in `area`",
 )
 
 # ╔═╡ edb7814a-eddf-4c87-8857-19bb0a0c0241
@@ -2303,16 +2242,6 @@ version = "1.4.1+1"
 # ╟─d15eb189-6e4d-4c70-a1cb-159e6a4eb8eb
 # ╟─5370c50b-a9b8-41dc-8cfe-1f0389df97c3
 # ╟─822d03c6-48f8-47b0-8f25-b2de45e4c589
-# ╟─cfcd4e18-efe6-49c5-82b0-e1a1db394935
-# ╟─fde75269-bfe7-4430-b312-7274c53c7369
-# ╟─403864a6-faf1-4e5b-b352-76a94cad8248
-# ╟─4f1a47f9-cd36-4166-9489-7f30f517b513
-# ╟─d708f8f2-4af4-4337-a2e4-f67c0f335de9
-# ╠═60619a5a-e8f5-40d3-b1ef-6ded4ee9605f
-# ╟─c05ef2bc-8bc6-43d8-84aa-d780283af939
-# ╠═4a3f2458-28f4-4b7c-b68d-eeee67cb2b78
-# ╠═fbb40861-3905-4b83-b762-4a0ba4ccb20c
-# ╟─01efb844-d95f-4b9f-bc61-153060f561c0
 # ╟─edb7814a-eddf-4c87-8857-19bb0a0c0241
 # ╠═f60be2e0-9b43-46b5-96ef-7747ab56e164
 # ╟─00000000-0000-0000-0000-000000000001

@@ -43,7 +43,7 @@ html"""
 """
 
 # ╔═╡ bdcb27c5-0603-49ac-b831-d78c558b31f0
-md"Due date: **Monday, April 29th 2024 at 23:59**"
+md"Due date: **Monday, October 28th 2024 at 23:59**"
 
 # ╔═╡ 6be73c03-925c-4afa-bd66-aca90e6b49fe
 md"This notebook gives you live feedback!

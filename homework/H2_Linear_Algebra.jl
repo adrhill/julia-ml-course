@@ -55,7 +55,7 @@ html"""
 """
 
 # ╔═╡ bdcb27c5-0603-49ac-b831-d78c558b31f0
-md"Due date: **Monday, May 6th 2024 at 23:59**"
+md"Due date: **Monday, November 4th 2024 at 23:59**"
 
 # ╔═╡ ddd6e83e-5a0d-4ff0-afe4-dedfc860994c
 md"### Student information"
@@ -432,7 +432,8 @@ task(
     md"Define a function `rbf` that evaluates the [radial basis function kernel](https://en.wikipedia.org/wiki/Radial_basis_function_kernel) (RBF kernel) $k$ on two data points $x_i$, $x_j$:
 
 $k(x_i, x_j) = \exp\left(-\frac{||x_i - x_j|| ^2}{2\sigma^2}\right)$
-", 0.5
+",
+    0.5,
 )
 
 # ╔═╡ 7f9afd24-fd1c-49cd-b6bf-598cea9758c7
@@ -444,7 +445,8 @@ md"Note that you can type σ using `\sigma<TAB>`.
 md"### Exercise 3.2 – Training kernel matrix $K_{XX}$"
 
 # ╔═╡ e2a37317-171d-4c45-975e-2752daf88008
-task(md"Use broadcasting to compute the training kernel matrix `kXX`, defined as
+task(
+    md"Use broadcasting to compute the training kernel matrix `kXX`, defined as
 
 $K_{XX} = \begin{bmatrix}
     k(x_1, x_1) & \cdots & k(x_1, x_n) \\
@@ -453,7 +455,8 @@ $K_{XX} = \begin{bmatrix}
 \end{bmatrix} \in \mathbb{R}^{n \times n}$
 
 where $x_i$ is the $i$-th entry in the dataset $X$ and $k$ is the kernel function.
-Use the RBF kernel with $\sigma=0.5$.", 0.5
+Use the RBF kernel with $\sigma=0.5$.",
+    0.5,
 )
 
 # ╔═╡ 45d51447-beb8-4682-8b09-f65de7cfb95a
@@ -510,7 +513,8 @@ $K_{\hat{x}X} = \begin{bmatrix}
 \end{bmatrix} \in \mathbb{R}^{1 \times n}$
 
 where $x_i$ is the $i$-th entry in the dataset $X$. Use $\hat{x}=0.8$ and the RBF kernel with $\sigma=0.5$.
-", 0.5
+",
+    0.5,
 )
 
 # ╔═╡ f9906c93-f96d-45fd-b0ae-48794d82d54e
@@ -738,20 +742,18 @@ md"### Exercise 4 – Multiple dispatch on diagonal matrix"
 # ╔═╡ c986580b-fe8c-4b68-9fa1-230b429e6de8
 md"""
 ### Overview diagonal matrix
-A diagonal matrix is one that has non-zero elements only in the diagonal.
+A diagonal matrix is a square matrix that has non-zero elements only in the diagonal.
 
 An example for a diagonal matrix would be:
 """
 
 # ╔═╡ 57d23d48-4f7b-434c-95f3-dd6c704dbb0b
-A₁ = [3 0 0 
-	  0 7 0 
-	  0 0 -4]
+A₁ = [3 0 0; 0 7 0; 0 0 -4]
 
 # ╔═╡ d89bd03c-5dda-4141-af90-1673af2370e3
 md"""
-In this typical matrix implementation, all elements are stored, regardless of whether they are zero or non-zero. This results in more storage and computation.
-
+In this implementation using the regular, dense `Array` type, all elements are stored, regardless of whether they are zero or not. 
+Since we used nine `Float64` numbers instead of just three, this results in more storage and computation.
 ### `Diagonal` from LinearAlgebra.jl
 For that reason, [LinearAlgebra.jl](https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/) implements a type called [Diagonal](https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#LinearAlgebra.Diagonal) for diagonal matrices. Instead of storing a dense diagonal matrix with all of its off-diagonal zeros, matrices of type `Diagonal` contain only the non-zero diagonal elements in a vector called `diag`:
 
@@ -769,33 +771,34 @@ A₂ = Diagonal([3, 7, -4])
 
 # ╔═╡ 3dbc1078-85b1-4711-98fe-29d48d0b1474
 task(
-	md"""
-In this task, you will define two methods for the `trace` function:
+    md"""
+   In this task, you will define two methods for the `trace` function:
 
-1. Implement a method `trace` for inputs of type `AbstractMatrix`
-2. Using multiple dispatch, implement a method `trace` for matrices of type `Diagonal`.
+   1. Implement a method `trace` for inputs of type `AbstractMatrix`
+   2. Using multiple dispatch, implement a method `trace` for matrices of type `Diagonal`.
 
-##### Trace Definition:
+   ##### Trace Definition:
 
-The trace of an $n \times n$ square matrix $\mathbf{A}$ is defined as:
+   The trace of an $n \times n$ square matrix $\mathbf{A}$ is defined as:
 
-$\text{trace}(\mathbf{A}) = \sum_{i=1}^{n} a_{ii} = a_{11} + a_{22} + \dots + a_{nn}$
+   $\text{trace}(\mathbf{A}) = \sum_{i=1}^{n} a_{ii} = a_{11} + a_{22} + \dots + a_{nn}$
 
-	""", 2
+   	""",
+    2,
 )
 
 # ╔═╡ 9f99e017-08f6-43b9-9db8-cec9e310b4b7
 function trace(A::AbstractMatrix)  # Don't change this line
     # Write your code here
-	
-    return 0
+
+    return missing
 end
 
 # ╔═╡ f6a2038a-9b42-4580-a61d-89c6a398ee66
 function trace(A::Diagonal)  # Don't change this line
     # Write your code here
-	
-    return 0
+
+    return missing
 end
 
 # ╔═╡ 65b736a4-1a38-4366-b519-cd13893d24a5
@@ -810,40 +813,38 @@ if !@isdefined(trace)
 else
     let
         # Define matrices
-        A_square = [4 0 0
-                     0 1 0
-                     0 0 7]
+        v = rand(20)
+        A_diagonal = Diagonal(v)
+        A_square = Matrix(A_diagonal)
+        result_ref = sum(v)
+        # Results
+        result_square = trace(A_square)
+        result_diagonal = trace(A_diagonal)
+        shouldError = true
+        try
+            result_not_square = trace(A_not_square)
+            shouldError = false
+        catch
+        end
 
-        A_not_square = [4 0 0 0
-                        0 1 0 0
-                        0 0 7 0]
-		
-        A_diagonal = Diagonal([4, 1, 7])
-		# Results
-		result_square = trace(A_square)
-		result_diagonal = trace(A_diagonal)		
-		shouldError = true
-		try 
-			result_not_square = trace(A_not_square)
-			shouldError = false
-		catch 
-		end 
-		
-		# Test for square matrix
-        if result_square != 12
+		# Test missing
+		if ismissing(result_square) || ismissing(result_diagonal)
+            still_missing()
+        # Test for square matrix
+		elseif result_square != result_ref
             keep_working(md"Check your implementation for square matrices.")
 
-        # Test for non-square matrix
-		elseif !shouldError
-			keep_working(md"Did you check whether the matrix is a square matrix?")
-			
-		# Test for diagonal matrix
-		elseif result_diagonal != 12  # Should sum up to 12 (4 + 1 + 7)
+            # Test for non-square matrix
+        elseif !shouldError
+            keep_working(md"Did you check whether the matrix is a square matrix?")
+
+            # Test for diagonal matrix
+        elseif result_diagonal != result_ref
             keep_working(md"Check your implementation for diagonal matrices.")
 
-		else
-			correct()
-		end
+        else
+            correct()
+        end
     end
 end
 
@@ -911,8 +912,8 @@ Calculate the projection $H = W_k^T \hat{X}$ of the mean-centered data $\hat{X}$
 # ╔═╡ 216dcbf9-91aa-40fe-bef2-6dea56a35be7
 function pca(X, k=2)  # Don't change this line
     # Write your code here
-	Wk = missing
-	H = missing
+    Wk = missing
+    H = missing
     return Wk, H # Don't change this line
 end
 
@@ -950,21 +951,29 @@ X_test = rand(my_distribution, n_samples);
 # ╔═╡ 6fd61dac-2ab1-464a-a20c-c0e1d7d23e8b
 begin
     # Plot data
-    scatter(X_test[1, :], X_test[2, :]; label=L"Data $X$", xlabel=L"x_1", ylabel=L"x_2", ratio=1, legend=:topleft)
+    scatter(
+        X_test[1, :],
+        X_test[2, :];
+        label=L"Data $X$",
+        xlabel=L"x_1",
+        ylabel=L"x_2",
+        ratio=1,
+        legend=:topleft,
+    )
 
-	# Plot mean
-	μ = mean(X_test, dims=2)
-    scatter!((μ[1], μ[2]), c=:black, label=L"Sample mean $\mu_x$")
-	
+    # Plot mean
+    μ = mean(X_test; dims=2)
+    scatter!((μ[1], μ[2]); c=:black, label=L"Sample mean $\mu_x$")
+
     # Compute PCA
     W, H = pca(X_test, 2)
-    
+
     # Plot PCA
     scale = 10
     pc1 = μ + scale * W[:, 1]
     pc2 = μ + scale * W[:, 2]
-    plot!([μ[1], pc1[1]], [μ[2], pc1[2]], arrow=true, lw=2, c=:red, label=L"1st PC $w_1$")
-    plot!([μ[1], pc2[1]], [μ[2], pc2[2]], arrow=true, lw=2, c=:blue, label=L"2nd PC $w_2$")
+    plot!([μ[1], pc1[1]], [μ[2], pc1[2]]; arrow=true, lw=2, c=:red, label=L"1st PC $w_1$")
+    plot!([μ[1], pc2[1]], [μ[2], pc2[2]]; arrow=true, lw=2, c=:blue, label=L"2nd PC $w_2$")
 end
 
 # ╔═╡ edb7814a-eddf-4c87-8857-19bb0a0c0241

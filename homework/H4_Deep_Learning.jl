@@ -54,7 +54,7 @@ html"""
 """
 
 # ╔═╡ ce8fd3c2-4fe8-4408-8479-efc81f1a4147
-md"Due date: **Monday, May 20th 2024 at 23:59**"
+md"Due date: **Thursday, November 21st 2024 at 23:59**"
 
 # ╔═╡ 42a8576f-d0ab-4915-864f-c1c2fd65e4e4
 md"### Student information"
@@ -430,7 +430,7 @@ gradient(f, -1)
 
 # ╔═╡ 68ad8a8f-8d0a-49d4-b79e-53491ecffc01
 md"""# Feedback
-This is the third iteration of the *"Julia Programming for ML"* class. Please help us make the course better!
+This is the fourth iteration of the *"Julia Programming for ML"* class. Please help us make the course better!
 
 You can write whatever you want in the following string. Feel free to add or delete whatever you want.
 """
