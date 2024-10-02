@@ -54,7 +54,7 @@ html"""
 """
 
 # ╔═╡ ce8fd3c2-4fe8-4408-8479-efc81f1a4147
-md"Due date: **Thursday, November 21st 2024 at 23:59**"
+md"Due date: **Monday, November 18th 2024 at 23:59**"
 
 # ╔═╡ 42a8576f-d0ab-4915-864f-c1c2fd65e4e4
 md"### Student information"
