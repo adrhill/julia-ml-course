@@ -108,20 +108,22 @@ If you do not register on time, you cannot pass the course.
 
 ![JuML course timeline](/assets/timeline.png)
 
-* **Course Period:**  April 15th - July 20th 2024 
-  * **Project meetings:** Tuesdays, 14:15-15:45, MAR 4.044
+* **Course Period:**  October 14th 2024 - February 14th 2025
+  * **Kick-off meeting:** Tuesday, October 15th, 14:15-15:45, MA 042
+  * **Project meetings:** Tuesdays, 14:15-15:45, H 3006
   * **Office hours:** TBA
 
-Attendance is mandatory on the following five dates:
-* Tuesday, 16.04.24
-* Tuesday, 21.05.24
-* Tuesday, 11.06.24
-* Tuesday, 02.07.24
-* Tuesday, 16.07.24
+Attendance is mandatory on the following dates:
+* Tuesday, 15.10.24
+* Tuesday, 19.11.24
+* Tuesday, 17.12.24
+* Tuesday, 21.01.25
+* Tuesday, 04.02.25
+* Tuesday, 11.02.25
 
 The date of the final examination will be determined on a group-by-group basis.
 
-More information can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=37588).
+More information can be found on [ISIS](https://isis.tu-berlin.de/course/view.php?id=40973).
 
 ## FAQ
 #### Why should I learn Julia?
