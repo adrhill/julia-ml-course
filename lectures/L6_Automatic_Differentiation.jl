@@ -1214,7 +1214,8 @@ md"Features include:
 # ╔═╡ d095e890-9ac8-4b05-ad98-3f8237402347
 md"## DifferentiationInterfaceTest.jl
 Let's use DifferentiationInterfaceTest to find out which AD backend is the most performant for our function `g`. 
-We're interested in the `:gradient` operators, more specifically the `:out` of place version. 
+
+We're interested in the `:gradient` operator, more specifically the `:out` of place version. 
 We pass the function `g`, `x̃` and the first-order result:
 "
 
@@ -1228,7 +1229,7 @@ backends = [
 	AutoZygote(),
 	AutoEnzyme(),
 	AutoFiniteDiff(),
-	AutoFiniteDifferences(; fdm=fdm_method),
+	AutoFiniteDifferences(; fdm=fdm_method), # some backends require configuration
 	AutoForwardDiff(),
 ]
 
