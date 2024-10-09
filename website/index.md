@@ -111,7 +111,7 @@ If you do not register on time, you cannot pass the course.
 * **Course Period:**  October 14th 2024 - February 14th 2025
   * **Kick-off meeting:** Tuesday, October 15th, 14:15-15:45, MA 042
   * **Project meetings:** Tuesdays, 14:15-15:45, H 3006
-  * **Office hours:** TBA
+  * **Office hours:** Thursdays, 14:15-15:45, MAR 4.044
 
 Attendance is mandatory on the following dates:
 * Tuesday, 15.10.24
