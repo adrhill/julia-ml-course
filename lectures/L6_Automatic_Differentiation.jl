@@ -38,6 +38,12 @@ using FiniteDifferences
 # ╔═╡ ff9aa2fe-6984-4896-9437-f32ec2f385f7
 using ForwardDiff
 
+# ╔═╡ 5cc54371-cf02-429e-b7ce-5fdf2ec8833a
+using DifferentiationInterface
+
+# ╔═╡ 8d4fea3c-01c3-4214-a5db-5c7c1c6bdb26
+using DifferentiationInterfaceTest
+
 # ╔═╡ 83497498-2c14-49f4-bb5a-c252f655e006
 ChooseDisplayMode()
 
@@ -1001,6 +1007,15 @@ tip(
     md"Always read the section on limitations / gotchas / sharp bits in AD package documentation.",
 )
 
+# ╔═╡ a2c9b337-7381-4d46-9981-5fad6043f76f
+md"""## Enzyme.jl
+[Enzyme.jl](https://github.com/EnzymeAD/Enzyme.jl) is a new, experimental AD system that does *LLVM source to source* transformations, supporting both forward- and reverse-mode AD.
+It currently doesn't support ChainRules.jl, instead using its own [EnzymeRules](https://enzyme.mit.edu/index.fcgi/julia/stable/generated/custom_rule/).
+Enzyme is highly performant and supports mutating functions.
+
+Since the package is under rapid development and the API hasn't fully stabilized, note that this example uses Enzyme `v0.13`:
+"""
+
 # ╔═╡ 27d23099-202d-4224-8a8d-0020138235f3
 pkgversion(Enzyme)
 
@@ -1010,15 +1025,6 @@ md"For $\tilde{x}=(1,2)$ and
 $g(x) = x_1^2 + 2 x_1 x_2 \quad ,$
 
 we can use both reverse- and forward-mode AD to correctly compute the gradient $\nabla g\big|_\tilde{x} = (6, 2)$:"
-
-# ╔═╡ a2c9b337-7381-4d46-9981-5fad6043f76f
-md"""## Enzyme.jl
-[Enzyme.jl](https://github.com/EnzymeAD/Enzyme.jl) is a new, experimental AD system that does *LLVM source to source* transformations, supporting both forward- and reverse-mode AD.
-It currently doesn't support ChainRules.jl, instead using its own [EnzymeRules](https://enzyme.mit.edu/index.fcgi/julia/stable/generated/custom_rule/).
-Enzyme is highly performant and supports mutating functions.
-
-Since the package is under rapid development and the API hasn't fully stabilized, note that this example uses Enzyme `v0.13`:
-"""
 
 # ╔═╡ 775bffca-9e9c-4188-b66d-78a50423377c
 Enzyme.gradient(Reverse, g, x̃)
@@ -1170,6 +1176,86 @@ ForwardDiff.gradient(g, x̃)
 # ╔═╡ 8aa5cd8a-ae0d-4c5c-a52b-6c00930b63cc
 tip(md"ForwardDiff.jl is considered one of the most stable and reliable Julia AD packages.")
 
+# ╔═╡ fd3e13e2-4417-446c-80b8-bacb71c03c6f
+md"## DifferentiationInterface.jl
+We just used five different packages with slightly different syntax and slightly different return types to compute a gradient.
+Wouldn't it be great to have a common interface for all of these?
+
+That's exactly what [DifferentiationInterface.jl](https://github.com/gdalle/DifferentiationInterface.jl) does:
+"
+
+# ╔═╡ c5bf7616-031d-401d-9f5d-ec45be67ad98
+value_and_gradient(g, AutoZygote(), x̃)
+
+# ╔═╡ 73887f4b-bcef-4ea5-b1e8-51dbd7c6f90f
+value_and_gradient(g, AutoEnzyme(), x̃)
+
+# ╔═╡ 05cbfe8c-7a5b-4469-9d5e-fd21e9c82bc6
+value_and_gradient(g, AutoFiniteDiff(), x̃)
+
+# ╔═╡ 7d97d2e2-4a55-419c-b864-7aaa2b9aeffa
+value_and_gradient(g, AutoFiniteDifferences(; fdm=fdm_method), x̃)
+
+# ╔═╡ f633c51b-1727-4d42-89d0-d5ef0f77506c
+value_and_gradient(g, AutoForwardDiff(), x̃)
+
+# ╔═╡ b35399ab-6ea9-4043-85fe-02ca0c63dd77
+tip(md"As one of the authors, I am not neutral, but I recommend using all backends via DifferentiationInterface!")
+
+# ╔═╡ b683a585-899e-4922-8164-732318248aa2
+md"Features include:
+- All the [first- and second-order operators](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/explanation/operators/) you could ever want (gradients, Jacobians, Hessians...)
+- In-place and out-of-place differentiation
+- Preparation mechanisms (e.g. to pre-allocate a cache or record a tape)
+- Built-in [sparsity handling](https://gdalle.github.io/DifferentiationInterface.jl/DifferentiationInterface/stable/explanation/advanced/#Sparsity)
+- Testing and benchmarking utilities accessible via [DifferentiationInterfaceTest](https://github.com/gdalle/DifferentiationInterface.jl/tree/main/DifferentiationInterfaceTest)
+"
+
+# ╔═╡ d095e890-9ac8-4b05-ad98-3f8237402347
+md"## DifferentiationInterfaceTest.jl
+Let's use DifferentiationInterfaceTest to find out which AD backend is the most performant for our function `g`. 
+
+We're interested in the `:gradient` operator, more specifically the `:out` of place version. 
+We pass the function `g`, `x̃` and the first-order result:
+"
+
+# ╔═╡ 79f497bc-6f6c-49fe-8ff9-0cd3eb13000a
+scenarios = [
+	Scenario{:gradient,:out}(g, x̃; res1=[6.0, 2.0]),
+]
+
+# ╔═╡ 058d65c5-0c73-47c7-ab4e-bf3d5825f44a
+backends = [
+	AutoZygote(),
+	AutoEnzyme(),
+	AutoFiniteDiff(),
+	AutoFiniteDifferences(; fdm=fdm_method), # some backends require configuration
+	AutoForwardDiff(),
+]
+
+# ╔═╡ d7ef288b-590d-4b1b-a3f5-296b732166ed
+md"Calling `benchmark_differentiation` gives us benchmark results for all backends in a useful `DataFrame`:"
+
+# ╔═╡ eed69a85-2db6-42a9-9530-0e44d4848ba0
+benchmark_differentiation(backends, scenarios)
+
+# ╔═╡ 412d720f-ca38-4781-ae25-a6cebf32cae9
+md"We can also use DifferentiationInterfaceTest.jl when developing our own Julia package:"
+
+# ╔═╡ 104d6880-428e-4389-9a84-249cece8e8be
+test_differentiation(
+   backends,              # backends you want to test on
+   scenarios,             # scenarios you want to test on
+   correctness=true,      # compare values against the reference
+   type_stability=false,  # check type stability with JET.jl
+   detailed=true,         # print a detailed test set
+)
+
+# ╔═╡ 65181eeb-f72c-47b2-9260-f6cf1de4760f
+md"In this example, all tests passed, which is also the reason we were able to benchmark all backends.
+You will learn more on [package testing](https://adrianhill.de/julia-ml-course/test/) during your project work.
+"
+
 # ╔═╡ ce2d9ef5-3835-4871-8744-18293c772133
 md"## Other AD packages
 Now that you are equipped with knowledge about AD, take a look at the list of Julia AD packages at [juliadiff.org](https://juliadiff.org)!
@@ -1193,6 +1279,8 @@ Further inspiration for this lecture came from
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+DifferentiationInterface = "a0c0ee7d-e4b9-4e03-894e-1c5f64a51d63"
+DifferentiationInterfaceTest = "a82114a7-5aa3-49a8-9643-716bb13727a3"
 Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
 FiniteDiff = "6a86dc24-6348-571c-b903-95158fe2bd41"
 FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
@@ -1205,6 +1293,8 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [compat]
+DifferentiationInterface = "~0.6.6"
+DifferentiationInterfaceTest = "~0.7.1"
 Enzyme = "~0.13.7"
 FiniteDiff = "~2.23.0"
 FiniteDifferences = "~0.12.31"
@@ -1223,7 +1313,17 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.5"
 manifest_format = "2.0"
-project_hash = "de0a0ac8eb2b16740282960e96b46e3da81c2dd7"
+project_hash = "efac8d7dbb178ff88f71c1a52b3e4666c45029e7"
+
+[[deps.ADTypes]]
+git-tree-sha1 = "eea5d80188827b35333801ef97a40c2ed653b081"
+uuid = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
+version = "1.9.0"
+weakdeps = ["ChainRulesCore", "EnzymeCore"]
+
+    [deps.ADTypes.extensions]
+    ADTypesChainRulesCoreExt = "ChainRulesCore"
+    ADTypesEnzymeCoreExt = "EnzymeCore"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1310,9 +1410,9 @@ version = "0.5.0"
 
 [[deps.Cairo_jll]]
 deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "a2f1c8c668c8e3cb4cca4e57a8efdb09067bb3fd"
+git-tree-sha1 = "009060c9a6168704143100f36ab08f06c2af4642"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
-version = "1.18.0+2"
+version = "1.18.2+1"
 
 [[deps.ChainRules]]
 deps = ["Adapt", "ChainRulesCore", "Compat", "Distributed", "GPUArraysCore", "IrrationalConstants", "LinearAlgebra", "Random", "RealDot", "SparseArrays", "SparseInverseSubset", "Statistics", "StructArrays", "SuiteSparse"]
@@ -1329,6 +1429,16 @@ weakdeps = ["SparseArrays"]
 
     [deps.ChainRulesCore.extensions]
     ChainRulesCoreSparseArraysExt = "SparseArrays"
+
+[[deps.Chairmarks]]
+deps = ["Printf"]
+git-tree-sha1 = "9bf9d4b0d4a1acc212251eebbdf76f2ad70aae67"
+uuid = "0ca39b1e-fe0b-4e98-acfc-b1656634c4de"
+version = "1.2.2"
+weakdeps = ["Statistics"]
+
+    [deps.Chairmarks.extensions]
+    StatisticsChairmarksExt = ["Statistics"]
 
 [[deps.CodeTracking]]
 deps = ["InteractiveUtils", "UUIDs"]
@@ -1417,10 +1527,21 @@ git-tree-sha1 = "439e35b0b36e2e5881738abc8857bd92ad6ff9a8"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.3"
 
+[[deps.Crayons]]
+git-tree-sha1 = "249fe38abf76d48563e2f4556bebd215aa317e15"
+uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
+version = "4.1.1"
+
 [[deps.DataAPI]]
 git-tree-sha1 = "abe83f3a2f1b857aac70ef8b269080af17764bbe"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
 version = "1.16.0"
+
+[[deps.DataFrames]]
+deps = ["Compat", "DataAPI", "DataStructures", "Future", "InlineStrings", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrecompileTools", "PrettyTables", "Printf", "Random", "Reexport", "SentinelArrays", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
+git-tree-sha1 = "fb61b4812c49343d7ef0b533ba982c46021938a6"
+uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+version = "1.7.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -1460,6 +1581,70 @@ deps = ["IrrationalConstants", "LogExpFunctions", "NaNMath", "Random", "SpecialF
 git-tree-sha1 = "23163d55f885173722d1e4cf0f6110cdbaf7e272"
 uuid = "b552c78f-8df3-52c6-915a-8e097449b14b"
 version = "1.15.1"
+
+[[deps.DifferentiationInterface]]
+deps = ["ADTypes", "Compat", "LinearAlgebra", "PackageExtensionCompat"]
+git-tree-sha1 = "624e283ddac6d608742e857b0487238f11940f57"
+uuid = "a0c0ee7d-e4b9-4e03-894e-1c5f64a51d63"
+version = "0.6.6"
+
+    [deps.DifferentiationInterface.extensions]
+    DifferentiationInterfaceChainRulesCoreExt = "ChainRulesCore"
+    DifferentiationInterfaceDiffractorExt = "Diffractor"
+    DifferentiationInterfaceEnzymeExt = "Enzyme"
+    DifferentiationInterfaceFastDifferentiationExt = "FastDifferentiation"
+    DifferentiationInterfaceFiniteDiffExt = "FiniteDiff"
+    DifferentiationInterfaceFiniteDifferencesExt = "FiniteDifferences"
+    DifferentiationInterfaceForwardDiffExt = "ForwardDiff"
+    DifferentiationInterfaceMooncakeExt = "Mooncake"
+    DifferentiationInterfacePolyesterForwardDiffExt = "PolyesterForwardDiff"
+    DifferentiationInterfaceReverseDiffExt = "ReverseDiff"
+    DifferentiationInterfaceSparseArraysExt = "SparseArrays"
+    DifferentiationInterfaceSparseMatrixColoringsExt = "SparseMatrixColorings"
+    DifferentiationInterfaceSymbolicsExt = "Symbolics"
+    DifferentiationInterfaceTrackerExt = "Tracker"
+    DifferentiationInterfaceZygoteExt = ["Zygote", "ForwardDiff"]
+
+    [deps.DifferentiationInterface.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    Diffractor = "9f5e2b26-1114-432f-b630-d3fe2085c51c"
+    Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
+    FastDifferentiation = "eb9bf01b-bf85-4b60-bf87-ee5de06c00be"
+    FiniteDiff = "6a86dc24-6348-571c-b903-95158fe2bd41"
+    FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
+    ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+    Mooncake = "da2b9cff-9c12-43a0-ae48-6db2b0edb7d6"
+    PolyesterForwardDiff = "98d1487c-24ca-40b6-b7ab-df2af84e126b"
+    ReverseDiff = "37e2e3b7-166d-5795-8a7a-e32c996b4267"
+    SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+    SparseMatrixColorings = "0a514795-09f3-496d-8182-132a7b665d35"
+    Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+    Tracker = "9f7883ad-71c0-57eb-9f7f-b5c9e6d3789c"
+    Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
+
+[[deps.DifferentiationInterfaceTest]]
+deps = ["ADTypes", "Chairmarks", "Compat", "DataFrames", "DifferentiationInterface", "DocStringExtensions", "Functors", "JET", "LinearAlgebra", "PackageExtensionCompat", "ProgressMeter", "Random", "SparseArrays", "Test"]
+git-tree-sha1 = "77dfb5ae8611bc4b409418658deed6c7b03dd996"
+uuid = "a82114a7-5aa3-49a8-9643-716bb13727a3"
+version = "0.7.1"
+
+    [deps.DifferentiationInterfaceTest.extensions]
+    DifferentiationInterfaceTestComponentArraysExt = "ComponentArrays"
+    DifferentiationInterfaceTestFluxExt = ["FiniteDifferences", "Flux"]
+    DifferentiationInterfaceTestJLArraysExt = "JLArrays"
+    DifferentiationInterfaceTestLuxExt = ["ComponentArrays", "ForwardDiff", "Lux", "LuxTestUtils"]
+    DifferentiationInterfaceTestStaticArraysExt = "StaticArrays"
+
+    [deps.DifferentiationInterfaceTest.weakdeps]
+    ComponentArrays = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"
+    FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
+    Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+    ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+    JLArrays = "27aeb0d3-9eb9-45fb-866b-73c2ecf80fcb"
+    Lux = "b2108857-7c20-44ae-9111-449ecde12c47"
+    LuxTestUtils = "ac9de150-d08f-4546-94fb-7472b5760531"
+    StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+    Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -1626,6 +1811,12 @@ git-tree-sha1 = "1ed150b39aebcc805c26b93a8d0122c940f64ce2"
 uuid = "559328eb-81f9-559d-9380-de523a88c83c"
 version = "1.0.14+0"
 
+[[deps.Functors]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "64d8e93700c7a3f28f717d265382d52fac9fa1c1"
+uuid = "d9f16b24-f501-4c13-a1f2-28368ffc5196"
+version = "0.4.12"
+
 [[deps.Future]]
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
@@ -1725,9 +1916,27 @@ git-tree-sha1 = "950c3717af761bc3ff906c2e8e52bd83390b6ec2"
 uuid = "7869d1d1-7146-5819-86e3-90919afe41df"
 version = "0.4.14"
 
+[[deps.InlineStrings]]
+git-tree-sha1 = "45521d31238e87ee9f9732561bfee12d4eebd52d"
+uuid = "842dd82b-1e85-43dc-bf29-5d0ee9dffc48"
+version = "1.4.2"
+
+    [deps.InlineStrings.extensions]
+    ArrowTypesExt = "ArrowTypes"
+    ParsersExt = "Parsers"
+
+    [deps.InlineStrings.weakdeps]
+    ArrowTypes = "31f734f8-188a-4ce0-8406-c8a06bd891cd"
+    Parsers = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
+
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+
+[[deps.InvertedIndices]]
+git-tree-sha1 = "0dc7b50b8d436461be01300fd8cd45aa0274b038"
+uuid = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
+version = "1.3.0"
 
 [[deps.IrrationalConstants]]
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
@@ -1738,6 +1947,20 @@ version = "0.2.2"
 git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
 uuid = "82899510-4779-5014-852e-03e436cf321d"
 version = "1.0.0"
+
+[[deps.JET]]
+deps = ["CodeTracking", "InteractiveUtils", "JuliaInterpreter", "LoweredCodeUtils", "MacroTools", "Pkg", "PrecompileTools", "Preferences", "Test"]
+git-tree-sha1 = "db3d262aed9730b3670d54000f452f4cd839f185"
+uuid = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
+version = "0.9.10"
+
+    [deps.JET.extensions]
+    JETCthulhuExt = "Cthulhu"
+    ReviseExt = "Revise"
+
+    [deps.JET.weakdeps]
+    Cthulhu = "f68482b8-f384-11e8-15f7-abe071a5a75f"
+    Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 
 [[deps.JLFzf]]
 deps = ["Pipe", "REPL", "Random", "fzf_jll"]
@@ -2056,6 +2279,12 @@ deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
 version = "10.42.0+1"
 
+[[deps.PackageExtensionCompat]]
+git-tree-sha1 = "fb28e33b8a95c4cee25ce296c817d89cc2e53518"
+uuid = "65ce6f38-6b18-4e1d-a461-8949797d7930"
+version = "1.0.2"
+weakdeps = ["Requires", "TOML"]
+
 [[deps.Pango_jll]]
 deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "FriBidi_jll", "Glib_jll", "HarfBuzz_jll", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "e127b609fb9ecba6f201ba7ab753d5a605d53801"
@@ -2140,6 +2369,12 @@ git-tree-sha1 = "eba4810d5e6a01f612b948c9fa94f905b49087b0"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 version = "0.7.60"
 
+[[deps.PooledArrays]]
+deps = ["DataAPI", "Future"]
+git-tree-sha1 = "36d8b4b899628fb92c2749eb488d884a926614d3"
+uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
+version = "1.4.3"
+
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
 git-tree-sha1 = "5aa36f7049a63a1528fe8f7c3f2113413ffd4e1f"
@@ -2152,9 +2387,21 @@ git-tree-sha1 = "9306f6085165d270f7e3db02af26a400d580f5c6"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
 version = "1.4.3"
 
+[[deps.PrettyTables]]
+deps = ["Crayons", "LaTeXStrings", "Markdown", "PrecompileTools", "Printf", "Reexport", "StringManipulation", "Tables"]
+git-tree-sha1 = "1101cd475833706e4d0e7b122218257178f48f34"
+uuid = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
+version = "2.4.0"
+
 [[deps.Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+
+[[deps.ProgressMeter]]
+deps = ["Distributed", "Printf"]
+git-tree-sha1 = "8f6bc219586aef8baf0ff9a5fe16ee9c70cb65e4"
+uuid = "92933f4c-e287-5a05-a399-4b506db050ca"
+version = "1.10.2"
 
 [[deps.Qt6Base_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Fontconfig_jll", "Glib_jll", "JLLWrappers", "Libdl", "Libglvnd_jll", "OpenSSL_jll", "Vulkan_Loader_jll", "Xorg_libSM_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Xorg_libxcb_jll", "Xorg_xcb_util_cursor_jll", "Xorg_xcb_util_image_jll", "Xorg_xcb_util_keysyms_jll", "Xorg_xcb_util_renderutil_jll", "Xorg_xcb_util_wm_jll", "Zlib_jll", "libinput_jll", "xkbcommon_jll"]
@@ -2245,6 +2492,12 @@ git-tree-sha1 = "3bac05bc7e74a75fd9cba4295cde4045d9fe2386"
 uuid = "6c6a2e73-6563-6170-7368-637461726353"
 version = "1.2.1"
 
+[[deps.SentinelArrays]]
+deps = ["Dates", "Random"]
+git-tree-sha1 = "ff11acffdb082493657550959d4feb4b6149e73a"
+uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
+version = "1.4.5"
+
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
@@ -2328,6 +2581,12 @@ git-tree-sha1 = "5cf7606d6cef84b543b483848d4ae08ad9832b21"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.34.3"
 
+[[deps.StringManipulation]]
+deps = ["PrecompileTools"]
+git-tree-sha1 = "a6b1675a536c5ad1a60e5a5153e1fee12eb146e3"
+uuid = "892a3eda-7b42-436c-8928-eab12a02cf0e"
+version = "0.4.0"
+
 [[deps.StructArrays]]
 deps = ["ConstructionBase", "DataAPI", "Tables"]
 git-tree-sha1 = "f4dc295e983502292c4c3f951dbb4e985e35b3be"
@@ -2394,9 +2653,9 @@ uuid = "a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f"
 version = "0.5.24"
 
 [[deps.TranscodingStreams]]
-git-tree-sha1 = "e84b3a11b9bece70d14cce63406bbc79ed3464d2"
+git-tree-sha1 = "0c45878dcfdcfa8480052b6ab162cdd138781742"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.11.2"
+version = "0.11.3"
 
 [[deps.Tricks]]
 git-tree-sha1 = "7822b97e99a1672bfb1b49b668a6d46d58d8cbcb"
@@ -2882,6 +3141,24 @@ version = "1.4.1+1"
 # ╟─15a3167e-f9c2-4516-a6fb-e737958fbdfe
 # ╠═bafd8dc3-7666-4d5e-a07f-d4e35b26a777
 # ╟─8aa5cd8a-ae0d-4c5c-a52b-6c00930b63cc
+# ╟─fd3e13e2-4417-446c-80b8-bacb71c03c6f
+# ╠═5cc54371-cf02-429e-b7ce-5fdf2ec8833a
+# ╠═c5bf7616-031d-401d-9f5d-ec45be67ad98
+# ╠═73887f4b-bcef-4ea5-b1e8-51dbd7c6f90f
+# ╠═05cbfe8c-7a5b-4469-9d5e-fd21e9c82bc6
+# ╠═7d97d2e2-4a55-419c-b864-7aaa2b9aeffa
+# ╠═f633c51b-1727-4d42-89d0-d5ef0f77506c
+# ╟─b35399ab-6ea9-4043-85fe-02ca0c63dd77
+# ╟─b683a585-899e-4922-8164-732318248aa2
+# ╟─d095e890-9ac8-4b05-ad98-3f8237402347
+# ╠═8d4fea3c-01c3-4214-a5db-5c7c1c6bdb26
+# ╠═79f497bc-6f6c-49fe-8ff9-0cd3eb13000a
+# ╠═058d65c5-0c73-47c7-ab4e-bf3d5825f44a
+# ╟─d7ef288b-590d-4b1b-a3f5-296b732166ed
+# ╠═eed69a85-2db6-42a9-9530-0e44d4848ba0
+# ╟─412d720f-ca38-4781-ae25-a6cebf32cae9
+# ╠═104d6880-428e-4389-9a84-249cece8e8be
+# ╟─65181eeb-f72c-47b2-9260-f6cf1de4760f
 # ╟─ce2d9ef5-3835-4871-8744-18293c772133
 # ╟─17a9dab3-46de-4c51-b16b-a0ce367bbcb3
 # ╟─00000000-0000-0000-0000-000000000001
