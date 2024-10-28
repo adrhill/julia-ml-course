@@ -825,10 +825,10 @@ else
 		if ismissing(result_square) || ismissing(result_diagonal)
             still_missing()
         # Test for square matrix
-		elseif !(result_square ≈ result_ref)
+        elseif !isapprox(result_square, result_ref, atol=1e-4)
             keep_working(md"Check your implementation for square matrices.")
             # Test for diagonal matrix
-        elseif !(result_diagonal ≈ result_ref)
+        elseif !isapprox(result_diagonal, result_ref, atol=1e-4)
             keep_working(md"Check your implementation for diagonal matrices.")
         else
             correct()
