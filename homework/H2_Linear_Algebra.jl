@@ -820,28 +820,16 @@ else
         # Results
         result_square = trace(A_square)
         result_diagonal = trace(A_diagonal)
-        shouldError = true
-        try
-            result_not_square = trace(A_not_square)
-            shouldError = false
-        catch
-        end
 
 		# Test missing
 		if ismissing(result_square) || ismissing(result_diagonal)
             still_missing()
         # Test for square matrix
-		elseif result_square != result_ref
+		elseif !(result_square ≈ result_ref)
             keep_working(md"Check your implementation for square matrices.")
-
-            # Test for non-square matrix
-        elseif !shouldError
-            keep_working(md"Did you check whether the matrix is a square matrix?")
-
             # Test for diagonal matrix
-        elseif result_diagonal != result_ref
+        elseif !(result_diagonal ≈ result_ref)
             keep_working(md"Check your implementation for diagonal matrices.")
-
         else
             correct()
         end
