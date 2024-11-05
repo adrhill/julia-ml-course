@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.46
+# v0.20.0
 
 using Markdown
 using InteractiveUtils
@@ -35,7 +35,7 @@ using StatsPlots
 # ╔═╡ 327399fe-a38e-4410-b928-a7f9410aba90
 begin
     using Plots
-    using PlotlyBase, PlotlyKaleido
+    import PlotlyBase, PlotlyKaleido
 
     plotly() # activate Plotly backend
 end
@@ -601,7 +601,7 @@ StatsPlots = "~0.15.7"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.5"
+julia_version = "1.10.6"
 manifest_format = "2.0"
 project_hash = "e51eb6c1b4098cd6f8122c9db0626e57b8497b5c"
 
