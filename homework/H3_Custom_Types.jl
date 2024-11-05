@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.46
+# v0.20.0
 
 using Markdown
 using InteractiveUtils
@@ -22,7 +22,7 @@ begin
 
     using LaTeXStrings
     using Plots
-    using PlotlyBase, PlotlyKaleido
+    import PlotlyBase, PlotlyKaleido
     plotly()
 end
 
@@ -740,7 +740,7 @@ Zygote = "~0.6.69"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.5"
+julia_version = "1.10.6"
 manifest_format = "2.0"
 project_hash = "089b0a488810cbbdbcfa5a58a73af6149ac4fc8c"
 
