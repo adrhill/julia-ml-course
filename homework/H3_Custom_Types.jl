@@ -387,7 +387,7 @@ To optimize $\theta$, we typically compute the gradient of our loss with respect
 """
 
 # ╔═╡ b3832fb6-dd19-4b38-8117-b0a11d1bc34f
-md"""### Interlude: Understanding Optimizer.jl
+md"""### Interlude: Understanding Optimisers.jl
 All optimization algorithms in Optimisers.jl are sub-types of the abstract type `AbstractRule`.
 
 To extend Optimisers.jl, we simply need to define a custom sub-type and overload two functions `init` and `apply!` using multiple dispatch.
