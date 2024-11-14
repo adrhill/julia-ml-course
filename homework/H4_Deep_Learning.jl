@@ -221,10 +221,10 @@ Markdown.MD(
         "Task",
         "Optional tasks (2 extra points)",
         [
-            md"
-           * Log the training losses and plot them
-           * Calculate the accuracy of the trained model using the test data `x_test` and `y_test`
-           * Find the classes with the highest and lowest accuracy on the test data",
+md"
+* Log the training losses and plot them
+* Calculate the accuracy of the trained model using the test data `x_test` and `y_test`
+* Find the classes with the highest and lowest accuracy on the test data",
         ],
     ),
 )
