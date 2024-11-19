@@ -28,7 +28,7 @@ template = Template(;
     julia=v"1.10",
     plugins=[
         License(; name="MIT"),
-        Git(; manifest=false),
+        Git(; ssh=true, manifest=false),
         Tests(; project=true),
         GitHubActions(; x64=true, extra_versions=[v"1.10"]),
         Codecov(),
