@@ -31,6 +31,9 @@ using UnicodePlots
 # ╔═╡ cbfc8bdf-2b6c-4dae-89da-c27342ec6afe
 using Distributions
 
+# ╔═╡ 0258bd29-ad24-40b2-b0df-7501040fd5e2
+html"""<style>.dont-panic{ display: none }</style>"""
+
 # ╔═╡ 83497498-2c14-49f4-bb5a-c252f655e006
 ChooseDisplayMode()
 
@@ -928,12 +931,12 @@ UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
 
 [compat]
 BenchmarkTools = "~1.6.0"
-Distributions = "~0.25.112"
-OffsetArrays = "~1.14.1"
-PlutoTeachingTools = "~0.3.0"
-PlutoUI = "~0.7.60"
-StaticArrays = "~1.9.7"
-UnicodePlots = "~3.6.4"
+Distributions = "~0.25.118"
+OffsetArrays = "~1.16.0"
+PlutoTeachingTools = "~0.3.1"
+PlutoUI = "~0.7.62"
+StaticArrays = "~1.9.13"
+UnicodePlots = "~3.7.2"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -942,7 +945,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.4"
 manifest_format = "2.0"
-project_hash = "f1c13c9c3c606218ce6e3e0641012e111ef089fb"
+project_hash = "8ccd917b567192666d9fd997091f9e5d0bcb61aa"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -1066,10 +1069,9 @@ version = "0.25.118"
     Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[deps.DocStringExtensions]]
-deps = ["LibGit2"]
-git-tree-sha1 = "2fb1e02f2b635d0845df5d7c167fec4dd739b00d"
+git-tree-sha1 = "e7b7e6f178525d17c720ab9c081e4ef04429f860"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
-version = "0.9.3"
+version = "0.9.4"
 
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
@@ -1287,9 +1289,9 @@ uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
 
 [[deps.OffsetArrays]]
-git-tree-sha1 = "39d000d9c33706b8364817d8894fae1548f40295"
+git-tree-sha1 = "a414039192a155fb38c4599a60110f0018c6ec82"
 uuid = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
-version = "1.14.2"
+version = "1.16.0"
 
     [deps.OffsetArrays.extensions]
     OffsetArraysAdaptExt = "Adapt"
@@ -1320,9 +1322,9 @@ version = "1.8.0"
 
 [[deps.PDMats]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
-git-tree-sha1 = "966b85253e959ea89c53a9abebbf2e964fbf593b"
+git-tree-sha1 = "48566789a6d5f6492688279e22445002d171cf76"
 uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
-version = "0.11.32"
+version = "0.11.33"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
@@ -1576,9 +1578,9 @@ uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 version = "0.1.10"
 
 [[deps.URIs]]
-git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
+git-tree-sha1 = "cbbebadbcc76c5ca1cc4b4f3b0614b3e603b5000"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.5.1"
+version = "1.5.2"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
@@ -1590,10 +1592,10 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 version = "1.11.0"
 
 [[deps.UnicodePlots]]
-deps = ["ColorSchemes", "ColorTypes", "Contour", "Crayons", "Dates", "LinearAlgebra", "MarchingCubes", "NaNMath", "PrecompileTools", "Printf", "Requires", "SparseArrays", "StaticArrays", "StatsBase"]
-git-tree-sha1 = "acae7efed23db0e73d3d2c434d97353748c9527c"
+deps = ["ColorSchemes", "ColorTypes", "Contour", "Crayons", "Dates", "LinearAlgebra", "MarchingCubes", "NaNMath", "PrecompileTools", "Printf", "SparseArrays", "StaticArrays", "StatsBase"]
+git-tree-sha1 = "24c0e2df19eb3f894d28a64e7486926f38de8a49"
 uuid = "b8865327-cd53-5732-bb35-84acbb429228"
-version = "3.6.5"
+version = "3.7.2"
 
     [deps.UnicodePlots.extensions]
     FreeTypeExt = ["FileIO", "FreeType"]
@@ -1632,6 +1634,7 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
+# ╟─0258bd29-ad24-40b2-b0df-7501040fd5e2
 # ╠═755b8685-0711-48a2-a3eb-f80af39f10e1
 # ╟─83497498-2c14-49f4-bb5a-c252f655e006
 # ╟─96b32c06-6136-4d44-be87-f2f67b374bbd

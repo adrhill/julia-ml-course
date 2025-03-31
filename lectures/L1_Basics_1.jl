@@ -17,6 +17,9 @@ begin
     print_type_tree(T) = print_tree(T)
 end
 
+# ╔═╡ f28ab96e-ff8a-46b4-b3db-b8ad5975352e
+html"""<style>.dont-panic{ display: none }</style>"""
+
 # ╔═╡ c5e6183d-8fc9-47f4-aff4-6a0fa75b3e4b
 ChooseDisplayMode()
 
@@ -955,8 +958,8 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 AbstractTrees = "~0.4.5"
-PlutoTeachingTools = "~0.3.0"
-PlutoUI = "~0.7.60"
+PlutoTeachingTools = "~0.3.1"
+PlutoUI = "~0.7.62"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -965,7 +968,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.4"
 manifest_format = "2.0"
-project_hash = "7297d7f8c8694e7dd193d0bdf7f4d5f03206eea1"
+project_hash = "6ebd83e7e3c8abf01e89b247385e3b0b31c651f8"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -1312,9 +1315,9 @@ uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 version = "0.1.10"
 
 [[deps.URIs]]
-git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
+git-tree-sha1 = "cbbebadbcc76c5ca1cc4b4f3b0614b3e603b5000"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.5.1"
+version = "1.5.2"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
@@ -1347,6 +1350,7 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
+# ╟─f28ab96e-ff8a-46b4-b3db-b8ad5975352e
 # ╠═1fcbc08a-a0b7-11ed-0477-13c86a949723
 # ╟─c5e6183d-8fc9-47f4-aff4-6a0fa75b3e4b
 # ╟─98428309-2e55-4c8b-8c3a-3e98e677a1b2

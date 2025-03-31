@@ -14,6 +14,9 @@ end
 # ╔═╡ d41a8c69-7a7f-4d6a-9fa2-6b12d99dd485
 using BenchmarkTools
 
+# ╔═╡ f751f567-47cb-4b54-ae86-88a392d8a5ed
+html"""<style>.dont-panic{ display: none }</style>"""
+
 # ╔═╡ 83497498-2c14-49f4-bb5a-c252f655e006
 ChooseDisplayMode()
 
@@ -494,7 +497,7 @@ We are simply defining additional methods using multiple dispatch!
 
 # ╔═╡ a4d72f28-c11c-4c61-8243-5e5599097f48
 begin
-    import Base: +, *, zero
+    import Base: +, *, zero, convert
 
     # Addition & multiplication with real numbers
     +(a::MyComplex, b::Real) = MyComplex(a.re + b, a.im)
@@ -516,6 +519,9 @@ begin
 
     # Let's also define the additive identity (x + zero(x) = x):
     zero(::MyComplex{T}) where {T} = MyComplex(zero(T), zero(T))
+
+	# In case of type promotion we should make it use zero 
+	convert(::Type{MyComplex{T}}, x::T) where {T<:Number} = MyComplex(x, zero(T))
 end
 
 # ╔═╡ e7ae71af-5f00-4667-8949-b58a096a8dde
@@ -679,8 +685,8 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 BenchmarkTools = "~1.6.0"
-PlutoTeachingTools = "~0.3.0"
-PlutoUI = "~0.7.60"
+PlutoTeachingTools = "~0.3.1"
+PlutoUI = "~0.7.62"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -689,7 +695,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.4"
 manifest_format = "2.0"
-project_hash = "3fb049957cfcca5c43500a95d4ea7ea1f9181e7b"
+project_hash = "98566091d298b8e2685426866a3052124707d2d1"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -1051,9 +1057,9 @@ uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 version = "0.1.10"
 
 [[deps.URIs]]
-git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
+git-tree-sha1 = "cbbebadbcc76c5ca1cc4b4f3b0614b3e603b5000"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.5.1"
+version = "1.5.2"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
@@ -1086,6 +1092,7 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
+# ╟─f751f567-47cb-4b54-ae86-88a392d8a5ed
 # ╠═755b8685-0711-48a2-a3eb-f80af39f10e1
 # ╟─83497498-2c14-49f4-bb5a-c252f655e006
 # ╟─96b32c06-6136-4d44-be87-f2f67b374bbd
