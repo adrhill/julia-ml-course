@@ -122,19 +122,19 @@ task("Define variables such that their type matches the given variable name.
 You can give the variables any value you want.", 0.5)
 
 # ╔═╡ b96fde59-1f2a-4d07-a5cc-6ec48e5079f1
-my_string = "hi" # replace `missing` with your code!
+my_string = missing # replace `missing` with your code!
 
 # ╔═╡ 12faf3e9-4380-430c-aedf-25380558b09a
-my_int = 1
+my_int = missing
 
 # ╔═╡ 9d20c79d-4f97-4a39-ac1a-eed311a6149a
-my_float64 = 1.0
+my_float64 = missing
 
 # ╔═╡ d9a237b0-c112-4ee2-9232-725ce97679dc
-my_float32 = 1f0
+my_float32 = missing
 
 # ╔═╡ b8e741c9-feff-4017-a037-0fbd9cd4f49a
-my_complex = 1 + 0im
+my_complex = missing
 
 # ╔═╡ 2001c0fb-e4cd-49d6-b305-429c0597bad2
 # my_string
@@ -195,22 +195,22 @@ Fix each expression by broadcasting.
 This only requires **adding a single dot** (`.`) to each line and for one expression exactly one space.""", 0.5)
 
 # ╔═╡ c84be3a2-73a9-42f1-bf6b-3fbf64258cf5
-my_square_roots = sqrt.([4, 9, 16])
+my_square_roots = sqrt([4, 9, 16])
 
 # ╔═╡ a11ccc2b-3c5b-493a-8e8b-8b46b44bd3a4
-my_favorite_primes = [7, 12, 18] .- 5
+my_favorite_primes = [7, 12, 18] - 5
 
 # ╔═╡ 6a1c553d-66ef-42da-83ad-5b46a7e4c58b
 md"Before you fix the following expressions, think about what you expect them to return!"
 
 # ╔═╡ 6eaffea6-099d-441e-b54b-f08bc9b478c7
-my_broadcast_1 = 2 .^(1:8)
+my_broadcast_1 = 2^(1:8)
 
 # ╔═╡ a87612a8-62dd-44d4-89c4-c712870b00c3
-my_broadcast_2 = (1:8).^2
+my_broadcast_2 = (1:8)^2
 
 # ╔═╡ da70e426-ea78-4969-9402-efffd5576238
-my_broadcast_3 = (1:8).^(1:8)
+my_broadcast_3 = (1:8)^(1:8)
 
 # ╔═╡ 35f59a25-0ab4-4c18-82c8-466fdeeb3471
 # my_square_roots
@@ -253,7 +253,7 @@ task("Define `my_types` such that it is a vector of the types in `my_vars`.", 0.
 my_vars = [1.3, 'b', 3, im, "String", 2//3]
 
 # ╔═╡ f190cbbb-24e7-4c83-b7fb-9477ccdb5023
-my_types = typeof.(my_vars)  # should be equal to types in `my_vars`
+my_types = missing  # should be equal to types in `my_vars`
 
 # ╔═╡ a4b05061-e48e-4dbb-aa1c-df242c5b2785
 if !@isdefined(my_types)
@@ -294,7 +294,7 @@ task(
 # ╔═╡ 49e6ab33-9452-4dc1-ac59-d47e70c325a5
 function smaller(a, b)
     # Write your code here!
-    return b < a ? b : a
+    return missing
 end
 
 # ╔═╡ ffbd5d8c-86f9-4c5d-9d9c-1d1a0083a439
@@ -339,11 +339,7 @@ task(
 # ╔═╡ f54461c4-392c-4a83-933c-d30a41ce4e0e
 function my_sum(xs)
     # Write your code here!
-	sum = 0
-	for val in xs
-		sum += val
-	end
-    return sum
+	return missing
 end
 
 # ╔═╡ bcb0ff95-f769-46f3-abf3-d5807107413b
@@ -390,7 +386,7 @@ function my_powers(x, ymax::Int)
     ymax < 1 && error("ymax has to be larger or equal 1.")
 
     # but you have to write code here!
-    return [x^y for y in 1:ymax]
+    return missing
 end
 
 # ╔═╡ b74c95c2-db7a-4a72-b7c6-3e6644d90158
@@ -499,7 +495,7 @@ You can reuse `my_sum`.
 # ╔═╡ bae3ffd7-2d9a-4450-9f5e-6b7c296529d5
 function my_mean(xs)
     # Write your code here!
-    return my_sum(xs)/length(xs)
+    return missing
 end
 
 # ╔═╡ 31ac70a3-2dcc-497f-a996-81e087615b0f
@@ -538,7 +534,7 @@ $\sigma(x) = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n} \left(x_i - \mu\right)^2}$
 # ╔═╡ 2af1806e-c9af-4616-a654-9b0d52a08c65
 function my_std(xs)
     # Write your code here!
-    return sqrt(my_sum((xs.-my_mean(xs)).^2)/(length(xs)-1))
+    return missing
 end
 
 # ╔═╡ 041fe618-588e-4fb6-b1d5-455a7d8bdf6f
@@ -579,9 +575,7 @@ task("Implement a function `standardize(xs)` that standardizes a vector.", 2)
 # ╔═╡ 5d080901-92f2-45d5-8603-3fc8e90137e0
 function standardize(xs)
     # Write your code here!
-	μ = my_mean(xs)
-	σ = my_std(xs)
-    return (xs .- μ)/σ
+    return missing
 end
 
 # ╔═╡ ac830b8f-9ca5-4a86-981f-e9953700a6b0
@@ -646,17 +640,15 @@ task(
 # ╔═╡ cce72fb1-b694-4b84-9cc6-e209acd398db
 function get_transformations(data)
     # Write code here!
-	μ = my_mean(data)
-	σ = my_std(data)
 
     function transform(xs)
         # Write code here!
-        return (xs .- μ) / σ   	# can skip broadcast on division
+        return xs
     end
 
     function inverse_transform(xs)
         # Write code here!
-        return xs * σ .+ μ  	# can skip broadcast on multiplication
+        return xs
     end
 
     return transform, inverse_transform # don't change this line

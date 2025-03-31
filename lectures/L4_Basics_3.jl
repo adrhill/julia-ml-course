@@ -521,7 +521,8 @@ begin
     zero(::MyComplex{T}) where {T} = MyComplex(zero(T), zero(T))
 
 	# In case of type promotion we should make it use zero 
-	convert(::Type{MyComplex{T}}, x::T) where {T<:Number} = MyComplex(x, zero(T))
+	convert(::Type{MyComplex{T1}}, x::T2) where {T1,T2<:Real} = MyComplex(convert(T1, x), zero(T1))
+
 end
 
 # ╔═╡ e7ae71af-5f00-4667-8949-b58a096a8dde
