@@ -108,7 +108,7 @@ If you do not register on time, you cannot pass the course.
 
 ![JuML course timeline](/assets/timeline.png)
 
-* **Course Period:**  April 14th 2025 - July 25th 2025
+* **Course Period:**  April 14th 2025 - July 19th 2025
   * **Kick-off meeting:** Tuesday, April 15th, 16:15-17:45, MAR 0.016
   * **Project meetings:** Tuesdays, 16:15-17:45, MAR 0.016
   * **Office hours:** TBA
