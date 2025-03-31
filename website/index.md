@@ -114,12 +114,12 @@ If you do not register on time, you cannot pass the course.
   * **Office hours:** TBA
 
 Attendance is mandatory on the following dates:
- * Tuesday, 15.04.25
- * Tuesday, 20.05.25
- * Tuesday, 10.06.25
- * Tuesday, 01.07.25
- * Tuesday, 15.07.25
- * Tuesday, 22.07.25
+* Tuesday, 15.04.25
+* Tuesday, 20.05.25
+* Tuesday, 10.06.25
+* Tuesday, 01.07.25
+* Tuesday, 15.07.25
+* Tuesday, 22.07.25
 
 The date of the final examination will be determined on a group-by-group basis.
 
