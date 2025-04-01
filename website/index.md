@@ -1,8 +1,8 @@
-@def title = "Julia Programming for Machine Learning"
+@def title = "Julia for Machine Learning"
 @def tags = ["index"]
 
-# Julia Programming for ML
-Welcome to the *Julia Programming for Machine Learning* course (JuML)
+# Julia for Machine Learning
+Welcome to the *Julia for Machine Learning* course (JuML)
 offered by Prof. Klaus-Robert Müller's 
 [Machine Learning Group](https://web.ml.tu-berlin.de) at TU Berlin.
 

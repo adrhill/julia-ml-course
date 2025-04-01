@@ -67,7 +67,7 @@ takeaways(md) = Markdown.MD(Markdown.Admonition("tip", "Takeaways", [md]));
 # ╔═╡ f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 html"""
 	<h1 style="text-align:center">
-		Julia Programming for ML
+		Julia for Machine Learning
 	</h1>
 	<div style="text-align:center">
 		<p style="font-weight:bold; font-size: 35px; font-variant: small-caps; margin: 0px">

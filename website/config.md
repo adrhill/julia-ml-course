@@ -15,8 +15,8 @@ ignore = ["node_modules/"]
 # RSS (the website_{title, descr, url} must be defined to get RSS)
 generate_rss = false
 prepath = "julia-ml-course"
-website_title = "Julia Programming for ML"
-website_descr = "Julia Programming for ML course at TU Berlin"
+website_title = "Julia for Machine Learning"
+website_descr = "Julia for Machine Learning course at TU Berlin"
 website_url   = "https://adrhill.github.io/julia-ml-course/"
 +++
 

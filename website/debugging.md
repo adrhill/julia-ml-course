@@ -1,4 +1,4 @@
-@def title = "Julia Programming for Machine Learning"
+@def title = "Julia for Machine Learning"
 @def tags = ["index", "profiling", "debugging"]
 
 # Debugging & Logging

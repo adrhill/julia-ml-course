@@ -22,7 +22,7 @@ PlutoTeachingTools.default_language[] = PlutoTeachingTools.PTTEnglish.EnglishUS(
 # ╔═╡ 04376141-9c94-4197-804a-932c35a53777
 html"""
 	<h1 style="text-align:center">
-		Julia Programming for ML
+		Julia for Machine Learning
 	</h1>
 	<div style="text-align:center">
 		<p style="font-weight:bold; font-size: 35px; font-variant: small-caps; margin: 0px">
@@ -148,7 +148,7 @@ Package search can be found on [JuliaHub.com](https://juliahub.com/ui/Home):
 # ╔═╡ 2915a88f-3bef-4d54-8c5f-6c3da7cb4386
 md"""# Getting help from humans
 #### TU Berlin students
-If you are a TU Berlin student taking the "Julia Programming for ML" course, you get personal help by either
+If you are a TU Berlin student taking the "Julia for Machine Learning" course, you get personal help by either
 - asking questions during lectures / exercises / office hours
 - asking in the forum of the JuML ISIS page
 - sending me an email

@@ -40,7 +40,7 @@ html"""<style>.dont-panic{ display: none }</style>"""
 # ╔═╡ f7347c06-c1b7-11ed-3b8e-fbf167ce9cba
 html"""
 	<h1 style="text-align:left">
-		Julia Programming for ML
+		Julia for Machine Learning
 	</h1>
 	<div style="text-align:left">
 		<p style="font-weight:bold; font-size: 35px; font-variant: small-caps; margin: 0px">
@@ -964,7 +964,7 @@ end
 
 # ╔═╡ edb7814a-eddf-4c87-8857-19bb0a0c0241
 md"""# Feedback
-This is the fourth iteration of the *"Julia Programming for ML"* class. Please help us make the course better!
+This is the fourth iteration of the *"Julia for Machine Learning"* class. Please help us make the course better!
 
 You can write whatever you want in the following string. Feel free to add or delete whatever you want.
 """

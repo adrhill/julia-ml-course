@@ -34,7 +34,7 @@ PlutoTeachingTools.default_language[] = PlutoTeachingTools.PTTEnglish.EnglishUS(
 # ╔═╡ 04376141-9c94-4197-804a-932c35a53777
 html"""
 	<h1 style="text-align:center">
-		Julia Programming for ML
+		Julia for Machine Learning
 	</h1>
 	<div style="text-align:center">
 		<p style="font-weight:bold; font-size: 35px; font-variant: small-caps; margin: 0px">
