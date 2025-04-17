@@ -860,7 +860,7 @@ end
 # ╔═╡ b857984b-ec1b-4409-bdf0-438228950f39
 md"""# Broadcasting on arrays
 We've already seen broadcasting on vectors in the previous lecture.
-For higher-dimensional arrays, the behaviour is [a bit more complicated]((https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting)):
+For higher-dimensional arrays, the behaviour is [a bit more complicated](https://docs.julialang.org/en/v1/manual/arrays/#Broadcasting):
 
 >  Broadcast **expands singleton dimensions in array arguments to match the corresponding dimension in the other array** without using extra memory, and applies the given function elementwise
 
