@@ -29,7 +29,7 @@ followed by the name of the environment you want to create.
 Let's create a new environment called `MyDeepLearningEnv` that includes *MLDatasets.jl* and *Flux.jl*:
 
 ```julia-repl
-(@v1.10) pkg> activate MyDeepLearningEnv            # create environment
+(@v1.11) pkg> activate MyDeepLearningEnv            # create environment
   Activating new project at `~/MyDeepLearningEnv`
 
 (@MyDeepLearningEnv) pkg>                           # environment is active
@@ -98,7 +98,7 @@ Let's look at our Manifest using `cat Manifest.toml`:
 ```toml
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.2"
+julia_version = "1.11.5"
 manifest_format = "2.0"
 project_hash = "9aea089894f46207e0e51b9ad88b65d90b4230ac"
 
@@ -160,7 +160,7 @@ When creating an environment, Pkg will look at the acceptable versions of Foo fo
 The more packages are installed in one environment, the harder it gets to resolve dependencies,
 and the more likely you are to use outdated versions of packages.
 
-For this reason, you should use separate environments for each project instead of installing everything into your global `(@v1.10)` environment.
+For this reason, you should use separate environments for each project instead of installing everything into your global `(@v1.11)` environment.
 To show which of your dependencies are outdated, run `status --outdated` in Pkg-mode.
 
 ### Reason 4: Simplify troubleshooting
@@ -191,7 +191,7 @@ In your Julia REPL, enter package mode and type `activate --temp`.
 This will create an environment with a randomized name in a temporary folder.
 
 ```julia-repl
-(@v1.10) pkg> activate --temp
+(@v1.11) pkg> activate --temp
   Activating new project at `/var/folders/74/wcz8c9qs5dzc8wgkk7839k5c0000gn/T/jl_9AGcg1`
 
 (jl_9AGcg1) pkg>

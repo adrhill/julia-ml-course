@@ -20,7 +20,7 @@ It's best to include only essential packages that you use frequently.
 There are however two packages I personally consider essential additions: *Revise.jl* and *OhMyRepl.jl*.
 
 !!! warning "Warning: First install packages"
-    Before adding a package to your `startup.jl`, first add it to your global `(@v1.10)` environment!
+    Before adding a package to your `startup.jl`, first add it to your global `(@v1.11)` environment!
 
 ## How does this work?
 
@@ -28,7 +28,7 @@ Julia makes use of something called [*stacked environments*](https://docs.julial
 
 > Stacked environments allow for adding tools to the primary environment. You can push an environment of development tools onto the end of the stack to make them available from the REPL and scripts, but not from inside packages.
 
-Before the environment of a package or project is activated, Julia first loads your global `(@v1.10)` environment and evaluates the code in your `startup.jl`.
+Before the environment of a package or project is activated, Julia first loads your global `(@v1.11)` environment and evaluates the code in your `startup.jl`.
 
 ## Enhancing the REPL experience
 ### Revise.jl

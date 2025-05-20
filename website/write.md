@@ -110,14 +110,14 @@ version = "1.0.0-DEV"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 
 [compat]
-julia = "1.10"
+julia = "1.11"
 ```
 
 * our package has a name, a unique identifier called a UUID, a version number and information
   about the package author
 * adding CSV.jl created an entry in the dependency section `[deps]`
 * there is a new `[compat]` section to specify package compatibility bounds
-   * our package is compatible with Julia versions $\ge$ `1.10` (and smaller than `2.0`) 
+   * our package is compatible with Julia versions $\ge$ `1.11` (and smaller than `2.0`) 
    * compat entries for external packages like CSV.jl have to be added manually
 
 !!! tip
@@ -155,7 +155,7 @@ This will allow us to get updates that patch bugs, but not updates that are pote
 ```toml
 [compat]
 CSV = "0.10"  # <-- manually added to Project.toml
-julia = "1.10"
+julia = "1.11"
 ```
 
 ## The source folder

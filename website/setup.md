@@ -25,12 +25,12 @@ using PkgTemplates
 template = Template(;
     user="YourGitHubUsername",
     authors="FirstName LastName <YourEmail@campus.tu-berlin.de>",
-    julia=v"1.10",
+    julia=v"1.11",
     plugins=[
         License(; name="MIT"),
         Git(; ssh=true, manifest=false),
         Tests(; project=true),
-        GitHubActions(; x64=true, extra_versions=[v"1.10"]),
+        GitHubActions(; x64=true, extra_versions=[v"1.11"]),
         Codecov(),
         Documenter{GitHubActions}(),
     ],
@@ -48,9 +48,9 @@ template = Template(;
 Let's go through this template step by step:
 * `user`: the GitHub (or other hosting platform) account name under which the project is hosted
 * `authors`: your authorship details 
-* `julia=v"1.10"`: sets the minimum Julia version requirement to 1.10 for package compatibility.
+* `julia=v"1.11"`: sets the minimum Julia version requirement to 1.11 for package compatibility.
     Usually, developers strive to support the last long-term support (LTS) release of Julia, which currently is 1.6.
-    Since this is the first package we write, we only target 1.10. 
+    Since this is the first package we write, we only target 1.11. 
     Thanks to packages like [Compat.jl](https://github.com/JuliaLang/Compat.jl), backwards compatibility is usually easy to achieve.
   
 We also use the following `plugins` to customize our template, most of which are defaults:
