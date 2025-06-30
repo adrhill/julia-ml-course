@@ -247,38 +247,6 @@ Otherwise, call `Base.require_one_based_indexing`.
 
 Refer to the section _Iterating over arrays_ in [_Lecture 2: Arrays & Linear Algebra_](/L2_Basics_2/).
 
-
-### 💡 Loops are perfectly fine
-
-In NumPy and MATLAB, code is commonly vectorized.
-This is done to internally run for-loops in C/C++ code instead of the much slower Python and MATLAB.
-In Julia, for-loops are highly performant and don't need to be avoided -- both loops and vectorization can be used.
-
-Refer to the lists of notheworthy differences from [Python](https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-Python)
-and [MATLAB](https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-MATLAB).
-
-### 💡 Mutate arrays for performance
-
-Allocating memory for a new array is slow.
-Instead, we can allocate arrays once and update values via mutation.
-By convention, Julia programmers indicate such functions with an `!` (see e.g. `sort` vs. `sort!`).
-
-Use [_Profiling_](/profiling) to identify performance critical allocations.
-Then refer to the section on _Views_ in [_Lecture 2: Arrays & Linear Algebra_](/L2_Basics_2/).
-
-### 💡 Leverage the type system
-
-Julia's type system is quite powerful. Parametric types can be used in methods:
-
-```julia
-# Function where both inputs have to have the same type:
-add_or_error(a::T, b::T) where {T} = a + b
-add_or_error(a, b) = error("Types of $a and $b don't match")
-
-# Method where array element type is made accessible:
-myeltype(A::AbstractArray{T}) where {T} = T
-```
-
 ### 🧹 Avoid strings for configuration
 
 In Python, it is common to configure functions via string arguments.
@@ -319,13 +287,43 @@ myfunction(data, algorithm) = error("Unknown algorithm $algorithm")
 
 (If for some reason, you want to avoid introducing types, at least use symbols (`:default`, `:special`) instead of strings (`"default"`, `"special"`).)
 
+### 💡 Loops are perfectly fine
+
+In NumPy and MATLAB, code is commonly vectorized.
+This is done to internally run for-loops in C/C++ code instead of the much slower Python and MATLAB.
+In Julia, for-loops are highly performant and don't need to be avoided -- both loops and vectorization can be used.
+
+Refer to the lists of notheworthy differences from [Python](https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-Python)
+and [MATLAB](https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-MATLAB).
+
+### 💡 Allocations are slow
+
+Allocating memory for a new array is slow.
+Instead, we can allocate arrays once and afterwards update values via mutation.
+By convention, Julia programmers indicate such functions with an `!` at the end of the name (see e.g. `sort` vs. `sort!`).
+
+Use [_Profiling_](/profiling) to identify performance critical allocations.
+Then refer to the section on _Views_ in [_Lecture 2: Arrays & Linear Algebra_](/L2_Basics_2/).
+
+### 💡 Leverage the type system
+
+Julia's type system is quite powerful. Parametric types can be used in methods:
+
+```julia
+# Function where both inputs have to have the same type:
+add_or_error(a::T, b::T) where {T} = a + b
+add_or_error(a, b) = error("Types of $a and $b don't match")
+
+# Method where array element type is made accessible:
+myeltype(A::AbstractArray{T}) where {T} = T
+```
+
 ## Documentation
 
-### ⚠️ Adhere to the recommended docstring style guide
+### ⚠️ Adhere to docstring conventions
 
 The [Julia community has conventions](https://docs.julialang.org/en/v1/manual/documentation/#Writing-Documentation) in place when writing documentation.
 LLM tend to ignore these.
-
 Advanced developers can automate some of this work using [DocStringExtensions.jl](https://github.com/JuliaDocs/DocStringExtensions.jl).
 
 
