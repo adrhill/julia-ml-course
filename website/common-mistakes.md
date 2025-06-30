@@ -67,27 +67,27 @@ Julia programmers tend to not use use submodules for individual source files, un
 There is rarely a reason to restrict field types to something more concrete than `Number`, `Real`, `AbstractFloat` or `Integer`.
 
 ```julia
-# ❌ BAD:
-struct MyTypeRestrictive
+# ❌ Restrictive:
+struct MyComplexRestrictive
     x::Float32
     y::Float32
 end
 
-# ✅ GOOD:
-struct MyTypeGood{T<:Real}
+# ✅ Flexible:
+struct MyComplex{T<:Real}
     x::T
     y::T
 end
 ```
 
 ```julia
-# ❌ BAD:
+# ❌ Restrictive:
 struct MyMatrixRestrictive
     mat::Matrix{Float32}
 end
 
-# ✅ GOOD:
-struct MyMatrixGood{T<:Real}
+# ✅ Flexible:
+struct MyMatrix{T<:Real}
     mat::Matrix{T}
 end
 
@@ -103,7 +103,7 @@ Mutable struct are less performant than regular (non-mutable) structs, since the
 It is therefore often more performant to simply return a new struct.
 
 ```julia
-# ❌ BAD:
+# ❌ USUALLY BAD:
 mutable struct PointMutable{T<:Real}
     x::T
     y::T
@@ -164,42 +164,77 @@ Refer to the section _Performance_ in [_Lecture 4: Custom Types_](/L4_Basics_3/)
 ### 🧹 Avoid overly strict type annotations
 
 Restrictive types usually remove functionality instead adding it.
-If really needed, use something more generic like `Number`, `Real`, `AbstractFloat` or `Integer`.
-
+If needed, use generic types like `Number`, `Real`, `AbstractFloat` or `Integer`.
 
 ```julia
-# ❌ BAD:
+# ❌ Restrictive:
 timestwo(x::Float32) = 2 * x
 
-# ✅ GOOD:
+# ✅ Flexible:
 timestwo(x) = 2 * x
 ```
 
-For arrays, the same applies: use `AbstractArray`, `AbstractMatrix`, `AbstractVector`.
+For arrays, use `AbstractArray`, `AbstractMatrix`, `AbstractVector`.
 To prohibit array types that don't use 1-based indexing, call `Base.require_one_based_indexing` within your function.
 
 ```julia
-# ❌ BAD:
+# ❌ Restrictive:
 sumrows(A::Matrix{Float64}) = sum(eachrow(A))
 
-# ✅ GOOD:
+# A bit more flexible:
+sumrows(A::Matrix{<:Real}) = sum(eachrow(A))
+
+# ✅ Flexible:
 sumrows(A::AbstractMatrix) = sum(eachrow(A))
+
+# or lightly restrict element-type while keeping array-type flexible:
+sumrows(A::AbstractMatrix{T}) where {T<:Real} = sum(eachrow(A))
 ```
+### ⚠️ Avoid type instabilities
+
+Type instabilities are discussed in [_Profiling: Type stabilty_](profiling/#type_stability)
+and should be avoided.
+While type stability is not required for the course project, it is needed for high performance Julia code.  
+
+For advanced users, besides profiling,type instabilities can be uncovered using [JET.jl](https://github.com/aviatesk/JET.jl).
 
 ### ⚠️ Avoid output type annotations
 
-If your code is well written, Julia will be able to infer output types by itself.
+If your code is type stable (see previous point), Julia will be able to infer output types without annotations.
+Output type annotations can hurt performance by causing allocations through unwanted type conversions.  
 
 ```julia
-# ❌ BAD:
+# ❌ BAD: return type annotation is abstract
+sumrows(A::AbstractMatrix)::AbstractVector = sum(eachrow(A))
 
+# ❌ BAD: return type annotation is too specific.
+# This will likely cause an unwanted and slow type conversion.
+sumrows(A::AbstractMatrix)::Vector{Float32} = sum(eachrow(A))
 
-# ✅ GOOD:
-
+# ✅ GOOD: Just let Julia figure it out
+sumrows(A::AbstractMatrix) = sum(eachrow(A))
 ```
 
 ### ⚠️ Avoid accidental type promotions
 
+Floating point numbers like `1.0` are of type `Float64`.
+Multiplying an array of `Float32` by such a number will promote the output to an array of `Float64`.
+
+The functions `typeof`, `eltype`, `one(T)`, `zero(T)` and `convert(T, x)` function are your friends.
+
+```julia
+# ❌ BAD:
+function example_bad(A::AbstractArray)
+    return 1 / sqrt(2) * A
+end
+
+# ✅ GOOD:
+function example_good(A::AbstractArray)
+    T = eltype(A)
+    scale = convert(T, 1 / sqrt(2))
+    return scale * A
+end
+```
 
 ## Code
 
@@ -227,12 +262,61 @@ Allocating memory on the heap for a new array is a slow operation.
 Instead, we can allocate arrays once and update values via mutation.
 By convention, Julia programmers indicate such functions with an `!` (see e.g. `sort` vs. `sort!`).
 
-Use [_Profiling_](/profiling) to identify allocations which are performance critical.
+Use [_Profiling_](/profiling) to identify performance critical allocations.
 Then refer to the section on _Views_ in [_Lecture 2: Arrays & Linear Algebra_](/L2_Basics_2/).
 
 ### 💡 Leverage the type system
 
-### 🧹 Avoid strings for algorithm selection
+Julia's type system is quite powerful. Parametric types can be used in methods:
+
+```julia
+# Methods where both inputs have to have the same type:
+add_or_error(a::T, b::T) where {T} = a + b
+add_or_error(a, b) = error("Types of $a and $b don't match")
+
+# Method where array element type is made accessible:
+myeltype(A::AbstractArray{T}) where {T} = T
+```
+
+### 🧹 Avoid strings for configuration
+
+In Python, it is common to configure function calls via strings.
+A 1-to-1 translation of this Python design pattern might look as follows:
+```julia
+# ❌ BAD:
+function solve_bad(data, algorithm="default")
+    if algorithm == "default"
+        solve_default(data)
+    elseif algorithm == "special"
+        solve_special(data)
+    else
+        error("Unknown algorithm $algorithm")
+    end
+end    
+```
+
+In Julia, it is more idiomatic to introduce types and use multiple dispatch:
+
+```julia
+# ✅ GOOD:
+abstract type AbstractSolver end
+
+# Solver without arguments:
+struct DefaultSolver <: AbstractSolver end
+
+# Solver with arguments:
+struct SpecialSolver <: AbstractSolver
+    some_parameter::Int
+    another_parameter::Bool
+end
+
+myfunction(data) = myfunction(data, DefaultSolver())
+myfunction(data, algorithm::DefaultSolver) = myfunction_default(data)
+myfunction(data, algorithm::SpecialSolver) = myfunction_special(data, algorithm) # pass arguments
+myfunction(data, algorithm) = error("Unknown algorithm $algorithm")
+```
+
+(If for some reason, you want to avoid introducing types, at least use symbols `:default`, `:special` instead of strings `"default"`, `"special"`.)
 
 ## Tests
 
