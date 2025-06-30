@@ -4,6 +4,7 @@
 # Common Mistakes 
 
 This page contains a short summary of common mistakes (⚠️), opinionated style suggestions (🧹) and miscellaneous tips (💡).
+Keep in mind that all rules are meant to be broken in the right context!
 
 ~~~
 <h2>Table of Contents</h2>
@@ -25,14 +26,14 @@ Explicitly import only the function you need from your dependencies.
 
 ```julia
 # ❌ BAD:
-using LinearAlgebra # imports all LinearAlgebra functions, including `cholesky`
+using LinearAlgebra # import all of LinearAlgebra just to use `cholesky` and `det`
 
 # ✅ GOOD:
-using LinearAlgebra: cholesky # imports only `cholesky`
+using LinearAlgebra: cholesky, det # import only `cholesky` and `det`
 ```
 
 Refer to [_Writing a Julia Package: Organizing dependencies, source files and exports_](/write/#organizing_dependencies_source_files_and_exports).
-Advanced users can test for this using [ExplicitImports.jl](https://github.com/JuliaTesting/ExplicitImports.jl).
+Advanced developers can test for this using [ExplicitImports.jl](https://github.com/JuliaTesting/ExplicitImports.jl).
 
 ### 🧹 Keep imports and exports in main file
 
@@ -42,7 +43,7 @@ Keep imports and exports in one place.
 module MyPackage
 
 # 1.) Explicitly import the functions you need from your dependencies
-using LinearAlgebra: cholesky 
+using LinearAlgebra: cholesky, det
 
 # 2.) Include source files
 include("timestwo.jl")
@@ -62,7 +63,7 @@ Julia programmers tend to not use use submodules for individual source files, un
 
 ## Types
 
-### 🧹 Avoid overly strict type fields
+### 🧹 Avoid overly strict struct fields
 
 There is rarely a reason to restrict field types to something more concrete than `Number`, `Real`, `AbstractFloat` or `Integer`.
 
@@ -92,7 +93,7 @@ struct MyMatrix{T<:Real}
 end
 
 # or even:
-struct MyMatrixGood2{T<:Real,A<:AbstractMatrix{T}}
+struct MyMatrix2{T<:Real,A<:AbstractMatrix{T}}
     mat::A
 end
 ```
@@ -109,7 +110,7 @@ mutable struct PointMutable{T<:Real}
     y::T
 end
  
-# Mutate field of `PointMutable`:
+# ❌ Mutate field of point:
 function addx_bad!(pt::PointMutable, x) 
     pt.x += x
     return pt
@@ -121,7 +122,7 @@ struct PointGood{T<:Real}
     y::T
 end
 
-# Simply create new immutable `PointGood`
+# ✅ Simply create new immutable point
 addx_good(pt::PointGood, x) = PointGood(pt.x + x, pt.y)
 ```
 
@@ -140,22 +141,22 @@ struct MyTypeBad
 end
 
 # ✅ GOOD:
-struct MyTypeGood{T}
+struct MyType{T}
     x::T
 end
 ```
 
 ```julia
 # ❌ BAD:
-struct AnotherTypeBad{TX}
-    x::TX
+struct AnotherTypeBad{X}
+    x::X
     y
 end
 
 # ✅ GOOD:
-struct AnotherTypeGood{TX,TY}
-    x::TX
-    y::TY
+struct AnotherType{X,Y}
+    x::X
+    y::Y
 end
 ```
 
@@ -193,15 +194,15 @@ sumrows(A::AbstractMatrix{T}) where {T<:Real} = sum(eachrow(A))
 ### ⚠️ Avoid type instabilities
 
 Type instabilities are discussed in [_Profiling: Type stabilty_](profiling/#type_stability)
-and should be avoided.
-While type stability is not required for the course project, it is needed for high performance Julia code.  
+and should be avoided, as they have a strong negative effect on performance.
+However, type stability is not mandatory for the project work in this course.
 
-For advanced users, besides profiling,type instabilities can be uncovered using [JET.jl](https://github.com/aviatesk/JET.jl).
+For advanced developers (besides profiling), type instabilities can be uncovered using [JET.jl](https://github.com/aviatesk/JET.jl).
 
 ### ⚠️ Avoid output type annotations
 
 If your code is type stable (see previous point), Julia will be able to infer output types without annotations.
-Output type annotations can hurt performance by causing allocations through unwanted type conversions.  
+Output type annotations can hurt performance by causing allocations via unwanted type conversions.  
 
 ```julia
 # ❌ BAD: return type annotation is abstract
@@ -250,7 +251,7 @@ Refer to the section _Iterating over arrays_ in [_Lecture 2: Arrays & Linear Alg
 ### 💡 Loops are perfectly fine
 
 In NumPy and MATLAB, code is commonly vectorized.
-This is done to call for-loops in C/C++ instead of the much slower high-level languages.
+This is done to internally run for-loops in C/C++ code instead of the much slower Python and MATLAB.
 In Julia, for-loops are highly performant and don't need to be avoided -- both loops and vectorization can be used.
 
 Refer to the lists of notheworthy differences from [Python](https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-Python)
@@ -258,7 +259,7 @@ and [MATLAB](https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Not
 
 ### 💡 Mutate arrays for performance
 
-Allocating memory on the heap for a new array is a slow operation.
+Allocating memory for a new array is slow.
 Instead, we can allocate arrays once and update values via mutation.
 By convention, Julia programmers indicate such functions with an `!` (see e.g. `sort` vs. `sort!`).
 
@@ -270,7 +271,7 @@ Then refer to the section on _Views_ in [_Lecture 2: Arrays & Linear Algebra_](/
 Julia's type system is quite powerful. Parametric types can be used in methods:
 
 ```julia
-# Methods where both inputs have to have the same type:
+# Function where both inputs have to have the same type:
 add_or_error(a::T, b::T) where {T} = a + b
 add_or_error(a, b) = error("Types of $a and $b don't match")
 
@@ -280,8 +281,8 @@ myeltype(A::AbstractArray{T}) where {T} = T
 
 ### 🧹 Avoid strings for configuration
 
-In Python, it is common to configure function calls via strings.
-A 1-to-1 translation of this Python design pattern might look as follows:
+In Python, it is common to configure functions via string arguments.
+A 1-to-1 translation of this design pattern might look as follows:
 ```julia
 # ❌ BAD:
 function solve_bad(data, algorithm="default")
@@ -316,28 +317,17 @@ myfunction(data, algorithm::SpecialSolver) = myfunction_special(data, algorithm)
 myfunction(data, algorithm) = error("Unknown algorithm $algorithm")
 ```
 
-(If for some reason, you want to avoid introducing types, at least use symbols `:default`, `:special` instead of strings `"default"`, `"special"`.)
-
-## Tests
-
-### ⚠️ Dry-run tests are not tests
-
-### 💡 Set environment variables
-Set global flag for e.g. MLDatasets
-
-### 💡 Advanced: Use JET to test type inference
-
-### 💡 Advanced: Use Aqua to test type inference
+(If for some reason, you want to avoid introducing types, at least use symbols (`:default`, `:special`) instead of strings (`"default"`, `"special"`).)
 
 ## Documentation
 
 ### ⚠️ Adhere to the recommended docstring style guide
 
-- No empty line before docstring
-- Four spaces before function name
-- Markdown for 
-- Examples
-- automated docstrings  
+The [Julia community has conventions](https://docs.julialang.org/en/v1/manual/documentation/#Writing-Documentation) in place when writing documentation.
+LLM tend to ignore these.
+
+Advanced developers can automate some of this work using [DocStringExtensions.jl](https://github.com/JuliaDocs/DocStringExtensions.jl).
+
 
 ### 💡 Run code in CI
 
