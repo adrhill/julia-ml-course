@@ -17,18 +17,44 @@ This page contains a short summary of common mistakes (⚠️), opinionated styl
 
 Dependencies like `Test.jl` and `Revise.jl` don't belong in the main `Project.toml`.
 
-Refer to [_Environments_](/environments) and to [_Enhancing the REPL_](/repl) respectively.
-
-### 🧹 Keep imports and exports in main file
-
-Refer to [_Writing a Julia Package: Organizing dependencies, source files and exports_](/write/#organizing_dependencies_source_files_and_exports).
-
+Refer to [_Environments_](/environments) and [_Enhancing the REPL_](/repl) respectively.
 
 ### 🧹 Use explicit imports
 
-Refer to [_Writing a Julia Package: Organizing dependencies, source files and exports_](/write/#organizing_dependencies_source_files_and_exports).
+Explicitly import only the function you need from your dependencies.
 
+```julia
+# ❌ BAD:
+using LinearAlgebra # imports all LinearAlgebra functions, including `cholesky`
+
+# ✅ GOOD:
+using LinearAlgebra: cholesky # imports only `cholesky`
+```
+
+Refer to [_Writing a Julia Package: Organizing dependencies, source files and exports_](/write/#organizing_dependencies_source_files_and_exports).
 Advanced users can test for this using [ExplicitImports.jl](https://github.com/JuliaTesting/ExplicitImports.jl).
+
+### 🧹 Keep imports and exports in main file
+
+Keep imports and exports in one place.
+```julia
+# ✅ GOOD:
+module MyPackage
+
+# 1.) Explicitly import the functions you need from your dependencies
+using LinearAlgebra: cholesky 
+
+# 2.) Include source files
+include("timestwo.jl")
+include("timesthree.jl")
+
+# 3.) Export functions you defined
+export timestwo, timesthree
+
+end # end module
+```
+
+Refer to [_Writing a Julia Package: Organizing dependencies, source files and exports_](/write/#organizing_dependencies_source_files_and_exports).
 
 ### 🧹 Avoid submodules
 
@@ -36,10 +62,68 @@ Julia programmers tend to not use use submodules for individual source files, un
 
 ## Types
 
+### 🧹 Avoid overly strict type fields
+
+There is rarely a reason to restrict field types to something more concrete than `Number`, `Real`, `AbstractFloat` or `Integer`.
+
+```julia
+# ❌ BAD:
+struct MyTypeRestrictive
+    x::Float32
+    y::Float32
+end
+
+# ✅ GOOD:
+struct MyTypeGood{T<:Real}
+    x::T
+    y::T
+end
+```
+
+```julia
+# ❌ BAD:
+struct MyMatrixRestrictive
+    mat::Matrix{Float32}
+end
+
+# ✅ GOOD:
+struct MyMatrixGood{T<:Real}
+    mat::Matrix{T}
+end
+
+# or even:
+struct MyMatrixGood2{T<:Real,A<:AbstractMatrix{T}}
+    mat::A
+end
+```
+
 ### ⚠️ Avoid mutable structs
 
 Mutable struct are less performant than regular (non-mutable) structs, since they are generally allocated on the heap.
 It is therefore often more performant to simply return a new struct.
+
+```julia
+# ❌ BAD:
+mutable struct PointMutable{T<:Real}
+    x::T
+    y::T
+end
+ 
+# Mutate field of `PointMutable`:
+function addx_bad!(pt::PointMutable, x) 
+    pt.x += x
+    return pt
+end
+
+# ✅ GOOD:
+struct PointGood{T<:Real}
+    x::T
+    y::T
+end
+
+# Simply create new immutable `PointGood`
+addx_good(pt::PointGood, x) = PointGood(pt.x + x, pt.y)
+```
 
 Refer to the section on _Mutable types_ in [_Lecture 4: Custom Types_](/L4_Basics_3/).
 
@@ -49,13 +133,70 @@ Refer to the section on _Mutable types_ in [_Lecture 4: Custom Types_](/L4_Basic
 Julia can't infer types from structs with untyped fields, which will result in bad performance.
 Use parametric types instead.
 
+```julia
+# ❌ BAD:
+struct MyTypeBad
+    x
+end
+
+# ✅ GOOD:
+struct MyTypeGood{T}
+    x::T
+end
+```
+
+```julia
+# ❌ BAD:
+struct AnotherTypeBad{TX}
+    x::TX
+    y
+end
+
+# ✅ GOOD:
+struct AnotherTypeGood{TX,TY}
+    x::TX
+    y::TY
+end
+```
+
 Refer to the section _Performance_ in [_Lecture 4: Custom Types_](/L4_Basics_3/).
 
-### ⚠️ Avoid overly strict type annotations
+### 🧹 Avoid overly strict type annotations
 
-Scalars and arrays (`requires_one_based`).
+Restrictive types usually remove functionality instead adding it.
+If really needed, use something more generic like `Number`, `Real`, `AbstractFloat` or `Integer`.
+
+
+```julia
+# ❌ BAD:
+timestwo(x::Float32) = 2 * x
+
+# ✅ GOOD:
+timestwo(x) = 2 * x
+```
+
+For arrays, the same applies: use `AbstractArray`, `AbstractMatrix`, `AbstractVector`.
+To prohibit array types that don't use 1-based indexing, call `Base.require_one_based_indexing` within your function.
+
+```julia
+# ❌ BAD:
+sumrows(A::Matrix{Float64}) = sum(eachrow(A))
+
+# ✅ GOOD:
+sumrows(A::AbstractMatrix) = sum(eachrow(A))
+```
 
 ### ⚠️ Avoid output type annotations
+
+If your code is well written, Julia will be able to infer output types by itself.
+
+```julia
+# ❌ BAD:
+
+
+# ✅ GOOD:
+
+```
 
 ### ⚠️ Avoid accidental type promotions
 
