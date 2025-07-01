@@ -124,7 +124,7 @@ Refer to the section _Iterating over arrays_ in [_Lecture 2: Arrays & Linear Alg
 
 ### ⚠️ Avoid type instabilities
 
-Type instabilities are discussed in [_Profiling: Type stabilty_](profiling/#type_stability)
+Type instabilities are discussed in [_Profiling: Type stability_](profiling/#type_stability)
 and should be avoided, as they have a strong negative effect on performance.
 However, type stability is not mandatory for the project work in this course.
 
@@ -196,7 +196,7 @@ In NumPy and MATLAB, code is commonly vectorized.
 This is done to internally run for-loops in C/C++ code instead of the much slower Python and MATLAB.
 In Julia, for-loops are highly performant and don't need to be avoided -- both loops and vectorization can be used.
 
-Refer to the lists of notheworthy differences from [Python](https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-Python)
+Refer to the lists of noteworthy differences from [Python](https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-Python)
 and [MATLAB](https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-MATLAB).
 
 ### 💡 Allocations are slow
@@ -227,7 +227,7 @@ myeltype(A::AbstractArray{T}) where {T} = T
 ### 🧹 Avoid overly strict struct fields, use type parameters
 
 There is rarely a reason to restrict field types to something more concrete than `Number`, `Real` or `Integer`.
-However, these abstact types are bad for performance when used directly in fields 
+However, these abstract types are bad for performance when used directly in fields 
 (refer to section _Performance_ in [_Lecture 4: Custom Types_](/L4_Basics_3/)).
 
 Parametric composite types are the perfect solution to both of these issues!
@@ -262,7 +262,7 @@ struct MyStructRestrictive
 end
 
 # ✅ More flexible.
-# Note: All three structs nput different restrictions on element and array types.
+# Note: All three structs put different restrictions on element and array types.
 struct MyStruct1{T<:Real}
     mat::Matrix{T}
 end
@@ -297,13 +297,13 @@ function addx_bad!(pt::PointMutable, x)
 end
 
 # ✅ GOOD:
-struct PointGood{T<:Real}
+struct Point{T<:Real}
     x::T
     y::T
 end
 
 # ✅ Simply create new immutable point
-addx_good(pt::PointGood, x) = PointGood(pt.x + x, pt.y)
+addx(pt::Point, x) = Point(pt.x + x, pt.y)
 ```
 
 Refer to the section on _Mutable types_ in [_Lecture 4: Custom Types_](/L4_Basics_3/).
@@ -312,7 +312,7 @@ Refer to the section on _Mutable types_ in [_Lecture 4: Custom Types_](/L4_Basic
 ### ⚠️ Avoid structs with untyped fields
 
 Julia can't infer types from structs with untyped fields, which will result in bad performance.
-Use parametric types instead.
+Use type parameters instead.
 
 ```julia
 # ❌ BAD:
