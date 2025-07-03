@@ -387,14 +387,14 @@ md"""Some types hold values of other types.
 Depending on the programming language they are found in, these types are called *structs*, *data classes* or *composite types*.
 
 Julia allows for generic implementations of these composite types.
-These so-called *parametric composite types* are indicated by curly braces `{T}`:
+These so-called *parametric composite types* are indicated by *type parameters* `{T}` in curly braces:
 
 - `Rational{Int64}` is a rational number represented by a `Int64` nominator and denominator. We could also have defined a rational number with any other `Integer` type.
 - `Complex{Float64}` is a complex number represented by `Float64` real and imaginary parts. We could also have defined a complex number with any other `Real` type.
 """
 
 # ╔═╡ 016ffd81-f142-42c4-93c0-e1ae71a4bfce
-md"""Some types have multiple parameters. The `Tuple` type *(round brackets)* is one example of this:"""
+md"""Some types have multiple type parameters. The `Tuple` type *(round brackets)* is one example of this:"""
 
 # ╔═╡ a9d7b66e-89a2-427b-b0ac-8311a9f60d38
 my_tuple = (1, 2.0, "Foo")

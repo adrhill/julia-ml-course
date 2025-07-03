@@ -178,7 +178,7 @@ md"### Exercise 1.1 – Composite types & constructors"
 
 # ╔═╡ 2258b8c6-e8b7-4c06-9ece-53b254db6a2c
 task(
-    md"Create a parametric composite type `Standardize` with two fields `μ` and `σ` of type `T<:Real`.
+    md"Create a parametric composite type `Standardize` with two fields `μ` and `σ` using the type parameter `T<:Real`.
 
 These two fields will hold the mean and the standard deviation of the standardization transformation.
 

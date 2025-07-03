@@ -306,6 +306,7 @@ md"## Mutable types
 Structs can be made mutable, meaning that their fields can be modified after their creation.
 
 The downside of this flexibility is a loss in performance since these objects will generally be allocated on the heap.
+Mutable types should therefore usually be avoided!
 "
 
 # ╔═╡ e2a2bb59-100a-4ed3-a30c-8f5525c73cb4
@@ -351,7 +352,7 @@ struct MyComplex{T<:Real} <: Number
 end
 
 # ╔═╡ 83938403-600f-47f2-abb5-ba04aa31dcc2
-md"""The big change compared to the previous structs are the curly braces `{T<:Real}` behind `MyComplex`. This can be read as follows:
+md"""The big change compared to previous structs is the type parameter `{T<:Real}` in curly braces behind `MyComplex`. This can be read as follows:
 1. `MyComplex` is a subtype of `Number`, the most general abstract number type.
 1. It contains real and imaginary parts `re` and `im`.
 1. `re` and `im` both have to be of the same *parametric* type `T`.
@@ -388,7 +389,7 @@ typeof(cf)
 
 # ╔═╡ 1db85444-9817-442f-b291-96e27e0f1bdc
 tip(
-    md"It is also possible to define composite types with multiple parameters. For example, we could have defined
+    md"It is also possible to define structs with multiple type parameters. For example, we could have defined
 ```julia
 struct MyComplex{T1, T2} <: Number
 	re::T1
@@ -470,7 +471,7 @@ PointParametric(1.2, 3.4) # Works with all subtypes of `Real` and is very perfor
 PointConcrete(1.2, 3.4) # Error: can only create a PointConcrete with Int64s
 
 # ╔═╡ da550590-054f-4a29-bd20-17f572f12a57
-tip(md"Parametric composite types are usually the way to go!")
+tip(md"Types parameters are usually the way to go!")
 
 # ╔═╡ bca3a7e7-4db3-4135-bf29-263dfece9407
 md"## Extending functions on custom types ⁽⁺⁾

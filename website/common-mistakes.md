@@ -11,7 +11,6 @@ Keep in mind that all rules are meant to be broken in the right context!
 ~~~
 \tableofcontents
 
-
 ## Dependencies
 
 ### ⚠️ Remove unused dependencies
@@ -57,13 +56,15 @@ end # end module
 
 Refer to [_Writing a Julia Package: Organizing dependencies, source files and exports_](/write/#organizing_dependencies_source_files_and_exports).
 
-### 🧹 Avoid submodules
+### 🧹 You probably don't need submodules
 
-Julia programmers tend to not use use submodules for individual source files, unless necessary.
-
+Julia programmers tend to not use submodules for individual source files.
+Submodules are usually only necessary if your code requires isolated namespaces 
+(e.g. if you need multiple unexported functions of the same name).
 
 ## Functions
-### 🧹 Avoid overly strict type annotations
+
+### ⚠️ Avoid overly strict type annotations
 
 Restrictive types prohibit Julia's composability. For example, a function that only allows `Float64` won't be compatible with [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl)'s `Dual` number type.
 If needed, use generic types like `Number`, `Real` or `Integer`.
@@ -89,8 +90,8 @@ sumrows(A::Matrix{<:Real}) = sum(eachrow(A))
 # ✅ Flexible:
 sumrows(A::AbstractMatrix) = sum(eachrow(A))
 
-# or lightly restrict element-type while keeping array-type flexible:
-sumrows(A::AbstractMatrix{T}) where {T<:Real} = sum(eachrow(A))
+# or lightly restrict the element-type while keeping array-type flexible:
+sumrows(A::AbstractMatrix{<:Real}) = sum(eachrow(A))
 ```
 
 ### ⚠️ Avoid accidental type promotions
@@ -146,7 +147,6 @@ sumrows(A::AbstractMatrix)::Vector{Float32} = sum(eachrow(A))
 # ✅ GOOD: Just let Julia figure it out
 sumrows(A::AbstractMatrix) = sum(eachrow(A))
 ```
-
 
 ### 🧹 Avoid strings for configuration
 
@@ -210,7 +210,8 @@ Then refer to the section on _Views_ in [_Lecture 2: Arrays & Linear Algebra_](/
 
 ### 💡 Leverage the type system
 
-Julia's type system is quite powerful. Type parameters can be used in methods:
+Julia's type system is quite powerful. 
+Type parameters can not only be used in structs, but also in methods:
 
 ```julia
 # Method where both inputs have to have the same type:
@@ -221,35 +222,33 @@ issametype(a, b) = false
 myeltype(A::AbstractArray{T}) where {T} = T
 ```
 
-
 ## Types
 
-### 🧹 Avoid overly strict struct fields, use type parameters
+### ⚠️ Avoid overly strict struct fields, use type parameters
 
 There is rarely a reason to restrict field types to something more concrete than `Number`, `Real` or `Integer`.
 However, these abstract types are bad for performance when used directly in fields 
 (refer to section _Performance_ in [_Lecture 4: Custom Types_](/L4_Basics_3/)).
 
-Parametric composite types are the perfect solution to both of these issues!
-
+Type parameters are the perfect solution to both of these issues!
 
 ```julia
 # ❌ Restrictive:
 struct MyComplexRestrictive
-    x::Float32
-    y::Float32
+    re::Float32
+    im::Float32
 end
 
 # ❌ Slow:
 struct MyComplexSlow
-    x::Real
-    y::Real
+    re::Real
+    im::Real
 end
 
 # ✅ Flexible & fast:
 struct MyComplex{T<:Real}
-    x::T
-    y::T
+    re::T
+    im::T
 end
 ```
 
@@ -275,8 +274,6 @@ struct MyStruct3{T<:Real,A<:AbstractMatrix{T}}
     mat::A
 end
 ```
-
-
 
 ### ⚠️ Avoid mutable structs
 
@@ -307,7 +304,6 @@ addx(pt::Point, x) = Point(pt.x + x, pt.y)
 ```
 
 Refer to the section on _Mutable types_ in [_Lecture 4: Custom Types_](/L4_Basics_3/).
-
 
 ### ⚠️ Avoid structs with untyped fields
 
@@ -349,7 +345,6 @@ Refer to the section _Performance_ in [_Lecture 4: Custom Types_](/L4_Basics_3/)
 The [Julia community has conventions](https://docs.julialang.org/en/v1/manual/documentation/#Writing-Documentation) in place when writing documentation.
 LLM tend to ignore these.
 Advanced developers can automate some of this work using [DocStringExtensions.jl](https://github.com/JuliaDocs/DocStringExtensions.jl).
-
 
 ### 💡 Run code
 
