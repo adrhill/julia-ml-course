@@ -1,0 +1,159 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/julia-ml-course/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/julia-ml-course/css/franklin.css"> <link rel=stylesheet  href="/julia-ml-course/css/poole_hyde.css"> <style> html {font-size: 17px;} .franklin-content {position: relative; padding-left: 8%; padding-right: 5%; line-height: 1.35em;} @media (min-width: 940px) { .franklin-content {width: 100%; margin-left: auto; margin-right: auto;} } @media (max-width: 768px) { .franklin-content {padding-left: 6%; padding-right: 6%;} } </style> <link rel=icon  href="/julia-ml-course/assets/favicon.png"> <title>Julia for Machine Learning</title> <div class=sidebar > <div class="container sidebar-sticky"> <div class=sidebar-about > <h1><a href="/julia-ml-course/">JuML</a></h1> <p class=lead > Julia Programming<br> for Machine Learning<br> SoSe 2025 @ TU Berlin.</p> </div> <div class=sidebar-nav-section >Course overview</div> <a class="sidebar-nav-item " href="/julia-ml-course/">General Information</a> <a class="sidebar-nav-item " href="/julia-ml-course/E1_Installation/">Installation</a> <a class="sidebar-nav-item " href="/julia-ml-course/E2_Help/">Getting Help</a> <div class=sidebar-nav-section >Julia basics</div> <a class="sidebar-nav-item " href="/julia-ml-course/L1_Basics_1/">Types, Functions & MD</a> <a class="sidebar-nav-item " href="/julia-ml-course/L2_Basics_2/">Arrays & Linear Algebra</a> <a class="sidebar-nav-item " href="/julia-ml-course/L4_Basics_3/">Custom Types</a> <div class=sidebar-nav-section >Julia ecosystem</div> <a class="sidebar-nav-item " href="/julia-ml-course/L3_Plotting/">Plotting & DataFrames</a> <a class="sidebar-nav-item " href="/julia-ml-course/L5_Machine_Learning/">Machine Learning</a> <a class="sidebar-nav-item " href="/julia-ml-course/L6_Automatic_Differentiation/">Automatic Differentiation</a> <a class="sidebar-nav-item " href="/julia-ml-course/L7_Deep_Learning/">Deep Learning</a> <div class=sidebar-nav-section >Workflows</div> <a class="sidebar-nav-item " href="/julia-ml-course/overview/">Overview</a> <a class="sidebar-nav-item " href="/julia-ml-course/environments/">Environments</a> <a class="sidebar-nav-item " href="/julia-ml-course/repl/">Enhancing the REPL</a> <a class="sidebar-nav-item " href="/julia-ml-course/setup/">Setting up a Package</a> <a class="sidebar-nav-item " href="/julia-ml-course/write/">Writing a Package</a> <a class="sidebar-nav-item " href="/julia-ml-course/test/">Testing</a> <a class="sidebar-nav-item " href="/julia-ml-course/git/">Hosting on GitHub</a> <a class="sidebar-nav-item " href="/julia-ml-course/docs/">Documentation</a> <a class="sidebar-nav-item " href="/julia-ml-course/debugging/">Debugging</a> <a class="sidebar-nav-item " href="/julia-ml-course/profiling/">Profiling</a> <a class="sidebar-nav-item " href="/julia-ml-course/scripts/">Scripts & Experiments</a> <a class="sidebar-nav-item active" href="/julia-ml-course/common-mistakes/">Common Mistakes</a> <div class=sidebar-nav-section >Homework</div> <a class="sidebar-nav-item " href="/julia-ml-course/H1_Basics/">Week 1</a> <a class="sidebar-nav-item " href="/julia-ml-course/H2_Linear_Algebra/">Week 2</a> <a class="sidebar-nav-item " href="/julia-ml-course/H3_Custom_Types/">Week 3</a> <a class="sidebar-nav-item " href="/julia-ml-course/H4_Deep_Learning/">Week 4</a> </nav> <br> </div> </div> <div class="content container"> <div class=franklin-content ><h1 id=common_mistakes ><a href="#common_mistakes" class=header-anchor >Common Mistakes </a></h1> <p>This page contains a short summary of common mistakes &#40;⚠️&#41;, opinionated style suggestions &#40;🧹&#41; and miscellaneous tips &#40;💡&#41;. Keep in mind that all rules are meant to be broken in the right context&#33;</p> <p> <h2>Table of Contents</h2> <div class=franklin-toc ><ol><li><a href="#dependencies">Dependencies</a><ol><li><a href="#remove_unused_dependencies">⚠️ Remove unused dependencies</a><li><a href="#use_explicit_imports">🧹 Use explicit imports</a><li><a href="#keep_imports_and_exports_in_main_file">🧹 Keep imports and exports in main file</a><li><a href="#you_probably_dont_need_submodules">🧹 You probably don&#39;t need submodules</a></ol><li><a href="#functions">Functions</a><ol><li><a href="#avoid_overly_strict_type_annotations">⚠️ Avoid overly strict type annotations</a><li><a href="#avoid_accidental_type_promotions">⚠️ Avoid accidental type promotions</a><li><a href="#dont_assume_1-based_indexing">⚠️ Don&#39;t assume 1-based indexing</a><li><a href="#avoid_type_instabilities">⚠️ Avoid type instabilities</a><li><a href="#avoid_output_type_annotations">⚠️ Avoid output type annotations</a><li><a href="#avoid_strings_for_configuration">🧹 Avoid strings for configuration</a><li><a href="#loops_are_perfectly_fine">💡 Loops are perfectly fine</a><li><a href="#allocations_are_slow">💡 Allocations are slow</a><li><a href="#leverage_the_type_system">💡 Leverage the type system</a></ol><li><a href="#types">Types</a><ol><li><a href="#avoid_overly_strict_struct_fields_use_type_parameters">⚠️ Avoid overly strict struct fields, use type parameters</a><li><a href="#avoid_mutable_structs">⚠️ Avoid mutable structs</a><li><a href="#avoid_structs_with_untyped_fields">⚠️ Avoid structs with untyped fields</a></ol><li><a href="#documentation">Documentation</a><ol><li><a href="#adhere_to_docstring_conventions">⚠️ Adhere to docstring conventions</a><li><a href="#run_code">💡 Run code</a></ol></ol></div></p> <h2 id=dependencies ><a href="#dependencies" class=header-anchor >Dependencies</a></h2> <h3 id=remove_unused_dependencies ><a href="#remove_unused_dependencies" class=header-anchor >⚠️ Remove unused dependencies</a></h3> <p>Dependencies like <code>Test.jl</code> and <code>Revise.jl</code> don&#39;t belong in the main <code>Project.toml</code>.</p> <p>Refer to <a href="/julia-ml-course/environments"><em>Environments</em></a> and <a href="/julia-ml-course/repl"><em>Enhancing the REPL</em></a> respectively.</p> <h3 id=use_explicit_imports ><a href="#use_explicit_imports" class=header-anchor >🧹 Use explicit imports</a></h3> <p>Explicitly import only the functions you need from your dependencies.</p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ BAD:</span>
+<span class=hljs-keyword >using</span> LinearAlgebra <span class=hljs-comment ># import all of LinearAlgebra just to use `cholesky` and `det`</span>
+
+<span class=hljs-comment ># ✅ GOOD:</span>
+<span class=hljs-keyword >using</span> LinearAlgebra: cholesky, det <span class=hljs-comment ># explicitly import only `cholesky` and `det`</span></code></pre> <p>Refer to <a href="/julia-ml-course/write/#organizing_dependencies_source_files_and_exports"><em>Writing a Julia Package: Organizing dependencies, source files and exports</em></a>. Advanced developers can test for this using <a href="https://github.com/JuliaTesting/ExplicitImports.jl">ExplicitImports.jl</a>.</p> <h3 id=keep_imports_and_exports_in_main_file ><a href="#keep_imports_and_exports_in_main_file" class=header-anchor >🧹 Keep imports and exports in main file</a></h3> <p>Keep imports and exports in one place instead of spreading them over several files.</p> <pre><code class="julia hljs"><span class=hljs-comment ># ✅ GOOD:</span>
+<span class=hljs-keyword >module</span> MyPackage
+
+<span class=hljs-comment ># 1.) Explicitly import the functions you need from your dependencies</span>
+<span class=hljs-keyword >using</span> LinearAlgebra: cholesky, det
+
+<span class=hljs-comment ># 2.) Include source files</span>
+include(<span class=hljs-string >&quot;timestwo.jl&quot;</span>)
+include(<span class=hljs-string >&quot;timesthree.jl&quot;</span>)
+
+<span class=hljs-comment ># 3.) Export functions you defined</span>
+<span class=hljs-keyword >export</span> timestwo, timesthree
+
+<span class=hljs-keyword >end</span> <span class=hljs-comment ># end module</span></code></pre> <p>Refer to <a href="/julia-ml-course/write/#organizing_dependencies_source_files_and_exports"><em>Writing a Julia Package: Organizing dependencies, source files and exports</em></a>.</p> <h3 id=you_probably_dont_need_submodules ><a href="#you_probably_dont_need_submodules" class=header-anchor >🧹 You probably don&#39;t need submodules</a></h3> <p>Julia programmers tend to not use submodules for individual source files. Submodules are usually only necessary if your code requires isolated namespaces &#40;e.g. if you need multiple unexported functions of the same name&#41;.</p> <h2 id=functions ><a href="#functions" class=header-anchor >Functions</a></h2> <h3 id=avoid_overly_strict_type_annotations ><a href="#avoid_overly_strict_type_annotations" class=header-anchor >⚠️ Avoid overly strict type annotations</a></h3> <p>Restrictive types prohibit Julia&#39;s composability. For example, a function that only allows <code>Float64</code> won&#39;t be compatible with <a href="https://github.com/JuliaDiff/ForwardDiff.jl">ForwardDiff.jl</a>&#39;s <code>Dual</code> number type. If needed, use generic types like <code>Number</code>, <code>Real</code> or <code>Integer</code>.</p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ Restrictive:</span>
+timestwo(x::<span class=hljs-built_in >Float32</span>) = <span class=hljs-number >2</span> * x
+
+<span class=hljs-comment ># ✅ Flexible:</span>
+timestwo(x) = <span class=hljs-number >2</span> * x</code></pre> <p>For arrays, use <code>AbstractArray</code>, <code>AbstractMatrix</code>, <code>AbstractVector</code>. To prohibit array types that don&#39;t use 1-based indexing, call <code>Base.require_one_based_indexing</code> within your function.</p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ Restrictive:</span>
+sumrows(A::<span class=hljs-built_in >Matrix</span>{<span class=hljs-built_in >Float64</span>}) = sum(eachrow(A))
+
+<span class=hljs-comment ># A bit more flexible:</span>
+sumrows(A::<span class=hljs-built_in >Matrix</span>{&lt;:<span class=hljs-built_in >Real</span>}) = sum(eachrow(A))
+
+<span class=hljs-comment ># ✅ Flexible:</span>
+sumrows(A::<span class=hljs-built_in >AbstractMatrix</span>) = sum(eachrow(A))
+
+<span class=hljs-comment ># or lightly restrict the element-type while keeping array-type flexible:</span>
+sumrows(A::<span class=hljs-built_in >AbstractMatrix</span>{&lt;:<span class=hljs-built_in >Real</span>}) = sum(eachrow(A))</code></pre> <h3 id=avoid_accidental_type_promotions ><a href="#avoid_accidental_type_promotions" class=header-anchor >⚠️ Avoid accidental type promotions</a></h3> <p>Floating point numbers like <code>1.0</code> are of type <code>Float64</code>. Multiplying an array of <code>Float32</code> by such a number will promote the output to an array of <code>Float64</code>.</p> <p>The functions <code>typeof</code>, <code>eltype</code>, <code>one&#40;T&#41;</code>, <code>zero&#40;T&#41;</code> and <code>convert&#40;T, x&#41;</code> function are your friends.</p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ BAD:</span>
+<span class=hljs-keyword >function</span> example_bad(A::<span class=hljs-built_in >AbstractArray</span>)
+    <span class=hljs-keyword >return</span> <span class=hljs-number >1</span> / sqrt(<span class=hljs-number >2</span>) * A
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># ✅ GOOD:</span>
+<span class=hljs-keyword >function</span> example_good(A::<span class=hljs-built_in >AbstractArray</span>)
+    T = eltype(A)
+    scale = convert(T, <span class=hljs-number >1</span> / sqrt(<span class=hljs-number >2</span>))
+    <span class=hljs-keyword >return</span> scale * A
+<span class=hljs-keyword >end</span></code></pre> <h3 id=dont_assume_1-based_indexing ><a href="#dont_assume_1-based_indexing" class=header-anchor >⚠️ Don&#39;t assume 1-based indexing</a></h3> <p>We can&#39;t assume all arrays to use 1-based indexing &#40;see e.g. <a href="https://github.com/JuliaArrays/OffsetArrays.jl">OffsetArrays.jl</a>&#41;. Use iterators like <code>eachrow</code>, <code>eachcol</code>, <code>eachslice</code> and <code>eachindex</code> when possible. Otherwise, call <code>Base.require_one_based_indexing</code>.</p> <p>Refer to the section <em>Iterating over arrays</em> in <a href="/julia-ml-course/L2_Basics_2/"><em>Lecture 2: Arrays &amp; Linear Algebra</em></a>.</p> <h3 id=avoid_type_instabilities ><a href="#avoid_type_instabilities" class=header-anchor >⚠️ Avoid type instabilities</a></h3> <p>Type instabilities are discussed in <a href="profiling/#type_stability"><em>Profiling: Type stability</em></a> and should be avoided, as they have a strong negative effect on performance. However, type stability is not mandatory for the project work in this course.</p> <p>For advanced developers &#40;besides profiling&#41;, type instabilities can be uncovered using <a href="https://github.com/aviatesk/JET.jl">JET.jl</a>.</p> <h3 id=avoid_output_type_annotations ><a href="#avoid_output_type_annotations" class=header-anchor >⚠️ Avoid output type annotations</a></h3> <p>If your code is type stable &#40;see previous point&#41;, Julia will be able to infer output types without annotations. Output type annotations can hurt performance by causing allocations via unwanted type conversions. </p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ BAD: return type annotation is abstract</span>
+sumrows(A::<span class=hljs-built_in >AbstractMatrix</span>)::<span class=hljs-built_in >AbstractVector</span> = sum(eachrow(A))
+
+<span class=hljs-comment ># ❌ BAD: return type annotation is too specific.</span>
+<span class=hljs-comment ># This will likely cause an unwanted and slow type conversion.</span>
+sumrows(A::<span class=hljs-built_in >AbstractMatrix</span>)::<span class=hljs-built_in >Vector</span>{<span class=hljs-built_in >Float32</span>} = sum(eachrow(A))
+
+<span class=hljs-comment ># ✅ GOOD: Just let Julia figure it out</span>
+sumrows(A::<span class=hljs-built_in >AbstractMatrix</span>) = sum(eachrow(A))</code></pre> <h3 id=avoid_strings_for_configuration ><a href="#avoid_strings_for_configuration" class=header-anchor >🧹 Avoid strings for configuration</a></h3> <p>In Python, it is common to configure functions via string arguments. A 1-to-1 translation of this design pattern might look as follows:</p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ BAD:</span>
+<span class=hljs-keyword >function</span> solve_bad(data; algorithm=<span class=hljs-string >&quot;default&quot;</span>, kwargs...)
+    <span class=hljs-keyword >if</span> algorithm == <span class=hljs-string >&quot;default&quot;</span>
+        solve_default(data; kwargs...)
+    <span class=hljs-keyword >elseif</span> algorithm == <span class=hljs-string >&quot;special&quot;</span>
+        solve_special(data; kwargs...)
+    <span class=hljs-keyword >else</span>
+        error(<span class=hljs-string >&quot;Unknown algorithm <span class=hljs-variable >$algorithm</span>&quot;</span>)
+    <span class=hljs-keyword >end</span>
+<span class=hljs-keyword >end</span></code></pre> <p>In Julia, it is more idiomatic to introduce types and use multiple dispatch:</p> <pre><code class="julia hljs"><span class=hljs-comment ># ✅ GOOD:</span>
+<span class=hljs-keyword >abstract type</span> AbstractSolver <span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># Solver without arguments:</span>
+<span class=hljs-keyword >struct</span> DefaultSolver &lt;: AbstractSolver <span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># Solver with arguments:</span>
+<span class=hljs-keyword >struct</span> SpecialSolver &lt;: AbstractSolver
+    some_parameter::<span class=hljs-built_in >Int</span>
+    another_parameter::<span class=hljs-built_in >Bool</span>
+<span class=hljs-keyword >end</span>
+
+solve(data) = solve(data, DefaultSolver())
+solve(data, algorithm::DefaultSolver) = solve_default(data)
+solve(data, algorithm::SpecialSolver) = solve_special(data, algorithm) <span class=hljs-comment ># pass arguments via `algorithm`</span>
+
+<span class=hljs-comment ># We could add this, but Julia will already throw a MethodError: </span>
+<span class=hljs-comment ># solve(data, algorithm) = error(&quot;Unknown algorithm $algorithm&quot;)</span></code></pre> <p>&#40;If for some reason, you want to avoid introducing types, at least use symbols &#40;<code>:default</code>, <code>:special</code>&#41; instead of strings &#40;<code>&quot;default&quot;</code>, <code>&quot;special&quot;</code>&#41;.&#41;</p> <h3 id=loops_are_perfectly_fine ><a href="#loops_are_perfectly_fine" class=header-anchor >💡 Loops are perfectly fine</a></h3> <p>In NumPy and MATLAB, code is commonly vectorized. This is done to internally run for-loops in C/C&#43;&#43; code instead of the much slower Python and MATLAB. In Julia, for-loops are highly performant and don&#39;t need to be avoided – both loops and vectorization can be used.</p> <p>Refer to the lists of noteworthy differences from <a href="https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-Python">Python</a> and <a href="https://docs.julialang.org/en/v1/manual/noteworthy-differences/#Noteworthy-differences-from-MATLAB">MATLAB</a>.</p> <h3 id=allocations_are_slow ><a href="#allocations_are_slow" class=header-anchor >💡 Allocations are slow</a></h3> <p>Allocating memory for a new array is slow. Instead of allocating new arrays, we can often update values of existing arrays via mutation. By convention, Julia programmers indicate such functions with an <code>&#33;</code> at the end of the name &#40;see e.g. <code>sort</code> vs. <code>sort&#33;</code>&#41;.</p> <p>Use <a href="/julia-ml-course/profiling"><em>Profiling</em></a> to identify performance critical allocations. Then refer to the section on <em>Views</em> in <a href="/julia-ml-course/L2_Basics_2/"><em>Lecture 2: Arrays &amp; Linear Algebra</em></a> for mutation.</p> <h3 id=leverage_the_type_system ><a href="#leverage_the_type_system" class=header-anchor >💡 Leverage the type system</a></h3> <p>Julia&#39;s type system is quite powerful. Type parameters can not only be used in structs, but also in methods:</p> <pre><code class="julia hljs"><span class=hljs-comment ># Method where both inputs have to have the same type:</span>
+issametype(a::T, b::T) <span class=hljs-keyword >where</span> {T} = <span class=hljs-literal >true</span>
+issametype(a, b) = <span class=hljs-literal >false</span>
+
+<span class=hljs-comment ># Method where array element type is made accessible:</span>
+myeltype(A::<span class=hljs-built_in >AbstractArray</span>{T}) <span class=hljs-keyword >where</span> {T} = T</code></pre> <h2 id=types ><a href="#types" class=header-anchor >Types</a></h2> <h3 id=avoid_overly_strict_struct_fields_use_type_parameters ><a href="#avoid_overly_strict_struct_fields_use_type_parameters" class=header-anchor >⚠️ Avoid overly strict struct fields, use type parameters</a></h3> <p>There is rarely a reason to restrict field types to something more concrete than <code>Number</code>, <code>Real</code> or <code>Integer</code>. However, these abstract types are bad for performance when used directly in fields &#40;refer to section <em>Performance</em> in <a href="/julia-ml-course/L4_Basics_3/"><em>Lecture 4: Custom Types</em></a>&#41;.</p> <p>Type parameters are the perfect solution to both of these issues&#33;</p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ Restrictive:</span>
+<span class=hljs-keyword >struct</span> MyComplexRestrictive
+    re::<span class=hljs-built_in >Float32</span>
+    <span class=hljs-literal >im</span>::<span class=hljs-built_in >Float32</span>
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># ❌ Slow:</span>
+<span class=hljs-keyword >struct</span> MyComplexSlow
+    re::<span class=hljs-built_in >Real</span>
+    <span class=hljs-literal >im</span>::<span class=hljs-built_in >Real</span>
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># ✅ Flexible &amp; fast:</span>
+<span class=hljs-keyword >struct</span> MyComplex{T&lt;:<span class=hljs-built_in >Real</span>}
+    re::T
+    <span class=hljs-literal >im</span>::T
+<span class=hljs-keyword >end</span></code></pre> <p>Similar ideas can also be applied to fields containing arrays:</p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ Restrictive:</span>
+<span class=hljs-keyword >struct</span> MyStructRestrictive
+    mat::<span class=hljs-built_in >Matrix</span>{<span class=hljs-built_in >Float32</span>}
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># ✅ More flexible.</span>
+<span class=hljs-comment ># Note: All three structs put different restrictions on element and array types.</span>
+<span class=hljs-keyword >struct</span> MyStruct1{T&lt;:<span class=hljs-built_in >Real</span>}
+    mat::<span class=hljs-built_in >Matrix</span>{T}
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-keyword >struct</span> MyStruct2{A&lt;:<span class=hljs-built_in >AbstractMatrix</span>}
+    mat::A
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-keyword >struct</span> MyStruct3{T&lt;:<span class=hljs-built_in >Real</span>,A&lt;:<span class=hljs-built_in >AbstractMatrix</span>{T}}
+    mat::A
+<span class=hljs-keyword >end</span></code></pre> <h3 id=avoid_mutable_structs ><a href="#avoid_mutable_structs" class=header-anchor >⚠️ Avoid mutable structs</a></h3> <p>Mutable struct are less performant than regular &#40;non-mutable&#41; structs, since they are generally allocated on the heap. It is therefore often more performant to simply return a new struct.</p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ USUALLY BAD:</span>
+<span class=hljs-keyword >mutable struct</span> PointMutable{T&lt;:<span class=hljs-built_in >Real</span>}
+    x::T
+    y::T
+<span class=hljs-keyword >end</span>
+ 
+<span class=hljs-comment ># ❌ Mutate field of point:</span>
+<span class=hljs-keyword >function</span> addx_bad!(pt::PointMutable, x) 
+    pt.x += x
+    <span class=hljs-keyword >return</span> pt
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># ✅ GOOD:</span>
+<span class=hljs-keyword >struct</span> Point{T&lt;:<span class=hljs-built_in >Real</span>}
+    x::T
+    y::T
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># ✅ Simply create new immutable point</span>
+addx(pt::Point, x) = Point(pt.x + x, pt.y)</code></pre> <p>Refer to the section on <em>Mutable types</em> in <a href="/julia-ml-course/L4_Basics_3/"><em>Lecture 4: Custom Types</em></a>.</p> <h3 id=avoid_structs_with_untyped_fields ><a href="#avoid_structs_with_untyped_fields" class=header-anchor >⚠️ Avoid structs with untyped fields</a></h3> <p>Julia can&#39;t infer types from structs with untyped fields, which will result in bad performance. Use type parameters instead.</p> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ BAD:</span>
+<span class=hljs-keyword >struct</span> MyTypeBad
+    x
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># ✅ GOOD:</span>
+<span class=hljs-keyword >struct</span> MyType{T}
+    x::T
+<span class=hljs-keyword >end</span></code></pre> <pre><code class="julia hljs"><span class=hljs-comment ># ❌ BAD:</span>
+<span class=hljs-keyword >struct</span> AnotherTypeBad{X}
+    x::X
+    y
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># ✅ GOOD:</span>
+<span class=hljs-keyword >struct</span> AnotherType{X,Y}
+    x::X
+    y::Y
+<span class=hljs-keyword >end</span></code></pre> <p>Refer to the section <em>Performance</em> in <a href="/julia-ml-course/L4_Basics_3/"><em>Lecture 4: Custom Types</em></a>.</p> <h2 id=documentation ><a href="#documentation" class=header-anchor >Documentation</a></h2> <h3 id=adhere_to_docstring_conventions ><a href="#adhere_to_docstring_conventions" class=header-anchor >⚠️ Adhere to docstring conventions</a></h3> <p>The <a href="https://docs.julialang.org/en/v1/manual/documentation/#Writing-Documentation">Julia community has conventions</a> in place when writing documentation. LLM tend to ignore these. Advanced developers can automate some of this work using <a href="https://github.com/JuliaDocs/DocStringExtensions.jl">DocStringExtensions.jl</a>.</p> <h3 id=run_code ><a href="#run_code" class=header-anchor >💡 Run code</a></h3> <p>You can use <a href="https://documenter.juliadocs.org/stable/man/syntax/#reference-at-example">Documenter.jl&#39;s <code>@example</code> blocks</a> to run Julia code examples and show the outputs within your documentation. Refer to <a href="/julia-ml-course/docs/#writing_documentation"><em>Writing documentation</em></a>.</p> <h4 id=run_mldatasetsjl_code ><a href="#run_mldatasetsjl_code" class=header-anchor >💡 Run MLDatasets.jl code</a></h4> <p>To use MLDatasets.jl within your documentation, you need to set an environment flag in <code>.github/workflows/CI.yaml</code>:</p> <pre><code class="yaml hljs"><span class=hljs-attr >docs:</span>
+  <span class=hljs-attr >name:</span> <span class=hljs-string >Documentation</span>
+  [<span class=hljs-string >...</span>]
+
+    <span class=hljs-bullet >-</span> <span class=hljs-attr >uses:</span> <span class=hljs-string >julia-actions/julia-docdeploy@v1</span>
+      <span class=hljs-attr >env:</span>
+        <span class=hljs-attr >DATADEPS_ALWAYS_ACCEPT:</span> <span class=hljs-literal >true</span> <span class=hljs-comment ># &lt;-- add this line for MLDatasets download</span>
+        <span class=hljs-attr >GITHUB_TOKEN:</span> <span class=hljs-string >${{</span> <span class=hljs-string >secrets.GITHUB_TOKEN</span> <span class=hljs-string >}}</span>
+        <span class=hljs-attr >DOCUMENTER_KEY:</span> <span class=hljs-string >${{</span> <span class=hljs-string >secrets.DOCUMENTER_KEY</span> <span class=hljs-string >}}</span></code></pre> <div class=page-foot > Last modified: <a href="https://github.com/adrhill/julia-ml-course/commits/main">August 25, 2025.</a><br> Website, code and notebooks are under <a href="https://github.com/adrhill/julia-ml-course/blob/main/LICENSE">MIT License</a> &copy; <a href="http://adrianhill.de">Adrian Hill</a>.<br> Built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>, <a href="https://github.com/fonsp/Pluto.jl">Pluto.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> </div> <script src="/julia-ml-course/libs/highlight/highlight.min.js"></script> <script>hljs.highlightAll();hljs.configure({tabReplace: ' '});</script>

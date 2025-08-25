@@ -1,0 +1,106 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/julia-ml-course/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/julia-ml-course/css/franklin.css"> <link rel=stylesheet  href="/julia-ml-course/css/poole_hyde.css"> <style> html {font-size: 17px;} .franklin-content {position: relative; padding-left: 8%; padding-right: 5%; line-height: 1.35em;} @media (min-width: 940px) { .franklin-content {width: 100%; margin-left: auto; margin-right: auto;} } @media (max-width: 768px) { .franklin-content {padding-left: 6%; padding-right: 6%;} } </style> <link rel=icon  href="/julia-ml-course/assets/favicon.png"> <title>Setting up a Julia Package</title> <div class=sidebar > <div class="container sidebar-sticky"> <div class=sidebar-about > <h1><a href="/julia-ml-course/">JuML</a></h1> <p class=lead > Julia Programming<br> for Machine Learning<br> SoSe 2025 @ TU Berlin.</p> </div> <div class=sidebar-nav-section >Course overview</div> <a class="sidebar-nav-item " href="/julia-ml-course/">General Information</a> <a class="sidebar-nav-item " href="/julia-ml-course/E1_Installation/">Installation</a> <a class="sidebar-nav-item " href="/julia-ml-course/E2_Help/">Getting Help</a> <div class=sidebar-nav-section >Julia basics</div> <a class="sidebar-nav-item " href="/julia-ml-course/L1_Basics_1/">Types, Functions & MD</a> <a class="sidebar-nav-item " href="/julia-ml-course/L2_Basics_2/">Arrays & Linear Algebra</a> <a class="sidebar-nav-item " href="/julia-ml-course/L4_Basics_3/">Custom Types</a> <div class=sidebar-nav-section >Julia ecosystem</div> <a class="sidebar-nav-item " href="/julia-ml-course/L3_Plotting/">Plotting & DataFrames</a> <a class="sidebar-nav-item " href="/julia-ml-course/L5_Machine_Learning/">Machine Learning</a> <a class="sidebar-nav-item " href="/julia-ml-course/L6_Automatic_Differentiation/">Automatic Differentiation</a> <a class="sidebar-nav-item " href="/julia-ml-course/L7_Deep_Learning/">Deep Learning</a> <div class=sidebar-nav-section >Workflows</div> <a class="sidebar-nav-item " href="/julia-ml-course/overview/">Overview</a> <a class="sidebar-nav-item " href="/julia-ml-course/environments/">Environments</a> <a class="sidebar-nav-item " href="/julia-ml-course/repl/">Enhancing the REPL</a> <a class="sidebar-nav-item active" href="/julia-ml-course/setup/">Setting up a Package</a> <a class="sidebar-nav-item " href="/julia-ml-course/write/">Writing a Package</a> <a class="sidebar-nav-item " href="/julia-ml-course/test/">Testing</a> <a class="sidebar-nav-item " href="/julia-ml-course/git/">Hosting on GitHub</a> <a class="sidebar-nav-item " href="/julia-ml-course/docs/">Documentation</a> <a class="sidebar-nav-item " href="/julia-ml-course/debugging/">Debugging</a> <a class="sidebar-nav-item " href="/julia-ml-course/profiling/">Profiling</a> <a class="sidebar-nav-item " href="/julia-ml-course/scripts/">Scripts & Experiments</a> <a class="sidebar-nav-item " href="/julia-ml-course/common-mistakes/">Common Mistakes</a> <div class=sidebar-nav-section >Homework</div> <a class="sidebar-nav-item " href="/julia-ml-course/H1_Basics/">Week 1</a> <a class="sidebar-nav-item " href="/julia-ml-course/H2_Linear_Algebra/">Week 2</a> <a class="sidebar-nav-item " href="/julia-ml-course/H3_Custom_Types/">Week 3</a> <a class="sidebar-nav-item " href="/julia-ml-course/H4_Deep_Learning/">Week 4</a> </nav> <br> </div> </div> <div class="content container"> <div class=franklin-content ><h1 id=setting_up_a_julia_package ><a href="#setting_up_a_julia_package" class=header-anchor >Setting up a Julia Package</a></h1> <p>In Julia, packages are the natural medium for code that doesn&#39;t fit in a simple script or notebook. While this might sound excessive at first, it provides many conveniences. This page serves as a guide for creating your first Julia package. It walks you through the process of the initial setup and the structure of a Julia package. </p> <p> <h2>Table of Contents</h2> <div class=franklin-toc ><ol><li><a href="#pkgtemplatesjl">PkgTemplates.jl</a><li><a href="#project_structure">Project structure</a><li><a href="#further_reading">Further reading</a></ol></div></p> <h2 id=pkgtemplatesjl ><a href="#pkgtemplatesjl" class=header-anchor >PkgTemplates.jl</a></h2> <p><a href="https://github.com/JuliaCI/PkgTemplates.jl">PkgTemplates.jl</a> is a highly configurable package for project templates. Thanks to these templates, setting up the file structure for a Julia package takes seconds. </p> <p>We suggest you use the following template for your project work at TU Berlin:</p> <pre><code class="julia hljs"><span class=hljs-keyword >using</span> PkgTemplates
+
+template = Template(;
+    user=<span class=hljs-string >&quot;YourGitHubUsername&quot;</span>,
+    authors=<span class=hljs-string >&quot;FirstName LastName &lt;YourEmail@campus.tu-berlin.de&gt;&quot;</span>,
+    julia=<span class=hljs-string >v&quot;1.11&quot;</span>,
+    plugins=[
+        License(; name=<span class=hljs-string >&quot;MIT&quot;</span>),
+        Git(; ssh=<span class=hljs-literal >true</span>, manifest=<span class=hljs-literal >false</span>),
+        Tests(; project=<span class=hljs-literal >true</span>),
+        GitHubActions(; x64=<span class=hljs-literal >true</span>, extra_versions=[<span class=hljs-string >v&quot;1.11&quot;</span>]),
+        Codecov(),
+        Documenter{GitHubActions}(),
+    ],
+)</code></pre> <div class="admonition warning"> <p class=admonition-title >⚠️ Don't just Copy & Paste ⚠️</p> <p>Make sure to customize the <code>user</code> and <code>authors</code> fields with your GitHub account, name, and email address!</p> </p> </div> <p>Let&#39;s go through this template step by step:</p> <ul> <li><p><code>user</code>: the GitHub &#40;or other hosting platform&#41; account name under which the project is hosted</p> <li><p><code>authors</code>: your authorship details </p> <li><p><code>julia&#61;v&quot;1.11&quot;</code>: sets the minimum Julia version requirement to 1.11 for package compatibility. Usually, developers strive to support the last long-term support &#40;LTS&#41; release of Julia, which currently is 1.6. Since this is the first package we write, we only target 1.11. Thanks to packages like <a href="https://github.com/JuliaLang/Compat.jl">Compat.jl</a>, backwards compatibility is usually easy to achieve.</p> </ul> <p>We also use the following <code>plugins</code> to customize our template, most of which are defaults:</p> <ul> <li><p><code>License&#40;name&#61;&quot;MIT&quot;&#41;</code>: add the MIT License, which is permissive with minimal restrictions.</p> <li><p><code>Git&#40;manifest&#61;false&#41;</code>: initialize a Git repository and opt out of tracking the Manifest.</p> <li><p><code>Test&#40;; project&#61;true&#41;</code>: set up package testing and add a <code>Project.toml</code> for tests. </p> <li><p><code>GitHubActions&#40;&#41;</code>: set up continuous integration &#40;CI&#41; via GitHub Actions to run our package tests.</p> <li><p><code>Codecov&#40;&#41;</code>: set up CodeCov to assess code coverage. This tells you how much of your code is covered by package tests.</p> <li><p><code>Documenter&#123;GitHubActions&#125;&#40;&#41;</code>: use <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> to generate package documentation. Build the documentation using GitHub and deploy it via <a href="https://pages.github.com/">GitHub Pages</a>.</p> <li><p><code>Formatter&#40;; style&#61;&quot;blue&quot;&#41;</code>: tells JuliaFormatter.jl and the Julia VSCode extension to use the <a href="https://github.com/JuliaDiff/BlueStyle">Blue code style</a> for automatic code formatting </p> </ul> <p>After you created the template, run </p> <pre><code class="julia-repl hljs"><span class="hljs-meta prompt_">julia&gt;</span><span class=language-julia > template(<span class=hljs-string >&quot;MyPackage&quot;</span>)</span></code></pre>
+<p>At the end of the package generation,  Julia will inform us that our project has been created in the <code>~/.julia/dev</code> folder:</p>
+<pre><code class="julia-repl hljs">[ Info: New package is at ~/.julia/dev/MyPackage</code></pre>
+<p>You can set a custom directory via the keyword argument <code>dir</code> of your template.</p>
+
+<div class="admonition tip">
+  <p class=admonition-title >Tip</p>
+  <p>The template above was customized for the JuML project work at TU Berlin.</p>
+  <p>Take a look at the
+  <a href="https://juliaci.github.io/PkgTemplates.jl/stable/user/">PkgTemplates user guide</a>
+  to create a template customized to your needs.
+</p>
+</div>
+
+<h2 id=project_structure ><a href="#project_structure" class=header-anchor >Project structure</a></h2>
+<p>Let&#39;s take a look at the structure of the files generated by PkgTemplates.jl by opening our project in VSCode. The file explorer on the left should show the following files: </p>
+<pre><code class="bash hljs">├── .github
+│   └── workflows
+│       ├── CI.yml
+│       ├── CompatHelper.yml
+│       └── TagBot.yml
+├── .gitignore
+├── docs
+│  ├── make.jl
+│  ├── Manifest.toml
+│  ├── Project.toml
+│  └── src
+│     └── index.md
+├── LICENSE
+├── Manifest.toml
+├── Project.toml
+├── README.md
+├── src
+│   └── MyPackage.jl
+└── <span class=hljs-built_in >test</span>
+   ├── Manifest.toml
+   ├── Project.toml
+   └── runtests.jl
+
+5 directories, 10 files</code></pre>
+<p>Let&#39;s go through this step by step:</p>
+<ul>
+<li><p><code>README.md</code>: the &quot;landing page&quot; of your repository. Should describe what the code is about, link to your documentation and maybe give a usage example.</p>
+
+<li><p><code>LICENSE</code>: the license you chose for your project, e.g. the MIT license</p>
+
+<li><p><code>Project.toml</code> and <code>Manifest.toml</code>: you should already be familiar with these files, which <a href="/julia-ml-course/environments">specify your package environment</a></p>
+
+<li><p><code>src</code>: your source code goes in here. The file named after your package is the &quot;main&quot; file.</p>
+
+<li><p><code>test</code>: your package tests go in here. The <code>runtests.jl</code> is the &quot;main&quot; file of your tests.</p>
+
+<li><p><code>docs</code>: your package documentation goes in here:</p>
+<ul>
+<li><p><code>make.jl</code>: the build </p>
+
+</ul>
+
+<li><p><code>.github/workflows</code>: the files in here specify GitHub Actions, commands that will be run on GitHub&#39;s remote computers.</p>
+<ul>
+<li><p><code>CI.yml</code>: runs your package tests, builds the documentation and computes code coverage.</p>
+
+<li><p><code>CompatHelper.yml</code>: automatically opens an issue when new versions of your dependencies have been released</p>
+
+<li><p><code>TagBot.yml</code>: automatically tags releases when using JuliaRegistrator &#40;you can ignore this&#41;.</p>
+
+</ul>
+
+<li><p><code>.gitignore</code>: specifies files you don&#39;t want to commit to Git, like the Manifest</p>
+
+</ul>
+<div class="admonition tip"><p class=admonition-title >Tip</p><p>We will describe the project structure in more detail in the page on <a href="/julia-ml-course/write">Writing a Julia package</a>. </p>
+</div>
+<h2 id=further_reading ><a href="#further_reading" class=header-anchor >Further reading</a></h2>
+<ul>
+<li><p><a href="https://juliaci.github.io/PkgTemplates.jl/stable/user/">PkgTemplates.jl documentation</a></p>
+
+<li><p><a href="https://modernjuliaworkflows.github.io/sharing/#setup"><em>Modern Julia Workflows</em> on setting up a package</a></p>
+
+</ul>
+<div class=page-foot >
+    
+    Last modified: <a href="https://github.com/adrhill/julia-ml-course/commits/main">August 25, 2025.</a><br>
+    Website, code and notebooks are under <a href="https://github.com/adrhill/julia-ml-course/blob/main/LICENSE">MIT License</a> &copy; <a href="http://adrianhill.de">Adrian Hill</a>.<br>
+    Built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>, <a href="https://github.com/fonsp/Pluto.jl">Pluto.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+    </div>  
+    
+    
+        <script src="/julia-ml-course/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
