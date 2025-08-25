@@ -271,12 +271,12 @@ begin
     Base.:+(n::Number, f::Dual) = f + n
 
     Base.:-(f::Dual, n::Number) = Dual(f.val - n, f.der)
-    Base.:-(n::Number, f::Dual) = f - n
+    Base.:-(n::Number, f::Dual) = Dual(n-f.val, -f.der)
 
     Base.:*(n::Number, f::Dual) = Dual(f.val * n, f.der * n)
     Base.:*(f::Dual, n::Number) = n * f
 
-    Base.:/(n::Number, f::Dual)  = Dual(n / f.val * n, -n * f.der / f.val^2)
+    Base.:/(n::Number, f::Dual)  = Dual(n / f.val, -n * f.der / f.val^2)
     Base.:/(f::Dual, n::Number)  = f * inv(n)
     Base.:^(f::Dual, n::Integer) = Base.power_by_squaring(f, n)
 end
