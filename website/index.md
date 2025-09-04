@@ -100,7 +100,6 @@ During code review sessions, students give each other feedback on their projects
 before presenting their work in end-of-semester presentations.
 
 ## Information for TU Berlin students 
-Starting in summer 2024, JuML is an stand-alone 6 ECTS / 6 LP course.
 
 Homework assignments must be submitted every week. 
 You must be enrolled on ISIS to submit homework. 
@@ -108,18 +107,18 @@ If you do not register on time, you cannot pass the course.
 
 ![JuML course timeline](/assets/timeline.png)
 
-* **Course Period:**  April 14th 2025 - July 19th 2025
-  * **Kick-off meeting:** Tuesday, April 15th, 16:15-17:45, MAR 0.016
-  * **Project meetings:** Tuesdays, 16:15-17:45, MAR 0.016
+* **Course Period:**  October 14th 2025 - February 10th 2026
+  * **Kick-off meeting:** Tuesday, October 14th, 16:15-17:45, MA 0.42
+  * **Project meetings:** Tuesdays, 16:15-17:45, MAR 0.011
   * **Office hours:** TBA
 
 Attendance is mandatory on the following dates:
-* Tuesday, 15.04.25
-* Tuesday, 20.05.25
-* Tuesday, 10.06.25
-* Tuesday, 01.07.25
-* Tuesday, 15.07.25
-* Tuesday, 22.07.25
+* Tuesday, 14.10.25
+* Tuesday, 18.11.25
+* Tuesday, 16.12.25
+* Tuesday, 20.01.25
+* Tuesday, 03.02.26
+* Tuesday, 10.02.26
 
 The date of the final examination will be determined on a group-by-group basis.
 

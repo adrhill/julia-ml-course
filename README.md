@@ -95,7 +95,7 @@ before presenting their work in end-of-semester presentations.
 
 [site-url]: https://adrhill.github.io/julia-ml-course/
 [ml-group-url]: https://web.ml.tu-berlin.de
-[isis-url]: https://isis.tu-berlin.de/course/view.php?id=43325
+[isis-url]: https://isis.tu-berlin.de/course/view.php?id=44767
 
 [goto-badge]: https://img.shields.io/badge/-Go%20to%20course%20website-informational
 [isis-badge]: https://img.shields.io/badge/TU%20Berlin-ISIS%20page-red
