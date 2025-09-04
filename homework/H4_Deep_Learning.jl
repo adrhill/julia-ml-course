@@ -46,13 +46,13 @@ html"""
 			Homework 4: Deep Learning
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Summer Semester 2025<br>
+			TU Berlin, Winter Semester 25/26<br>
 		</p>
 	</div>
 """
 
 # ╔═╡ ce8fd3c2-4fe8-4408-8479-efc81f1a4147
-md"Due date: **Monday, May 19th 2025 at 23:59**"
+md"Due date: **Monday, November 17th 2025 at 23:59**"
 
 # ╔═╡ 42a8576f-d0ab-4915-864f-c1c2fd65e4e4
 md"### Student information"

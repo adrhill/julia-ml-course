@@ -42,7 +42,7 @@ html"""
 			Adrian Hill
 		</p>
 		<p style="font-size: 20px;">
-			TU Berlin, Summer Semester 2025
+			TU Berlin, Winter Semester 25/26
 		</p>
 	</div>
 """
