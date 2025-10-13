@@ -15,12 +15,14 @@
     </h1>
     
 [![Go to course website][goto-badge]][site-url]
-[![TU Berlin ISIS page][isis-badge]][isis-url]
     
   </p>
 </div>
 
-Course material and website for the [Julia for Machine Learning][site-url] course (JuML) at the [TU Berlin Machine Learning group][ml-group-url].
+> [!IMPORTANT]  
+> The course material for the JuML course at the [TU Berlin Machine Learning group][ml-group-url] has moved to the [`JuML-TUB` organization](https://github.com/JuML-TUB/julia-ml-course).
+
+Course material and website for the [Julia for Machine Learning][site-url] course (JuML).
 
 ## Installation
 Follow the [installation instructions](https://adrhill.github.io/julia-ml-course/E1_Installation/)
@@ -95,7 +97,5 @@ before presenting their work in end-of-semester presentations.
 
 [site-url]: https://adrhill.github.io/julia-ml-course/
 [ml-group-url]: https://web.ml.tu-berlin.de
-[isis-url]: https://isis.tu-berlin.de/course/view.php?id=44767
 
 [goto-badge]: https://img.shields.io/badge/-Go%20to%20course%20website-informational
-[isis-badge]: https://img.shields.io/badge/TU%20Berlin-ISIS%20page-red
